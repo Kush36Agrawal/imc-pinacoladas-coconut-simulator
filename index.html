@@ -1347,247 +1347,249 @@
         <!-- RIGHT -->
         <div class="panel green-top">
           <h2 class="green">&#x1F40D; Strategy Contract</h2>
-          <span class="kw">def</span> <span class="fn">strategy</span>(coconut_row, pina_row, pos_coconut, pos_pina,
-          step):
-          <span class="cm"># coconut_row, pina_row -- dicts
-            # pos_coconut, pos_pina -- ints
-            # step -- int</span>
-          mid_c = (coconut_row.get(<span class="st">"bid_price_1"</span>, <span class="num">7999</span>) +
-          coconut_row.get(<span class="st">"ask_price_1"</span>, <span class="num">8001</span>)) / <span
-            class="num">2</span>
-          mid_p = (pina_row.get(<span class="st">"bid_price_1"</span>, <span class="num">14999</span>) +
-          pina_row.get(<span class="st">"ask_price_1"</span>, <span class="num">15001</span>)) / <span
-            class="num">2</span>
-          <span class="kw">return</span> {
-          <span class="st">"COCONUTS"</span>: { <span class="st">"bid"</span>: <span class="fn">int</span>(mid_c) -
-          <span class="num">1</span>, <span class="st">"ask"</span>: <span class="fn">int</span>(mid_c) + <span
-            class="num">1</span>, <span class="st">"bid_qty"</span>: <span class="num">10</span>, <span
-            class="st">"ask_qty"</span>: <span class="num">10</span> },
-          <span class="st">"PINA_COLADAS"</span>: { <span class="st">"bid"</span>: <span class="fn">int</span>(mid_p) -
-          <span class="num">2</span>, <span class="st">"ask"</span>: <span class="fn">int</span>(mid_p) + <span
-            class="num">2</span>, <span class="st">"bid_qty"</span>: <span class="num">10</span>, <span
-            class="st">"ask_qty"</span>: <span class="num">10</span> }
-          }
-        </div>
-        <div id="strategy-error"></div>
-        <div id="py-runtime-status">
-          <div class="spinner" id="py-spinner"></div>
-          <span id="py-runtime-text">Loading Python runtime (Pyodide)&hellip;</span>
-        </div>
-        <div class="hint-box" style="margin-top:14px;">
-          <strong style="color:var(--accent2)">Row keys</strong><br>
-          <code>bid_price_1</code>&nbsp;<code>bid_volume_1</code> &mdash; best bid &nbsp;&nbsp;
-          <code>ask_price_1</code>&nbsp;<code>ask_volume_1</code> &mdash; best ask<br>
-          <code>bid/ask_price_2</code>&nbsp;<code>bid/ask_price_3</code> &mdash; deeper levels<br><br>
-          <strong style="color:var(--accent2)">Imports</strong><br>
-          <code>numpy</code>&nbsp;<code>pandas</code>&nbsp;<code>scipy</code>&nbsp;<code>statistics</code> + all
-          stdlib<br>
-          <code>row.get("key", default)</code> fully supported<br><br>
-          <strong style="color:var(--accent2)">Rules</strong>&nbsp; Position capped at <strong
-            style="color:var(--text)">&plusmn;600 (Coc) / &plusmn;300 (Pina)</strong>. Orders trimmed automatically.
-        </div>
-        <button class="btn btn-primary" id="run-sim-btn" onclick="startSimulation()" disabled>&#x21BB; Loading Python
-          Runtime&hellip;</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ════════════ SIM VIEW ════════════ -->
-  <div id="sim-view">
-
-    <!-- Computation progress overlay -->
-    <div id="compute-overlay">
-      <h2>&#x26A1; Computing Simulation</h2>
-      <p>Pre-computing all steps in the background. Takes only a few seconds.</p>
-      <div class="compute-bar-wrap">
-        <div class="compute-bar" id="compute-bar"></div>
-      </div>
-      <div id="compute-pct" style="font-size:.65rem;color:var(--text-muted);margin-bottom:16px;">0%</div>
-      <div id="compute-stats">
-        <div class="cstat">
-          <div class="cstat-label">Steps Done</div>
-          <div class="cstat-value" id="cs-steps">0</div>
-        </div>
-        <div class="cstat">
-          <div class="cstat-label">Live PnL</div>
-          <div class="cstat-value" id="cs-pnl">0.00</div>
-        </div>
-        <div class="cstat">
-          <div class="cstat-label">Position</div>
-          <div class="cstat-value" id="cs-pos" style="font-size:0.8rem;margin-top:5px;">C:0 | P:0</div>
-        </div>
-        <div class="cstat">
-          <div class="cstat-label">Cash</div>
-          <div class="cstat-value" id="cs-cash">0.00</div>
+          <div class="demo-code-block"><span class="kw">def</span> <span class="fn">strategy</span>(coconut_row,
+            pina_row, pos_coconut, pos_pina, step):
+            <span class="cm"># coconut_row, pina_row -- dicts
+              # pos_coconut, pos_pina -- ints
+              # step -- int</span>
+            mid_c = (coconut_row.get(<span class="st">"bid_price_1"</span>, <span class="num">7999</span>) +
+            coconut_row.get(<span class="st">"ask_price_1"</span>, <span class="num">8001</span>)) / <span
+              class="num">2</span>
+            mid_p = (pina_row.get(<span class="st">"bid_price_1"</span>, <span class="num">14999</span>) +
+            pina_row.get(<span class="st">"ask_price_1"</span>, <span class="num">15001</span>)) / <span
+              class="num">2</span>
+            <span class="kw">return</span> {
+            <span class="st">"COCONUTS"</span>: { <span class="st">"bid"</span>: <span class="fn">int</span>(mid_c) -
+            <span class="num">1</span>, <span class="st">"ask"</span>: <span class="fn">int</span>(mid_c) + <span
+              class="num">1</span>, <span class="st">"bid_qty"</span>: <span class="num">10</span>, <span
+              class="st">"ask_qty"</span>: <span class="num">10</span> },
+            <span class="st">"PINA_COLADAS"</span>: { <span class="st">"bid"</span>: <span class="fn">int</span>(mid_p)
+            -
+            <span class="num">2</span>, <span class="st">"ask"</span>: <span class="fn">int</span>(mid_p) + <span
+              class="num">2</span>, <span class="st">"bid_qty"</span>: <span class="num">10</span>, <span
+              class="st">"ask_qty"</span>: <span class="num">10</span> }
+            }
+          </div>
+          <div id="strategy-error"></div>
+          <div id="py-runtime-status">
+            <div class="spinner" id="py-spinner"></div>
+            <span id="py-runtime-text">Loading Python runtime (Pyodide)&hellip;</span>
+          </div>
+          <div class="hint-box" style="margin-top:14px;">
+            <strong style="color:var(--accent2)">Row keys</strong><br>
+            <code>bid_price_1</code>&nbsp;<code>bid_volume_1</code> &mdash; best bid &nbsp;&nbsp;
+            <code>ask_price_1</code>&nbsp;<code>ask_volume_1</code> &mdash; best ask<br>
+            <code>bid/ask_price_2</code>&nbsp;<code>bid/ask_price_3</code> &mdash; deeper levels<br><br>
+            <strong style="color:var(--accent2)">Imports</strong><br>
+            <code>numpy</code>&nbsp;<code>pandas</code>&nbsp;<code>scipy</code>&nbsp;<code>statistics</code> + all
+            stdlib<br>
+            <code>row.get("key", default)</code> fully supported<br><br>
+            <strong style="color:var(--accent2)">Rules</strong>&nbsp; Position capped at <strong
+              style="color:var(--text)">&plusmn;600 (Coc) / &plusmn;300 (Pina)</strong>. Orders trimmed automatically.
+          </div>
+          <button class="btn btn-primary" id="run-sim-btn" onclick="startSimulation()" disabled>&#x21BB; Loading Python
+            Runtime&hellip;</button>
         </div>
       </div>
     </div>
 
-    <!-- Results panel (shown after compute) -->
-    <div id="results-view" style="display:none;">
+    <!-- ════════════ SIM VIEW ════════════ -->
+    <div id="sim-view">
 
-      <div class="final-banner" id="final-banner">
-        <h2>Simulation Complete &mdash; Press START to Play</h2>
-        <div class="final-pnl" id="final-pnl-display"></div>
-        <div class="final-sub" id="final-sub"></div>
+      <!-- Computation progress overlay -->
+      <div id="compute-overlay">
+        <h2>&#x26A1; Computing Simulation</h2>
+        <p>Pre-computing all steps in the background. Takes only a few seconds.</p>
+        <div class="compute-bar-wrap">
+          <div class="compute-bar" id="compute-bar"></div>
+        </div>
+        <div id="compute-pct" style="font-size:.65rem;color:var(--text-muted);margin-bottom:16px;">0%</div>
+        <div id="compute-stats">
+          <div class="cstat">
+            <div class="cstat-label">Steps Done</div>
+            <div class="cstat-value" id="cs-steps">0</div>
+          </div>
+          <div class="cstat">
+            <div class="cstat-label">Live PnL</div>
+            <div class="cstat-value" id="cs-pnl">0.00</div>
+          </div>
+          <div class="cstat">
+            <div class="cstat-label">Position</div>
+            <div class="cstat-value" id="cs-pos" style="font-size:0.8rem;margin-top:5px;">C:0 | P:0</div>
+          </div>
+          <div class="cstat">
+            <div class="cstat-label">Cash</div>
+            <div class="cstat-value" id="cs-cash">0.00</div>
+          </div>
+        </div>
       </div>
 
-      <div class="day-tabs" id="day-tabs"></div>
+      <!-- Results panel (shown after compute) -->
+      <div id="results-view" style="display:none;">
 
-      <!--
+        <div class="final-banner" id="final-banner">
+          <h2>Simulation Complete &mdash; Press START to Play</h2>
+          <div class="final-pnl" id="final-pnl-display"></div>
+          <div class="final-sub" id="final-sub"></div>
+        </div>
+
+        <div class="day-tabs" id="day-tabs"></div>
+
+        <!--
         Controls:  ◄ (prev, icon only)  ·  ▶ START / ⏸ PAUSE  ·  ► (next, icon only)  ·  ↺ RESET
       -->
-      <div class="sim-controls">
-        <button class="btn btn-secondary btn-icon" id="prev-btn" onclick="stepBackward()"
-          title="Previous step">&#9664;</button>
-        <button class="btn btn-green" id="start-btn" onclick="togglePlay()">&#9654; START</button>
-        <button class="btn btn-secondary btn-icon" id="next-btn" onclick="stepForward()"
-          title="Next step">&#9654;</button>
-        <button class="btn btn-danger" onclick="resetSim()">&#8635; RESET</button>
-      </div>
+        <div class="sim-controls">
+          <button class="btn btn-secondary btn-icon" id="prev-btn" onclick="stepBackward()"
+            title="Previous step">&#9664;</button>
+          <button class="btn btn-green" id="start-btn" onclick="togglePlay()">&#9654; START</button>
+          <button class="btn btn-secondary btn-icon" id="next-btn" onclick="stepForward()"
+            title="Next step">&#9654;</button>
+          <button class="btn btn-danger" onclick="resetSim()">&#8635; RESET</button>
+        </div>
 
-      <!-- Draggable seek bar with tooltip -->
-      <div class="progress-wrap">
-        <div class="progress-label" id="progress-label">Step 0 / 0</div>
-        <div class="progress-bar-outer" id="progress-bar-outer">
-          <div class="progress-fill" id="progress-fill"></div>
-          <div class="progress-thumb" id="progress-thumb"></div>
-        </div>
-      </div>
-
-      <div class="error-msg" id="sim-error"></div>
-
-      <!-- 6 stat cards -->
-      <div class="stats-row">
-        <div class="stat-card pnl">
-          <div class="stat-label">Total PnL</div>
-          <div class="stat-value neutral" id="stat-pnl">0.00</div>
-        </div>
-        <div class="stat-card cash">
-          <div class="stat-label">Cash</div>
-          <div class="stat-value neutral" id="stat-cash">0.00</div>
-        </div>
-        <div class="stat-card pos">
-          <div class="stat-label">Position</div>
-          <div class="stat-value neutral" id="stat-pos" style="font-size:1.1rem;">C: 0 | P: 0</div>
-        </div>
-        <div class="stat-card fair">
-          <div class="stat-label">Fair Value (?)</div>
-          <div class="stat-value neutral" id="stat-fair">&mdash;</div>
-        </div>
-        <div class="stat-card fills">
-          <div class="stat-label">Executed Trades</div>
-          <div class="stat-value purple" id="stat-fills">0</div>
-          <div class="stat-sub" id="stat-fills-sub"></div>
-        </div>
-        <div class="stat-card step">
-          <div class="stat-label">Step</div>
-          <div class="stat-value neutral" id="stat-step">0</div>
-          <div class="stat-sub" id="stat-step-sub"></div>
-        </div>
-      </div>
-
-      <!-- Charts -->
-      <div class="chart-grid">
-        <div class="chart-panel">
-          <div class="chart-header">
-            <h3>&#128200; PnL Over Time</h3>
-            <div style="display:flex;align-items:center;gap:12px;">
-              <span class="chart-hint">Scroll to zoom &middot; Drag to pan</span>
-              <button class="btn btn-secondary btn-small" onclick="resetZoomPnl()">Reset Zoom</button>
-            </div>
+        <!-- Draggable seek bar with tooltip -->
+        <div class="progress-wrap">
+          <div class="progress-label" id="progress-label">Step 0 / 0</div>
+          <div class="progress-bar-outer" id="progress-bar-outer">
+            <div class="progress-fill" id="progress-fill"></div>
+            <div class="progress-thumb" id="progress-thumb"></div>
           </div>
-          <canvas id="pnl-chart" height="160"></canvas>
         </div>
-        <div class="chart-panel">
-          <div class="chart-header">
-            <h3>&#128230; Position</h3>
-            <button class="btn btn-secondary btn-small" onclick="resetZoomPos()">Reset Zoom</button>
-          </div>
-          <canvas id="pos-chart" height="160"></canvas>
-        </div>
-      </div>
 
-      <!-- Order Book -->
-      <div class="panel" style="margin-bottom:20px;">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-          <div>
-            <h2>Order Book &mdash; COCONUTS</h2>
-            <div class="book-grid" style="grid-template-columns:1fr 1fr;gap:10px;">
-              <div class="book-side asks">
-                <h4>Ask Side (Sellers)</h4>
-                <div id="book-asks-c"></div>
-              </div>
-              <div class="book-side bids">
-                <h4>Bid Side (Buyers)</h4>
-                <div id="book-bids-c"></div>
+        <div class="error-msg" id="sim-error"></div>
+
+        <!-- 6 stat cards -->
+        <div class="stats-row">
+          <div class="stat-card pnl">
+            <div class="stat-label">Total PnL</div>
+            <div class="stat-value neutral" id="stat-pnl">0.00</div>
+          </div>
+          <div class="stat-card cash">
+            <div class="stat-label">Cash</div>
+            <div class="stat-value neutral" id="stat-cash">0.00</div>
+          </div>
+          <div class="stat-card pos">
+            <div class="stat-label">Position</div>
+            <div class="stat-value neutral" id="stat-pos" style="font-size:1.1rem;">C: 0 | P: 0</div>
+          </div>
+          <div class="stat-card fair">
+            <div class="stat-label">Fair Value (?)</div>
+            <div class="stat-value neutral" id="stat-fair">&mdash;</div>
+          </div>
+          <div class="stat-card fills">
+            <div class="stat-label">Executed Trades</div>
+            <div class="stat-value purple" id="stat-fills">0</div>
+            <div class="stat-sub" id="stat-fills-sub"></div>
+          </div>
+          <div class="stat-card step">
+            <div class="stat-label">Step</div>
+            <div class="stat-value neutral" id="stat-step">0</div>
+            <div class="stat-sub" id="stat-step-sub"></div>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="chart-grid">
+          <div class="chart-panel">
+            <div class="chart-header">
+              <h3>&#128200; PnL Over Time</h3>
+              <div style="display:flex;align-items:center;gap:12px;">
+                <span class="chart-hint">Scroll to zoom &middot; Drag to pan</span>
+                <button class="btn btn-secondary btn-small" onclick="resetZoomPnl()">Reset Zoom</button>
               </div>
             </div>
+            <canvas id="pnl-chart" height="160"></canvas>
           </div>
-          <div>
-            <h2>Order Book &mdash; PINA COLADAS</h2>
-            <div class="book-grid" style="grid-template-columns:1fr 1fr;gap:10px;">
-              <div class="book-side asks">
-                <h4>Ask Side (Sellers)</h4>
-                <div id="book-asks-p"></div>
+          <div class="chart-panel">
+            <div class="chart-header">
+              <h3>&#128230; Position</h3>
+              <button class="btn btn-secondary btn-small" onclick="resetZoomPos()">Reset Zoom</button>
+            </div>
+            <canvas id="pos-chart" height="160"></canvas>
+          </div>
+        </div>
+
+        <!-- Order Book -->
+        <div class="panel" style="margin-bottom:20px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+            <div>
+              <h2>Order Book &mdash; COCONUTS</h2>
+              <div class="book-grid" style="grid-template-columns:1fr 1fr;gap:10px;">
+                <div class="book-side asks">
+                  <h4>Ask Side (Sellers)</h4>
+                  <div id="book-asks-c"></div>
+                </div>
+                <div class="book-side bids">
+                  <h4>Bid Side (Buyers)</h4>
+                  <div id="book-bids-c"></div>
+                </div>
               </div>
-              <div class="book-side bids">
-                <h4>Bid Side (Buyers)</h4>
-                <div id="book-bids-p"></div>
+            </div>
+            <div>
+              <h2>Order Book &mdash; PINA COLADAS</h2>
+              <div class="book-grid" style="grid-template-columns:1fr 1fr;gap:10px;">
+                <div class="book-side asks">
+                  <h4>Ask Side (Sellers)</h4>
+                  <div id="book-asks-p"></div>
+                </div>
+                <div class="book-side bids">
+                  <h4>Bid Side (Buyers)</h4>
+                  <div id="book-bids-p"></div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Trade Log -->
-      <div class="trade-log">
-        <div class="trade-log-header">
-          <h3>
-            Trade Log &nbsp;
-            <span
-              style="font-size:.55rem;color:var(--text-muted);letter-spacing:0;text-transform:none;font-family:'Space Mono',monospace;">
-              <span class="bot-dot dot-mm1"></span>MM Alpha &nbsp;
-              <span class="bot-dot dot-mm2"></span>MM Beta &nbsp;
-              <span class="bot-dot dot-nt1"></span>Noise Alpha &nbsp;
-              <span class="bot-dot dot-nt2"></span>Noise Beta &nbsp;
-              <span class="bot-dot dot-mkt"></span>Market
-            </span>
-          </h3>
-          <button class="download-btn" onclick="downloadTradeLogCSV()">&#x2B07; Download CSV</button>
+        <!-- Trade Log -->
+        <div class="trade-log">
+          <div class="trade-log-header">
+            <h3>
+              Trade Log &nbsp;
+              <span
+                style="font-size:.55rem;color:var(--text-muted);letter-spacing:0;text-transform:none;font-family:'Space Mono',monospace;">
+                <span class="bot-dot dot-mm1"></span>MM Alpha &nbsp;
+                <span class="bot-dot dot-mm2"></span>MM Beta &nbsp;
+                <span class="bot-dot dot-nt1"></span>Noise Alpha &nbsp;
+                <span class="bot-dot dot-nt2"></span>Noise Beta &nbsp;
+                <span class="bot-dot dot-mkt"></span>Market
+              </span>
+            </h3>
+            <button class="download-btn" onclick="downloadTradeLogCSV()">&#x2B07; Download CSV</button>
+          </div>
+          <div style="overflow-x:auto;max-height:300px;overflow-y:auto;">
+            <table class="log-table">
+              <thead>
+                <tr>
+                  <th>Day</th>
+                  <th>Timestamp</th>
+                  <th>Asset</th>
+                  <th>Side</th>
+                  <th>Placed Px</th>
+                  <th>Placed Qty</th>
+                  <th>Fill Px</th>
+                  <th>Exec Qty</th>
+                  <th>Counterparty</th>
+                  <th>Cash &Delta;</th>
+                  <th>Position</th>
+                  <th>PnL</th>
+                </tr>
+              </thead>
+              <tbody id="trade-log-body"></tbody>
+            </table>
+          </div>
         </div>
-        <div style="overflow-x:auto;max-height:300px;overflow-y:auto;">
-          <table class="log-table">
-            <thead>
-              <tr>
-                <th>Day</th>
-                <th>Timestamp</th>
-                <th>Asset</th>
-                <th>Side</th>
-                <th>Placed Px</th>
-                <th>Placed Qty</th>
-                <th>Fill Px</th>
-                <th>Exec Qty</th>
-                <th>Counterparty</th>
-                <th>Cash &Delta;</th>
-                <th>Position</th>
-                <th>PnL</th>
-              </tr>
-            </thead>
-            <tbody id="trade-log-body"></tbody>
-          </table>
+
+        <!-- Bot Summary -->
+        <div class="bot-summary">
+          <h2>&#x1F916; Bot Final Summary</h2>
+          <div class="bot-summary-grid" id="bot-summary-grid"></div>
         </div>
-      </div>
 
-      <!-- Bot Summary -->
-      <div class="bot-summary">
-        <h2>&#x1F916; Bot Final Summary</h2>
-        <div class="bot-summary-grid" id="bot-summary-grid"></div>
-      </div>
-
-      <button class="btn btn-secondary" onclick="resetSim()" style="margin-bottom:32px;">&#8592; Back to Setup</button>
-    </div><!-- /results-view -->
-  </div><!-- /sim-view -->
+        <button class="btn btn-secondary" onclick="resetSim()" style="margin-bottom:32px;">&#8592; Back to
+          Setup</button>
+      </div><!-- /results-view -->
+    </div><!-- /sim-view -->
 
   </div><!-- /container -->
 
@@ -1663,7 +1665,9 @@
       }
     }
     function callStrategy(rowC, rowP, posC, posP, step) {
-      const pyC = pyodide.toPy(rowC), pyP = pyodide.toPy(rowP); let pyResult;
+      const mapC = new Map(Object.entries(rowC || {}));
+      const mapP = new Map(Object.entries(rowP || {}));
+      const pyC = pyodide.toPy(mapC), pyP = pyodide.toPy(mapP); let pyResult;
       try { pyResult = pyStratFn(pyC, pyP, posC, posP, step); }
       finally {
         if (pyC && typeof pyC.destroy === 'function') pyC.destroy();
@@ -1754,7 +1758,7 @@
       const qty = 1 + Math.floor(r2 * 4);
       return r1 > .5 ? [{ type: 'bid', price: Math.floor(mid - r1 * 2), qty, from: 'Noise Beta' }] : [{ type: 'ask', price: Math.ceil(mid + r1 * 2), qty, from: 'Noise Beta' }];
     }
-    function allBotOrders(row, asset) { return [...mmAlpha(row), ...mmBeta(row), ...noiseAlpha(row), ...noiseBeta(row)].map(o => ({ ...o, asset })); }
+    function allBotOrders(row, asset) { if(!row) return []; return [...mmAlpha(row), ...mmBeta(row), ...noiseAlpha(row), ...noiseBeta(row)].map(o => ({ ...o, asset })); }
     function statArbAlpha(rowC, rowP) {
       const fC = computeFairValue(rowC, 8000), fP = computeFairValue(rowP, 15000), spread = fP / fC, tgt = 15000 / 8000;
       const c = [], p = [];
@@ -2228,10 +2232,10 @@
     }
     function downloadTradeLogCSV() {
       if (!allTrades.length) { alert('No trades to download.'); return; }
-      const header='Day,Timestamp,Asset,Side,PlacedPrice,PlacedQty,FillPrice,ExecutedQty,Counterparty,CashDelta,Position,PnL\n';
-  const rows=allTrades.map(t=>{
-    const s=snaps[t.snapIdx]||{};
-    return[t.day,t.ts,t.asset,t.side,t.placedPx??'',t.placedQty??'',t.price,t.qty,'"'+t.from+'"',t.cashDelta.toFixed(2),t.asset==='COCONUTS'?(s.posC??0):(s.posP??0),(s.pnl??0).toFixed(2)].join(',');
+      const header = 'Day,Timestamp,Asset,Side,PlacedPrice,PlacedQty,FillPrice,ExecutedQty,Counterparty,CashDelta,Position,PnL\n';
+      const rows = allTrades.map(t => {
+        const s = snaps[t.snapIdx] || {};
+        return [t.day, t.ts, t.asset, t.side, t.placedPx ?? '', t.placedQty ?? '', t.price, t.qty, '"' + t.from + '"', t.cashDelta.toFixed(2), t.asset === 'COCONUTS' ? (s.posC ?? 0) : (s.posP ?? 0), (s.pnl ?? 0).toFixed(2)].join(',');
       }).join('\n');
       const blob = new Blob([header + rows], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
@@ -2269,11 +2273,11 @@
         const totalVol = botFills.reduce((s, t) => s + t.qty, 0);
 
         // PnL edge and net position
-    let pnlEdge  = 0;
-    let netPos   = 0;
-    for(const t of botFills){
-      const s = snaps[t.snapIdx];
-      const fair = t.asset==='COCONUTS' ? (s?.fC ?? 8000) : (s?.fP ?? 15000);
+        let pnlEdge = 0;
+        let netPos = 0;
+        for (const t of botFills) {
+          const s = snaps[t.snapIdx];
+          const fair = t.asset === 'COCONUTS' ? (s?.fC ?? 8000) : (s?.fP ?? 15000);
           if (t.side === 'BUY') {
             // Student bought → bot SOLD at t.price. Bot's edge = t.price - fair
             pnlEdge += (t.price - fair) * t.qty;
@@ -2356,42 +2360,42 @@
       });
     }
 
-    function updateChartsFull(){
-  if(!pnlChart||!posChart)return;
-  const N=pnlHistory.length;
-  const pnlData=pnlHistory.map((v,i)=>({x:i,y:v}));
-  const posDataC=posCHistory.map((v,i)=>({x:i,y:v}));
-  const posDataP=posPHistory.map((v,i)=>({x:i,y:v}));
-  const limPC=posCHistory.map((_,i)=>({x:i,y:POS_LIMIT_C}));
-  const limNC=posCHistory.map((_,i)=>({x:i,y:-POS_LIMIT_C}));
-  const setLimits=(chart)=>{
-    const z=chart.options.plugins.zoom;
-    if(z&&z.limits){z.limits.x.min=0;z.limits.x.max=N-1;z.limits.x.minRange=ZOOM_MIN_RANGE;}
-  };
-  pnlChart.data.datasets[0].data=pnlData;setLimits(pnlChart);pnlChart.update();
-  posChart.data.datasets[0].data=posDataC;
-  posChart.data.datasets[0].label='Pos C';
-  if(!posChart.data.datasets[3]){
-     posChart.data.datasets.push({data:[],label:'Pos P',borderColor:'#ff6b35',backgroundColor:'rgba(255,107,53,.05)',borderWidth:1.5,pointRadius:0,fill:true,tension:0.3});
-  }
-  posChart.data.datasets[3].data=posDataP;
-  posChart.data.datasets[1].data=limPC;posChart.data.datasets[2].data=limNC;
-  setLimits(posChart);posChart.update();
-}
+    function updateChartsFull() {
+      if (!pnlChart || !posChart) return;
+      const N = pnlHistory.length;
+      const pnlData = pnlHistory.map((v, i) => ({ x: i, y: v }));
+      const posDataC = posCHistory.map((v, i) => ({ x: i, y: v }));
+      const posDataP = posPHistory.map((v, i) => ({ x: i, y: v }));
+      const limPC = posCHistory.map((_, i) => ({ x: i, y: POS_LIMIT_C }));
+      const limNC = posCHistory.map((_, i) => ({ x: i, y: -POS_LIMIT_C }));
+      const setLimits = (chart) => {
+        const z = chart.options.plugins.zoom;
+        if (z && z.limits) { z.limits.x.min = 0; z.limits.x.max = N - 1; z.limits.x.minRange = ZOOM_MIN_RANGE; }
+      };
+      pnlChart.data.datasets[0].data = pnlData; setLimits(pnlChart); pnlChart.update();
+      posChart.data.datasets[0].data = posDataC;
+      posChart.data.datasets[0].label = 'Pos C';
+      if (!posChart.data.datasets[3]) {
+        posChart.data.datasets.push({ data: [], label: 'Pos P', borderColor: '#ff6b35', backgroundColor: 'rgba(255,107,53,.05)', borderWidth: 1.5, pointRadius: 0, fill: true, tension: 0.3 });
+      }
+      posChart.data.datasets[3].data = posDataP;
+      posChart.data.datasets[1].data = limPC; posChart.data.datasets[2].data = limNC;
+      setLimits(posChart); posChart.update();
+    }
     function resetZoomPnl() { if (pnlChart) pnlChart.resetZoom(); }
     function resetZoomPos() { if (posChart) posChart.resetZoom(); }
 
     // ════════════════════════════════════════════════════════════════════════════
     //  RESET
     // ════════════════════════════════════════════════════════════════════════════
-    function resetSim(){
-  stopPlay();
-  document.getElementById('setup-view').style.display='block';
-  document.getElementById('sim-view').style.display='none';
-  cash=0;posC=0;posP=0;lastFairC=8000;lastFairP=15000;
-  snaps=[];dayStart={};allTrades=[];pnlHistory=[];posCHistory=[];posPHistory=[];
-  computedSteps=0;currentViewIdx=0;
-}
+    function resetSim() {
+      stopPlay();
+      document.getElementById('setup-view').style.display = 'block';
+      document.getElementById('sim-view').style.display = 'none';
+      cash = 0; posC = 0; posP = 0; lastFairC = 8000; lastFairP = 15000;
+      snaps = []; dayStart = {}; allTrades = []; pnlHistory = []; posCHistory = []; posPHistory = [];
+      computedSteps = 0; currentViewIdx = 0;
+    }
   </script>
 </body>
 
