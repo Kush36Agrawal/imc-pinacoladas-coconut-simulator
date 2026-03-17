@@ -4,9 +4,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IMC Prosperity — COCONUTS & PINA COLADAS Simulator</title>
+  <title>IMC Prosperity — PEARLS Simulator</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap');
 
@@ -25,8 +27,6 @@
       --success: #00ff9d;
       --gold: #ffd700;
       --purple: #a78bfa;
-      --coconut: #ffb142;
-      --pina: #34ace0;
     }
 
     * {
@@ -47,9 +47,7 @@
       content: '';
       position: fixed;
       inset: 0;
-      background-image:
-        linear-gradient(rgba(0, 212, 255, 0.022) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 212, 255, 0.022) 1px, transparent 1px);
+      background-image: linear-gradient(rgba(0, 212, 255, .022) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 212, 255, .022) 1px, transparent 1px);
       background-size: 48px 48px;
       pointer-events: none;
       z-index: 0;
@@ -62,7 +60,7 @@
       left: -20%;
       width: 60%;
       height: 80%;
-      background: radial-gradient(ellipse, rgba(0, 212, 255, 0.035) 0%, transparent 70%);
+      background: radial-gradient(ellipse, rgba(0, 212, 255, .035) 0%, transparent 70%);
       pointer-events: none;
       z-index: 0;
     }
@@ -70,7 +68,7 @@
     .container {
       position: relative;
       z-index: 1;
-      max-width: 1600px;
+      max-width: 1440px;
       margin: 0 auto;
       padding: 24px 28px;
     }
@@ -84,7 +82,7 @@
     }
 
     .header-eyebrow {
-      font-size: 0.63rem;
+      font-size: .63rem;
       letter-spacing: 5px;
       text-transform: uppercase;
       color: var(--text-muted);
@@ -93,9 +91,9 @@
 
     header h1 {
       font-family: 'Syne', sans-serif;
-      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-size: clamp(2.4rem, 6vw, 4rem);
       font-weight: 800;
-      background: linear-gradient(135deg, var(--coconut) 0%, var(--pina) 100%);
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent3) 45%, var(--gold) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -106,7 +104,7 @@
     header .sub {
       color: var(--text-muted);
       margin-top: 10px;
-      font-size: 0.7rem;
+      font-size: .7rem;
       letter-spacing: 2px;
     }
 
@@ -120,7 +118,7 @@
 
     .badge {
       display: inline-block;
-      font-size: 0.6rem;
+      font-size: .6rem;
       padding: 3px 12px;
       border-radius: 20px;
       letter-spacing: 2px;
@@ -128,33 +126,21 @@
     }
 
     .badge-blue {
-      background: rgba(0, 212, 255, 0.08);
-      border: 1px solid rgba(0, 212, 255, 0.3);
+      background: rgba(0, 212, 255, .08);
+      border: 1px solid rgba(0, 212, 255, .3);
       color: var(--accent);
     }
 
     .badge-green {
-      background: rgba(0, 255, 157, 0.08);
-      border: 1px solid rgba(0, 255, 157, 0.3);
+      background: rgba(0, 255, 157, .08);
+      border: 1px solid rgba(0, 255, 157, .3);
       color: var(--accent3);
     }
 
     .badge-gold {
-      background: rgba(255, 215, 0, 0.08);
-      border: 1px solid rgba(255, 215, 0, 0.3);
+      background: rgba(255, 215, 0, .08);
+      border: 1px solid rgba(255, 215, 0, .3);
       color: var(--gold);
-    }
-
-    .badge-coconut {
-      background: rgba(255, 177, 66, 0.08);
-      border: 1px solid rgba(255, 177, 66, 0.3);
-      color: var(--coconut);
-    }
-
-    .badge-pina {
-      background: rgba(52, 172, 224, 0.08);
-      border: 1px solid rgba(52, 172, 224, 0.3);
-      color: var(--pina);
     }
 
     /* PANELS */
@@ -182,32 +168,28 @@
     }
 
     .panel.green-top::before {
-      background: linear-gradient(90deg, var(--pina), transparent 60%);
+      background: linear-gradient(90deg, var(--accent3), transparent 60%);
     }
 
     .panel.purple-top::before {
-      background: linear-gradient(90deg, var(--coconut), transparent 60%);
+      background: linear-gradient(90deg, var(--purple), transparent 60%);
     }
 
     .panel h2 {
       font-family: 'Syne', sans-serif;
-      font-size: 0.7rem;
+      font-size: .7rem;
       letter-spacing: 3px;
       text-transform: uppercase;
       color: var(--accent);
       margin-bottom: 18px;
     }
 
-    .panel h2.gold {
-      color: var(--gold);
-    }
-
     .panel h2.green {
-      color: var(--pina);
+      color: var(--accent3);
     }
 
     .panel h2.purple {
-      color: var(--coconut);
+      color: var(--purple);
     }
 
     /* SETUP */
@@ -218,18 +200,18 @@
       margin-bottom: 24px;
     }
 
-    @media (max-width: 1000px) {
+    @media(max-width:900px) {
       .setup-grid {
         grid-template-columns: 1fr;
       }
     }
 
     .info-box {
-      background: rgba(0, 212, 255, 0.04);
-      border: 1px solid rgba(0, 212, 255, 0.15);
+      background: rgba(0, 212, 255, .04);
+      border: 1px solid rgba(0, 212, 255, .15);
       border-radius: 10px;
       padding: 14px 18px;
-      font-size: 0.7rem;
+      font-size: .7rem;
       color: var(--text-muted);
       margin-bottom: 24px;
       line-height: 1.8;
@@ -243,7 +225,6 @@
       color: var(--accent3);
     }
 
-    /* UPLOADS */
     .upload-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -251,7 +232,7 @@
       margin-bottom: 16px;
     }
 
-    @media (max-width: 700px) {
+    @media(max-width:700px) {
       .upload-row {
         grid-template-columns: 1fr;
       }
@@ -263,24 +244,24 @@
       padding: 22px 14px;
       text-align: center;
       cursor: pointer;
-      transition: all 0.2s;
-      background: rgba(0, 212, 255, 0.015);
+      transition: all .2s;
+      background: rgba(0, 212, 255, .015);
     }
 
     .upload-zone:hover,
     .upload-zone.drag-over {
-      border-color: var(--coconut);
-      background: rgba(255, 177, 66, 0.05);
+      border-color: var(--accent);
+      background: rgba(0, 212, 255, .05);
     }
 
     .upload-zone.py-zone {
-      border-color: rgba(52, 172, 224, 0.35);
-      background: rgba(52, 172, 224, 0.018);
+      border-color: rgba(167, 139, 250, .35);
+      background: rgba(167, 139, 250, .018);
     }
 
     .upload-zone.py-zone:hover {
-      border-color: var(--pina);
-      background: rgba(52, 172, 224, 0.05);
+      border-color: var(--purple);
+      background: rgba(167, 139, 250, .05);
     }
 
     .upload-zone input {
@@ -290,12 +271,12 @@
     .upload-icon {
       font-size: 1.5rem;
       margin-bottom: 6px;
-      opacity: 0.75;
+      opacity: .75;
     }
 
     .upload-zone p {
       color: var(--text-muted);
-      font-size: 0.68rem;
+      font-size: .68rem;
       line-height: 1.6;
     }
 
@@ -304,22 +285,22 @@
     }
 
     .files-loaded {
-      color: var(--coconut);
-      font-size: 0.7rem;
+      color: var(--accent3);
+      font-size: .7rem;
       margin-top: 6px;
       font-weight: 700;
     }
 
     .py-loaded {
-      color: var(--pina);
-      font-size: 0.7rem;
+      color: var(--purple);
+      font-size: .7rem;
       margin-top: 6px;
       font-weight: 700;
     }
 
     label {
       display: block;
-      font-size: 0.63rem;
+      font-size: .63rem;
       color: var(--text-muted);
       letter-spacing: 1.5px;
       text-transform: uppercase;
@@ -327,64 +308,16 @@
       margin-top: 16px;
     }
 
-    textarea,
-    input[type="number"] {
-      width: 100%;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-family: 'Space Mono', monospace;
-      font-size: 0.74rem;
-      border-radius: 8px;
-      padding: 10px 14px;
-      outline: none;
-      transition: border-color 0.2s;
-      resize: vertical;
-    }
-
-    textarea:focus,
-    input:focus {
-      border-color: var(--accent);
-    }
-
-    textarea {
-      min-height: 220px;
-      line-height: 1.7;
-    }
-
-    /* DEMO CODE */
     .demo-code-block {
       background: #0d1117;
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 16px;
-      font-size: 0.7rem;
+      font-size: .7rem;
       line-height: 1.85;
       overflow-x: auto;
       white-space: pre;
       position: relative;
-    }
-
-    .code-editor {
-      width: 100%;
-      height: 480px;
-      background: #050810;
-      color: #e2e8f0;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 14px;
-      font-family: 'Space Mono', monospace;
-      font-size: 0.85rem;
-      resize: vertical;
-      line-height: 1.5;
-      outline: none;
-      white-space: pre;
-      tab-size: 4;
-    }
-
-    .code-editor:focus {
-      border-color: var(--pina);
-      box-shadow: 0 0 10px rgba(52, 172, 224, 0.15);
     }
 
     .demo-code-block .kw {
@@ -413,31 +346,30 @@
     }
 
     .hint-box {
-      font-size: 0.63rem;
+      font-size: .63rem;
       color: var(--text-muted);
       margin-top: 10px;
       line-height: 1.75;
       padding: 10px 14px;
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(0, 0, 0, .2);
       border-radius: 8px;
-      border-left: 2px solid var(--pina);
+      border-left: 2px solid var(--accent2);
     }
 
     .hint-box code {
       color: var(--accent);
-      background: rgba(0, 212, 255, 0.09);
+      background: rgba(0, 212, 255, .09);
       padding: 1px 5px;
       border-radius: 3px;
     }
 
-    /* BOT ROSTER */
     .bot-roster {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
     }
 
-    @media (max-width: 600px) {
+    @media(max-width:600px) {
       .bot-roster {
         grid-template-columns: 1fr;
       }
@@ -452,13 +384,13 @@
 
     .bot-card .bot-name {
       font-family: 'Syne', sans-serif;
-      font-size: 0.78rem;
+      font-size: .78rem;
       font-weight: 700;
       margin-bottom: 2px;
     }
 
     .bot-card .bot-type {
-      font-size: 0.58rem;
+      font-size: .58rem;
       letter-spacing: 1px;
       text-transform: uppercase;
       margin-bottom: 6px;
@@ -466,12 +398,12 @@
 
     .bot-card .bot-desc {
       color: var(--text-muted);
-      font-size: 0.63rem;
+      font-size: .63rem;
       line-height: 1.6;
     }
 
     .bot-card.mm1 {
-      border-color: rgba(0, 212, 255, 0.28);
+      border-color: rgba(0, 212, 255, .28);
     }
 
     .bot-card.mm1 .bot-name {
@@ -479,7 +411,7 @@
     }
 
     .bot-card.mm2 {
-      border-color: rgba(0, 255, 157, 0.28);
+      border-color: rgba(0, 255, 157, .28);
     }
 
     .bot-card.mm2 .bot-name {
@@ -487,7 +419,7 @@
     }
 
     .bot-card.nt1 {
-      border-color: rgba(255, 107, 53, 0.28);
+      border-color: rgba(255, 107, 53, .28);
     }
 
     .bot-card.nt1 .bot-name {
@@ -495,19 +427,11 @@
     }
 
     .bot-card.nt2 {
-      border-color: rgba(255, 71, 87, 0.28);
+      border-color: rgba(255, 71, 87, .28);
     }
 
     .bot-card.nt2 .bot-name {
       color: var(--danger);
-    }
-
-    .bot-card.sa1 {
-      border-color: rgba(167, 139, 250, 0.28);
-    }
-
-    .bot-card.sa1 .bot-name {
-      color: var(--purple);
     }
 
     .locked-info {
@@ -515,7 +439,7 @@
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 9px 14px;
-      font-size: 0.63rem;
+      font-size: .63rem;
       color: var(--text-muted);
       margin-top: 12px;
       display: flex;
@@ -532,15 +456,22 @@
       border-radius: 8px;
       border: none;
       font-family: 'Space Mono', monospace;
-      font-size: 0.75rem;
+      font-size: .75rem;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all .2s;
       letter-spacing: 1px;
       text-transform: uppercase;
     }
 
+    .btn:disabled {
+      opacity: .35;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
     .btn-primary {
-      background: linear-gradient(135deg, var(--coconut) 0%, var(--pina) 100%);
+      background: linear-gradient(135deg, var(--accent) 0%, #0099cc 100%);
       color: #000;
       font-weight: 700;
       width: 100%;
@@ -548,9 +479,9 @@
       margin-top: 20px;
     }
 
-    .btn-primary:hover {
+    .btn-primary:hover:not(:disabled) {
       transform: translateY(-1px);
-      box-shadow: 0 8px 24px rgba(52, 172, 224, 0.25);
+      box-shadow: 0 8px 24px rgba(0, 212, 255, .25);
     }
 
     .btn-secondary {
@@ -559,7 +490,7 @@
       border: 1px solid var(--border);
     }
 
-    .btn-secondary:hover {
+    .btn-secondary:hover:not(:disabled) {
       border-color: var(--accent);
       color: var(--accent);
     }
@@ -567,12 +498,12 @@
     .btn-danger {
       background: var(--surface2);
       color: var(--danger);
-      border: 1px solid rgba(255, 71, 87, 0.35);
+      border: 1px solid rgba(255, 71, 87, .35);
     }
 
     .btn-danger:hover {
       border-color: var(--danger);
-      background: rgba(255, 71, 87, 0.07);
+      background: rgba(255, 71, 87, .07);
     }
 
     .btn-green {
@@ -581,21 +512,64 @@
       font-weight: 700;
     }
 
-    .btn-green:hover {
+    .btn-green:hover:not(:disabled) {
       transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(0, 255, 157, 0.25);
+      box-shadow: 0 6px 20px rgba(0, 255, 157, .25);
+    }
+
+    /* Icon-only arrow buttons */
+    .btn-icon {
+      padding: 11px 16px;
+      font-size: 1rem;
+    }
+
+    .btn-small {
+      padding: 5px 12px;
+      font-size: .6rem;
+    }
+
+    /* RUNTIME STATUS */
+    #py-runtime-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: .63rem;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      padding: 9px 14px;
+      background: rgba(0, 0, 0, .2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-top: 12px;
+    }
+
+    .spinner {
+      width: 10px;
+      height: 10px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     #strategy-error {
-      background: rgba(255, 71, 87, 0.07);
-      border: 1px solid rgba(255, 71, 87, 0.35);
+      background: rgba(255, 71, 87, .07);
+      border: 1px solid rgba(255, 71, 87, .35);
       color: var(--danger);
       padding: 8px 12px;
       border-radius: 6px;
-      font-size: 0.67rem;
+      font-size: .67rem;
       margin-top: 8px;
       display: none;
-      line-height: 1.5;
+      line-height: 1.6;
+      white-space: pre-wrap;
     }
 
     /* SIM VIEW */
@@ -603,10 +577,83 @@
       display: none;
     }
 
+    #compute-overlay {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 40px;
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    #compute-overlay h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem;
+      color: var(--accent);
+      margin-bottom: 6px;
+      letter-spacing: 2px;
+    }
+
+    #compute-overlay p {
+      font-size: .68rem;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .compute-bar-wrap {
+      height: 6px;
+      background: var(--surface3);
+      border-radius: 4px;
+      overflow: hidden;
+      max-width: 480px;
+      margin: 0 auto 10px;
+    }
+
+    .compute-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent3));
+      border-radius: 4px;
+      transition: width .1s;
+    }
+
+    #compute-pct {
+      font-size: .65rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    #compute-stats {
+      display: flex;
+      gap: 32px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .cstat {
+      text-align: center;
+    }
+
+    .cstat-label {
+      font-size: .55rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .cstat-value {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-top: 2px;
+    }
+
     .final-banner {
       display: none;
-      background: linear-gradient(135deg, rgba(0, 255, 157, 0.07), rgba(0, 212, 255, 0.07));
-      border: 1px solid rgba(0, 255, 157, 0.3);
+      background: linear-gradient(135deg, rgba(0, 255, 157, .07), rgba(0, 212, 255, .07));
+      border: 1px solid rgba(0, 255, 157, .3);
       border-radius: 14px;
       padding: 28px;
       text-align: center;
@@ -615,7 +662,7 @@
 
     .final-banner h2 {
       font-family: 'Syne', sans-serif;
-      font-size: 0.9rem;
+      font-size: .9rem;
       letter-spacing: 4px;
       color: var(--text-muted);
       text-transform: uppercase;
@@ -637,6 +684,13 @@
       color: var(--danger);
     }
 
+    .final-sub {
+      color: var(--text-muted);
+      margin-top: 8px;
+      font-size: .66rem;
+    }
+
+    /* DAY TABS */
     .day-tabs {
       display: flex;
       gap: 8px;
@@ -651,22 +705,23 @@
       background: var(--surface2);
       color: var(--text-muted);
       font-family: 'Space Mono', monospace;
-      font-size: 0.68rem;
+      font-size: .68rem;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all .2s;
     }
 
     .day-tab.active {
-      border-color: var(--pina);
-      color: var(--pina);
-      background: rgba(52, 172, 224, 0.08);
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(0, 212, 255, .08);
     }
 
     .day-tab:hover {
-      border-color: var(--pina);
-      color: var(--pina);
+      border-color: var(--accent);
+      color: var(--accent);
     }
 
+    /* SIM CONTROLS */
     .sim-controls {
       display: flex;
       gap: 10px;
@@ -675,59 +730,117 @@
       flex-wrap: wrap;
     }
 
-    .speed-control {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-left: auto;
-    }
-
-    .speed-control label {
-      font-size: 0.62rem;
-      color: var(--text-muted);
-      margin: 0;
-    }
-
-    .speed-control input {
-      width: 76px;
-      padding: 6px 8px;
-    }
-
-    .progress-bar {
-      height: 3px;
-      background: var(--surface2);
-      border-radius: 2px;
+    /* PROGRESS BAR + SEEK TOOLTIP */
+    .progress-wrap {
       margin-bottom: 20px;
-      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-label {
+      font-size: .58rem;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .progress-bar-outer {
+      height: 6px;
+      background: var(--surface2);
+      border-radius: 3px;
+      cursor: grab;
+      position: relative;
+      transition: height .15s;
+      /* NO overflow:hidden — keeps the drag thumb visible */
+    }
+
+    .progress-bar-outer:hover,
+    .progress-bar-outer.dragging {
+      height: 10px;
+      cursor: grabbing;
     }
 
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, var(--coconut), var(--pina));
-      border-radius: 2px;
-      transition: width 0.08s;
+      background: linear-gradient(90deg, var(--accent), var(--accent3));
+      border-radius: 3px;
       width: 0%;
+      pointer-events: none;
+      transition: width .05s;
+    }
+
+    /* Drag thumb — a small circle on top of the fill */
+    .progress-thumb {
+      position: absolute;
+      top: 50%;
+      width: 14px;
+      height: 14px;
+      background: var(--accent);
+      border: 2px solid #fff;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      box-shadow: 0 0 6px rgba(0, 212, 255, .5);
+      transition: left .05s;
+      display: none;
+      /* shown on hover/drag via JS */
+    }
+
+    /* Seek tooltip */
+    #seek-tooltip {
+      position: fixed;
+      background: rgba(15, 22, 36, .96);
+      border: 1px solid rgba(0, 212, 255, .4);
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      font-size: .62rem;
+      padding: 5px 11px;
+      border-radius: 5px;
+      pointer-events: none;
+      white-space: nowrap;
+      z-index: 9999;
+      transform: translateX(-50%);
+      display: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .4);
+    }
+
+    #seek-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: rgba(0, 212, 255, .4);
     }
 
     .error-msg {
-      background: rgba(255, 71, 87, 0.07);
-      border: 1px solid rgba(255, 71, 87, 0.35);
+      background: rgba(255, 71, 87, .07);
+      border: 1px solid rgba(255, 71, 87, .35);
       color: var(--danger);
       padding: 10px 14px;
       border-radius: 8px;
-      font-size: 0.7rem;
+      font-size: .7rem;
       margin-bottom: 14px;
       display: none;
+      white-space: pre-wrap;
     }
 
+    /* STATS */
     .stats-row {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(6, 1fr);
       gap: 12px;
       margin-bottom: 24px;
     }
 
-    @media (max-width: 900px) {
+    @media(max-width:1200px) {
+      .stats-row {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media(max-width:600px) {
       .stats-row {
         grid-template-columns: repeat(2, 1fr);
       }
@@ -759,16 +872,24 @@
       background: var(--gold);
     }
 
-    .stat-card.pos-c::after {
-      background: var(--coconut);
+    .stat-card.pos::after {
+      background: var(--accent);
     }
 
-    .stat-card.pos-p::after {
-      background: var(--pina);
+    .stat-card.fair::after {
+      background: var(--accent2);
+    }
+
+    .stat-card.fills::after {
+      background: var(--purple);
+    }
+
+    .stat-card.step::after {
+      background: var(--text-muted);
     }
 
     .stat-label {
-      font-size: 0.57rem;
+      font-size: .57rem;
       letter-spacing: 2px;
       text-transform: uppercase;
       color: var(--text-muted);
@@ -777,7 +898,7 @@
 
     .stat-value {
       font-family: 'Syne', sans-serif;
-      font-size: 1.4rem;
+      font-size: 1.35rem;
       font-weight: 800;
       line-height: 1;
     }
@@ -794,14 +915,26 @@
       color: var(--text);
     }
 
+    .stat-value.purple {
+      color: var(--purple);
+    }
+
+    .stat-sub {
+      font-size: .55rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    /* CHARTS */
     .chart-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 2fr 1fr;
       gap: 20px;
       margin-bottom: 24px;
     }
 
-    @media (max-width: 900px) {
+    @media(max-width:900px) {
       .chart-grid {
         grid-template-columns: 1fr;
       }
@@ -814,48 +947,37 @@
       padding: 20px;
     }
 
-    .chart-panel h3 {
-      font-size: 0.62rem;
+    .chart-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chart-header h3 {
+      font-size: .62rem;
       letter-spacing: 3px;
       text-transform: uppercase;
       color: var(--accent);
-      margin-bottom: 14px;
     }
 
-    .books-container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin-bottom: 24px;
+    .chart-hint {
+      font-size: .55rem;
+      color: var(--text-muted);
+      letter-spacing: 1px;
     }
 
-    .bot-pnl-row {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-    @media (max-width: 900px) {
-      .bot-pnl-row {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 1000px) {
-      .books-container {
-        grid-template-columns: 1fr;
-      }
-    }
-
+    /* ORDER BOOK */
     .book-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
+      gap: 24px;
     }
 
     .book-side h4 {
-      font-size: 0.62rem;
+      font-size: .62rem;
       letter-spacing: 2px;
       text-transform: uppercase;
       margin-bottom: 10px;
@@ -875,16 +997,16 @@
       align-items: center;
       padding: 5px 10px;
       border-radius: 4px;
-      font-size: 0.7rem;
+      font-size: .7rem;
       margin-bottom: 3px;
     }
 
     .book-row.bid {
-      background: rgba(0, 255, 157, 0.04);
+      background: rgba(0, 255, 157, .04);
     }
 
     .book-row.ask {
-      background: rgba(255, 71, 87, 0.04);
+      background: rgba(255, 71, 87, .04);
     }
 
     .book-row .price {
@@ -901,9 +1023,10 @@
 
     .book-row .vol {
       color: var(--text-muted);
-      font-size: 0.64rem;
+      font-size: .64rem;
     }
 
+    /* TRADE LOG */
     .trade-log {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -912,18 +1035,26 @@
       margin-bottom: 24px;
     }
 
-    .trade-log h3 {
-      font-size: 0.62rem;
+    .trade-log-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .trade-log-header h3 {
+      font-size: .62rem;
       letter-spacing: 3px;
       text-transform: uppercase;
       color: var(--accent);
-      margin-bottom: 14px;
     }
 
     .log-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.67rem;
+      font-size: .67rem;
     }
 
     .log-table th {
@@ -933,17 +1064,17 @@
       font-weight: 400;
       letter-spacing: 1px;
       text-transform: uppercase;
-      font-size: 0.57rem;
+      font-size: .57rem;
       border-bottom: 1px solid var(--border);
     }
 
     .log-table td {
       padding: 6px 10px;
-      border-bottom: 1px solid rgba(30, 58, 95, 0.2);
+      border-bottom: 1px solid rgba(30, 58, 95, .2);
     }
 
     .log-table tr:hover td {
-      background: rgba(255, 255, 255, 0.01);
+      background: rgba(255, 255, 255, .01);
     }
 
     .tag-buy {
@@ -956,17 +1087,7 @@
 
     .tag-bot {
       color: var(--text-muted);
-      font-size: 0.6rem;
-    }
-
-    .tag-coconut {
-      color: var(--coconut);
-      font-weight: 700;
-    }
-
-    .tag-pina {
-      color: var(--pina);
-      font-weight: 700;
+      font-size: .6rem;
     }
 
     .bot-dot {
@@ -994,152 +1115,350 @@
       background: var(--danger);
     }
 
-    .dot-sa1 {
-      background: var(--purple);
-    }
-
     .dot-mkt {
       background: var(--text-muted);
+    }
+
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: 6px;
+      border: 1px solid rgba(0, 255, 157, .3);
+      background: rgba(0, 255, 157, .06);
+      color: var(--accent3);
+      font-family: 'Space Mono', monospace;
+      font-size: .6rem;
+      cursor: pointer;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: all .2s;
+    }
+
+    .download-btn:hover {
+      background: rgba(0, 255, 157, .12);
+      border-color: var(--accent3);
+    }
+
+    /* BOT SUMMARY */
+    .bot-summary {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .bot-summary h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: .7rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .bot-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    @media(max-width:900px) {
+      .bot-summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media(max-width:500px) {
+      .bot-summary-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .bscard {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bscard::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+    }
+
+    .bscard.mm1::after {
+      background: var(--accent);
+    }
+
+    .bscard.mm2::after {
+      background: var(--accent3);
+    }
+
+    .bscard.nt1::after {
+      background: var(--accent2);
+    }
+
+    .bscard.nt2::after {
+      background: var(--danger);
+    }
+
+    .bscard-name {
+      font-family: 'Syne', sans-serif;
+      font-size: .78rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .bscard.mm1 .bscard-name {
+      color: var(--accent);
+    }
+
+    .bscard.mm2 .bscard-name {
+      color: var(--accent3);
+    }
+
+    .bscard.nt1 .bscard-name {
+      color: var(--accent2);
+    }
+
+    .bscard.nt2 .bscard-name {
+      color: var(--danger);
+    }
+
+    .bscard-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+      font-size: .67rem;
+    }
+
+    .bscard-row .bslabel {
+      color: var(--text-muted);
+      font-size: .58rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .bscard-row .bsval {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: .85rem;
+    }
+
+    .bscard-row .bsval.pos {
+      color: var(--success);
+    }
+
+    .bscard-row .bsval.neg {
+      color: var(--danger);
+    }
+
+    .bscard-row .bsval.neu {
+      color: var(--text);
     }
   </style>
 </head>
 
 <body>
+
+  <!-- Seek tooltip — floats above the progress bar on hover/drag -->
+  <div id="seek-tooltip">Step 0</div>
+
   <div class="container">
 
-    <!-- HEADER -->
     <header>
-      <div class="header-eyebrow">IMC Prosperity · Round 2</div>
-      <h1>COCONUTS & PINA COLADAS<br>SIMULATOR</h1>
-      <p class="sub">Upload your strategy · Discover the connection · Beat the Arbitrageurs</p>
+      <div class="header-eyebrow">IMC Prosperity &middot; Round 2</div>
+      <h1>COCONUTS &amp; PINA COLADAS SIMULATOR</h1>
+      <p class="sub">Upload your strategy &middot; Instant backtest &middot; Interactive playback</p>
       <div class="badges">
-        <span class="badge badge-blue">&#8645; Multi-Asset Market</span>
-        <span class="badge badge-green">&#10022; 5 Active Bots</span>
-        <span class="badge badge-coconut">Coconuts Limit: &plusmn;600</span>
-        <span class="badge badge-pina">Pina Coladas Limit: &plusmn;300</span>
+        <span class="badge badge-blue">&#x2B21; Market Microstructure</span>
+        <span class="badge badge-green">&#x2726; 4 Active Bots</span>
+        <span class="badge badge-gold">&#x2691; Position Limit &plusmn;600 (Coc), &plusmn;300 (Pina)</span>
       </div>
     </header>
 
-    <!-- ---------- SETUP VIEW ---------- -->
+    <!-- ════════════ SETUP VIEW ════════════ -->
     <div id="setup-view">
       <div class="info-box">
-        <strong>The Challenge:</strong> You are tasked with trading two assets: <strong>COCONUTS</strong> and
-        <strong>PINA_COLADAS</strong>.
-        Upload the historical price data and your Python trading logic. The engine will call your <span
-          class="hl">strategy()</span> function at every timestep, providing the order books and your current inventory
-        for both assets. Your PnL is continuously evaluated at the current market Mid-Prices.
+        <strong>How it works:</strong> Upload CSV files + Python strategy. The engine pre-computes the entire
+        simulation in seconds, then lets you play through results interactively.
+        <strong>PnL = Cash + Position &times; Fair Value.</strong><br><br>
+        <strong>Full Python via Pyodide (WebAssembly):</strong>
+        <span class="hl">import numpy as np</span>, <span class="hl">import pandas as pd</span>,
+        <code>row.get()</code>, helper functions, classes &mdash; all valid Python works.
       </div>
 
       <div class="setup-grid">
-        <!-- LEFT: uploads + bot roster -->
+        <!-- LEFT -->
         <div class="panel purple-top">
-          <h2 class="purple">&#11014; Upload Files</h2>
-
+          <h2 class="purple">&#x2B06; Upload Files</h2>
           <div class="upload-row">
             <div class="upload-zone" id="drop-zone" onclick="document.getElementById('csv-input').click()">
-              <div class="upload-icon">📊</div>
-              <p><strong>Round 2 CSV Data Files</strong><br>prices_round_2_day_-1.csv<br>through day_1.csv</p>
+              <div class="upload-icon">&#x1F4CA;</div>
+              <p><strong>CSV Data Files</strong><br>prices_round_2_day_-1.csv<br>through day_1.csv</p>
               <div class="files-loaded" id="files-loaded"></div>
               <input type="file" id="csv-input" multiple accept=".csv">
             </div>
             <div class="upload-zone py-zone" id="py-drop-zone" onclick="document.getElementById('py-input').click()">
-              <div class="upload-icon">&#128013;</div>
+              <div class="upload-icon">&#x1F40D;</div>
               <p><strong>Strategy .py File</strong><br>Must contain a<br><code
-                  style="color:var(--pina);font-size:0.65rem;">strategy(...)</code> fn</p>
+                  style="color:var(--purple);font-size:.65rem;">strategy(row,position,step)</code> fn</p>
               <div class="py-loaded" id="py-loaded"></div>
               <input type="file" id="py-input" accept=".py">
             </div>
           </div>
-
-          <label>Active Bots (Fixed — cannot be changed)</label>
+          <label>Active Bots (Fixed)</label>
           <div class="bot-roster">
             <div class="bot-card mm1">
-              <div class="bot-name">&#128309; MM Alpha</div>
-              <div class="bot-type" style="color:var(--accent)">Market Maker</div>
-              <div class="bot-desc">Quotes symmetrically around volume-weighted mid. Trades independently on both
-                assets.</div>
+              <div class="bot-name">&#x1F535; MM Alpha</div>
+              <div class="bot-type" style="color:var(--accent)">Market Maker &middot; v1</div>
+              <div class="bot-desc">Quotes around volume-weighted fair value. Spread from book depth + volatility.</div>
             </div>
             <div class="bot-card mm2">
-              <div class="bot-name">&#128994; MM Beta</div>
-              <div class="bot-type" style="color:var(--accent3)">Momentum MM</div>
-              <div class="bot-desc">Shifts quotes using order flow imbalance. Trades independently on both assets.</div>
+              <div class="bot-name">&#x1F7E2; MM Beta</div>
+              <div class="bot-type" style="color:var(--accent3)">Market Maker &middot; v2</div>
+              <div class="bot-desc">Momentum-shifted fair price from order-flow imbalance. Widens under pressure.</div>
             </div>
             <div class="bot-card nt1">
-              <div class="bot-name">&#128993; Noise Alpha</div>
-              <div class="bot-type" style="color:var(--accent2)">Random Noise</div>
-              <div class="bot-desc">Fires random-direction orders on both assets to create noise.</div>
+              <div class="bot-name">&#x1F7E0; Noise Alpha</div>
+              <div class="bot-type" style="color:var(--accent2)">Noise Trader &middot; v1</div>
+              <div class="bot-desc">Random direction + size. Occasionally crosses the spread aggressively.</div>
             </div>
             <div class="bot-card nt2">
-              <div class="bot-name">&#128308; Noise Beta</div>
-              <div class="bot-type" style="color:var(--danger)">Mean Reversion</div>
-              <div class="bot-desc">Trades against local spikes on a short-term moving average.</div>
-            </div>
-            <div class="bot-card sa1" style="grid-column: 1 / -1;">
-              <div class="bot-name">&#128995; StatArb Alpha</div>
-              <div class="bot-type" style="color:var(--purple)">Advanced Strategy Bot</div>
-              <div class="bot-desc">Monitors both assets simultaneously. If it spots a pricing inefficiency between
-                them, it will aggressively cross the spread to capture the arbitrage.</div>
+              <div class="bot-name">&#x1F534; Noise Beta</div>
+              <div class="bot-type" style="color:var(--danger)">Noise Trader &middot; v2</div>
+              <div class="bot-desc">Mean-reverting around 10&nbsp;000. Size scales with distance from anchor.</div>
             </div>
           </div>
+          <div class="locked-info">&#x1F512; &nbsp;Bot logic, position limit (&plusmn;600, &plusmn;300), and fair value
+            formula are fixed.</div>
         </div>
 
-        <!-- RIGHT: strategy contract reference -->
+        <!-- RIGHT -->
         <div class="panel green-top">
           <h2 class="green">&#x1F40D; Strategy Contract</h2>
+          <span class="kw">def</span> <span class="fn">strategy</span>(coconut_row, pina_row, pos_coconut, pos_pina,
+          step):
+          <span class="cm"># coconut_row, pina_row -- dicts
+            # pos_coconut, pos_pina -- ints
+            # step -- int</span>
+          mid_c = (coconut_row.get(<span class="st">"bid_price_1"</span>, <span class="num">7999</span>) +
+          coconut_row.get(<span class="st">"ask_price_1"</span>, <span class="num">8001</span>)) / <span
+            class="num">2</span>
+          mid_p = (pina_row.get(<span class="st">"bid_price_1"</span>, <span class="num">14999</span>) +
+          pina_row.get(<span class="st">"ask_price_1"</span>, <span class="num">15001</span>)) / <span
+            class="num">2</span>
+          <span class="kw">return</span> {
+          <span class="st">"COCONUTS"</span>: { <span class="st">"bid"</span>: <span class="fn">int</span>(mid_c) -
+          <span class="num">1</span>, <span class="st">"ask"</span>: <span class="fn">int</span>(mid_c) + <span
+            class="num">1</span>, <span class="st">"bid_qty"</span>: <span class="num">10</span>, <span
+            class="st">"ask_qty"</span>: <span class="num">10</span> },
+          <span class="st">"PINA_COLADAS"</span>: { <span class="st">"bid"</span>: <span class="fn">int</span>(mid_p) -
+          <span class="num">2</span>, <span class="st">"ask"</span>: <span class="fn">int</span>(mid_p) + <span
+            class="num">2</span>, <span class="st">"bid_qty"</span>: <span class="num">10</span>, <span
+            class="st">"ask_qty"</span>: <span class="num">10</span> }
+          }
+        </div>
+        <div id="strategy-error"></div>
+        <div id="py-runtime-status">
+          <div class="spinner" id="py-spinner"></div>
+          <span id="py-runtime-text">Loading Python runtime (Pyodide)&hellip;</span>
+        </div>
+        <div class="hint-box" style="margin-top:14px;">
+          <strong style="color:var(--accent2)">Row keys</strong><br>
+          <code>bid_price_1</code>&nbsp;<code>bid_volume_1</code> &mdash; best bid &nbsp;&nbsp;
+          <code>ask_price_1</code>&nbsp;<code>ask_volume_1</code> &mdash; best ask<br>
+          <code>bid/ask_price_2</code>&nbsp;<code>bid/ask_price_3</code> &mdash; deeper levels<br><br>
+          <strong style="color:var(--accent2)">Imports</strong><br>
+          <code>numpy</code>&nbsp;<code>pandas</code>&nbsp;<code>scipy</code>&nbsp;<code>statistics</code> + all
+          stdlib<br>
+          <code>row.get("key", default)</code> fully supported<br><br>
+          <strong style="color:var(--accent2)">Rules</strong>&nbsp; Position capped at <strong
+            style="color:var(--text)">&plusmn;600 (Coc) / &plusmn;300 (Pina)</strong>. Orders trimmed automatically.
+        </div>
+        <button class="btn btn-primary" id="run-sim-btn" onclick="startSimulation()" disabled>&#x21BB; Loading Python
+          Runtime&hellip;</button>
+      </div>
+    </div>
+  </div>
 
-          <div id="editor-container" style="position:relative;">
-            <textarea id="code-editor" class="code-editor" spellcheck="false"
-              placeholder="# Write your strategy here..."></textarea>
-            <div id="save-status"
-              style="position:absolute; bottom:10px; right:20px; font-size:0.7rem; color:var(--text-muted); opacity:0.7;">
-            </div>
-          </div>
+  <!-- ════════════ SIM VIEW ════════════ -->
+  <div id="sim-view">
 
-          <div id="strategy-error"></div>
-
-          <div class="hint-box" style="margin-top:14px;">
-            <strong style="color:var(--pina)">Important Rules</strong><br>
-            Positions are strictly capped at <strong style="color:var(--coconut)">&plusmn;600</strong> for Coconuts and
-            <strong style="color:var(--pina)">&plusmn;300</strong> for Pina Coladas. If your orders would exceed this,
-            the
-            exchange
-            engine will automatically reduce the size of your fill.<br><br>
-            If your algorithm does not want to trade an asset for a timestep, omit keys like `"bid"` and `"ask"` for
-            that asset.
-          </div>
-
-          <button class="btn btn-primary" onclick="startSimulation()">&#9654; RUN SIMULATION</button>
+    <!-- Computation progress overlay -->
+    <div id="compute-overlay">
+      <h2>&#x26A1; Computing Simulation</h2>
+      <p>Pre-computing all steps in the background. Takes only a few seconds.</p>
+      <div class="compute-bar-wrap">
+        <div class="compute-bar" id="compute-bar"></div>
+      </div>
+      <div id="compute-pct" style="font-size:.65rem;color:var(--text-muted);margin-bottom:16px;">0%</div>
+      <div id="compute-stats">
+        <div class="cstat">
+          <div class="cstat-label">Steps Done</div>
+          <div class="cstat-value" id="cs-steps">0</div>
+        </div>
+        <div class="cstat">
+          <div class="cstat-label">Live PnL</div>
+          <div class="cstat-value" id="cs-pnl">0.00</div>
+        </div>
+        <div class="cstat">
+          <div class="cstat-label">Position</div>
+          <div class="cstat-value" id="cs-pos" style="font-size:0.8rem;margin-top:5px;">C:0 | P:0</div>
+        </div>
+        <div class="cstat">
+          <div class="cstat-label">Cash</div>
+          <div class="cstat-value" id="cs-cash">0.00</div>
         </div>
       </div>
-    </div><!-- /setup-view -->
+    </div>
 
-    <!-- ---------- SIM VIEW ---------- -->
-    <div id="sim-view">
+    <!-- Results panel (shown after compute) -->
+    <div id="results-view" style="display:none;">
+
       <div class="final-banner" id="final-banner">
-        <h2>Simulation Complete</h2>
+        <h2>Simulation Complete &mdash; Press START to Play</h2>
         <div class="final-pnl" id="final-pnl-display"></div>
-        <p style="color:var(--text-muted);margin-top:10px;font-size:0.68rem;">Total PnL Evaluated at Final Mid Prices
-        </p>
+        <div class="final-sub" id="final-sub"></div>
       </div>
 
       <div class="day-tabs" id="day-tabs"></div>
 
+      <!--
+        Controls:  ◄ (prev, icon only)  ·  ▶ START / ⏸ PAUSE  ·  ► (next, icon only)  ·  ↺ RESET
+      -->
       <div class="sim-controls">
-        <button class="btn btn-green" id="run-btn" onclick="runAll()">&#9654;&#9654; RUN ALL</button>
-        <button class="btn btn-secondary" onclick="stepOnce()">&#9654; STEP</button>
-        <button class="btn btn-danger" onclick="resetSim()">&#8634; RESET</button>
-        <div class="speed-control">
-          <label>DELAY (ms)</label>
-          <input type="number" id="speed-input" value="25" min="0" max="2000">
+        <button class="btn btn-secondary btn-icon" id="prev-btn" onclick="stepBackward()"
+          title="Previous step">&#9664;</button>
+        <button class="btn btn-green" id="start-btn" onclick="togglePlay()">&#9654; START</button>
+        <button class="btn btn-secondary btn-icon" id="next-btn" onclick="stepForward()"
+          title="Next step">&#9654;</button>
+        <button class="btn btn-danger" onclick="resetSim()">&#8635; RESET</button>
+      </div>
+
+      <!-- Draggable seek bar with tooltip -->
+      <div class="progress-wrap">
+        <div class="progress-label" id="progress-label">Step 0 / 0</div>
+        <div class="progress-bar-outer" id="progress-bar-outer">
+          <div class="progress-fill" id="progress-fill"></div>
+          <div class="progress-thumb" id="progress-thumb"></div>
         </div>
       </div>
 
-      <div class="progress-bar">
-        <div class="progress-fill" id="progress-fill"></div>
-      </div>
       <div class="error-msg" id="sim-error"></div>
 
-      <div class="stats-row" style="margin-bottom: 8px;">
+      <!-- 6 stat cards -->
+      <div class="stats-row">
         <div class="stat-card pnl">
           <div class="stat-label">Total PnL</div>
           <div class="stat-value neutral" id="stat-pnl">0.00</div>
@@ -1148,73 +1467,96 @@
           <div class="stat-label">Cash</div>
           <div class="stat-value neutral" id="stat-cash">0.00</div>
         </div>
-        <div class="stat-card pos-c">
-          <div class="stat-label">Coconut Pos</div>
-          <div class="stat-value neutral" id="stat-pos-c">0</div>
+        <div class="stat-card pos">
+          <div class="stat-label">Position</div>
+          <div class="stat-value neutral" id="stat-pos" style="font-size:1.1rem;">C: 0 | P: 0</div>
         </div>
-        <div class="stat-card pos-p">
-          <div class="stat-label">Pina Coladas Pos</div>
-          <div class="stat-value neutral" id="stat-pos-p">0</div>
+        <div class="stat-card fair">
+          <div class="stat-label">Fair Value (?)</div>
+          <div class="stat-value neutral" id="stat-fair">&mdash;</div>
         </div>
-        <div class="stat-card steps">
-          <div class="stat-label">Time Step</div>
-          <div class="stat-value neutral" id="stat-step">0 / 0</div>
+        <div class="stat-card fills">
+          <div class="stat-label">Executed Trades</div>
+          <div class="stat-value purple" id="stat-fills">0</div>
+          <div class="stat-sub" id="stat-fills-sub"></div>
+        </div>
+        <div class="stat-card step">
+          <div class="stat-label">Step</div>
+          <div class="stat-value neutral" id="stat-step">0</div>
+          <div class="stat-sub" id="stat-step-sub"></div>
         </div>
       </div>
 
+      <!-- Charts -->
       <div class="chart-grid">
         <div class="chart-panel">
-          <h3 style="color:var(--pina)">📈 Mid Price Observation</h3>
-          <canvas id="price-chart" height="160"></canvas>
-        </div>
-        <div class="chart-panel">
-          <h3>💰 Total PnL</h3>
+          <div class="chart-header">
+            <h3>&#128200; PnL Over Time</h3>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span class="chart-hint">Scroll to zoom &middot; Drag to pan</span>
+              <button class="btn btn-secondary btn-small" onclick="resetZoomPnl()">Reset Zoom</button>
+            </div>
+          </div>
           <canvas id="pnl-chart" height="160"></canvas>
         </div>
-      </div>
-
-      <div class="books-container">
-        <div class="panel purple-top">
-          <h2 class="purple">Coconuts Book</h2>
-          <div class="book-grid">
-            <div class="book-side asks">
-              <h4>Asks</h4>
-              <div id="book-asks-c"></div>
-            </div>
-            <div class="book-side bids">
-              <h4>Bids</h4>
-              <div id="book-bids-c"></div>
-            </div>
+        <div class="chart-panel">
+          <div class="chart-header">
+            <h3>&#128230; Position</h3>
+            <button class="btn btn-secondary btn-small" onclick="resetZoomPos()">Reset Zoom</button>
           </div>
-        </div>
-        <div class="panel green-top">
-          <h2 class="green">Pina Coladas Book</h2>
-          <div class="book-grid">
-            <div class="book-side asks">
-              <h4>Asks</h4>
-              <div id="book-asks-p"></div>
-            </div>
-            <div class="book-side bids">
-              <h4>Bids</h4>
-              <div id="book-bids-p"></div>
-            </div>
-          </div>
+          <canvas id="pos-chart" height="160"></canvas>
         </div>
       </div>
 
+      <!-- Order Book -->
+      <div class="panel" style="margin-bottom:20px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+          <div>
+            <h2>Order Book &mdash; COCONUTS</h2>
+            <div class="book-grid" style="grid-template-columns:1fr 1fr;gap:10px;">
+              <div class="book-side asks">
+                <h4>Ask Side (Sellers)</h4>
+                <div id="book-asks-c"></div>
+              </div>
+              <div class="book-side bids">
+                <h4>Bid Side (Buyers)</h4>
+                <div id="book-bids-c"></div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h2>Order Book &mdash; PINA COLADAS</h2>
+            <div class="book-grid" style="grid-template-columns:1fr 1fr;gap:10px;">
+              <div class="book-side asks">
+                <h4>Ask Side (Sellers)</h4>
+                <div id="book-asks-p"></div>
+              </div>
+              <div class="book-side bids">
+                <h4>Bid Side (Buyers)</h4>
+                <div id="book-bids-p"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trade Log -->
       <div class="trade-log">
-        <h3>Trade Log &nbsp;
-          <span
-            style="font-size:0.55rem;color:var(--text-muted);letter-spacing:0;text-transform:none;font-family:'Space Mono',monospace;">
-            <span class="bot-dot dot-mm1"></span>MM Alpha &nbsp;
-            <span class="bot-dot dot-mm2"></span>MM Beta &nbsp;
-            <span class="bot-dot dot-nt1"></span>Noise Alpha &nbsp;
-            <span class="bot-dot dot-nt2"></span>Noise Beta &nbsp;
-            <span class="bot-dot dot-sa1"></span>StatArb Alpha &nbsp;
-            <span class="bot-dot dot-mkt"></span>Market
-          </span>
-        </h3>
-        <div style="overflow-x:auto;max-height:280px;overflow-y:auto;">
+        <div class="trade-log-header">
+          <h3>
+            Trade Log &nbsp;
+            <span
+              style="font-size:.55rem;color:var(--text-muted);letter-spacing:0;text-transform:none;font-family:'Space Mono',monospace;">
+              <span class="bot-dot dot-mm1"></span>MM Alpha &nbsp;
+              <span class="bot-dot dot-mm2"></span>MM Beta &nbsp;
+              <span class="bot-dot dot-nt1"></span>Noise Alpha &nbsp;
+              <span class="bot-dot dot-nt2"></span>Noise Beta &nbsp;
+              <span class="bot-dot dot-mkt"></span>Market
+            </span>
+          </h3>
+          <button class="download-btn" onclick="downloadTradeLogCSV()">&#x2B07; Download CSV</button>
+        </div>
+        <div style="overflow-x:auto;max-height:300px;overflow-y:auto;">
           <table class="log-table">
             <thead>
               <tr>
@@ -1222,10 +1564,13 @@
                 <th>Timestamp</th>
                 <th>Asset</th>
                 <th>Side</th>
-                <th>Price</th>
-                <th>Qty</th>
+                <th>Placed Px</th>
+                <th>Placed Qty</th>
+                <th>Fill Px</th>
+                <th>Exec Qty</th>
                 <th>Counterparty</th>
                 <th>Cash &Delta;</th>
+                <th>Position</th>
                 <th>PnL</th>
               </tr>
             </thead>
@@ -1234,471 +1579,821 @@
         </div>
       </div>
 
-      <button class="btn btn-secondary" onclick="resetSim()" style="margin-bottom:32px;">&larr; Back to Setup</button>
-    </div>
+      <!-- Bot Summary -->
+      <div class="bot-summary">
+        <h2>&#x1F916; Bot Final Summary</h2>
+        <div class="bot-summary-grid" id="bot-summary-grid"></div>
+      </div>
+
+      <button class="btn btn-secondary" onclick="resetSim()" style="margin-bottom:32px;">&#8592; Back to Setup</button>
+    </div><!-- /results-view -->
+  </div><!-- /sim-view -->
+
   </div><!-- /container -->
 
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.26.2/full/pyodide.js"></script>
   <script>
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-    //  Global State
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-    let csvFiles = {}, dayOrder = [];
-    let timeSeries = [];
-    let strategySource = '';
-    let currentDayIdx = 0, currentStep = 0;
-    let cash = 0, posC = 0, posP = 0;
-    let pnlHistory = [], posCHistory = [], posPHistory = [], priceHistoryC = [], priceHistoryP = [];
-    let trades = [];
-    let runInterval = null, strategyFn = null;
-    const POS_LIMIT_C = 600;
-    const POS_LIMIT_P = 300;
-    let totalSteps = 0, completedSteps = 0;
-    let priceChart = null, pnlChart = null;
-    let pendingLogEntries = [];
-    let lastPnlValue = 0;
+    'use strict';
 
-    let _seed = 42;
-    function rng() { _seed = (_seed * 1664525 + 1013904223) >>> 0; return _seed / 0xFFFFFFFF; }
-    function resetRng() { _seed = 42; }
+    // ════════════════════════════════════════════════════════════════════════════
+    //  PYODIDE RUNTIME
+    // ════════════════════════════════════════════════════════════════════════════
+    let pyodide = null, pyodideReady = false, pyStratFn = null;
 
-    let botStats = {};
-    function resetBots() {
-      botStats = {
-        'MM Alpha': { cash: 0, posC: 0, posP: 0, pnl: 0, pnlHistory: [] },
-        'MM Beta': { cash: 0, posC: 0, posP: 0, pnl: 0, pnlHistory: [] },
-        'Noise Alpha': { cash: 0, posC: 0, posP: 0, pnl: 0, pnlHistory: [] },
-        'Noise Beta': { cash: 0, posC: 0, posP: 0, pnl: 0, pnlHistory: [] },
-        'StatArb Alpha': { cash: 0, posC: 0, posP: 0, pnl: 0, pnlHistory: [] }
-      };
+    async function initPyodide() {
+      const textEl = document.getElementById('py-runtime-text');
+      const boxEl = document.getElementById('py-runtime-status');
+      const spin = document.getElementById('py-spinner');
+      const btn = document.getElementById('run-sim-btn');
+      try {
+        pyodide = await loadPyodide({ indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.26.2/full/' });
+        await pyodide.loadPackage(['numpy']);
+        pyodideReady = true;
+        boxEl.style.borderColor = 'rgba(0,255,157,.35)';
+        spin.style.animation = 'none'; spin.style.border = '2px solid var(--accent3)';
+        textEl.style.color = 'var(--accent3)';
+        textEl.textContent = '✓ Python runtime ready  ·  numpy loaded  ·  pandas/scipy on demand';
+        btn.disabled = false; btn.textContent = '▶ RUN SIMULATION';
+      } catch (e) {
+        boxEl.style.borderColor = 'rgba(255,71,87,.35)';
+        spin.style.animation = 'none'; spin.style.border = '2px solid var(--danger)';
+        textEl.style.color = 'var(--danger)';
+        textEl.textContent = '✗ Pyodide failed: ' + e.message;
+      }
+    }
+    initPyodide();
+
+    const PKG_MAP = {
+      pandas: 'pandas', scipy: 'scipy', sklearn: 'scikit-learn',
+      matplotlib: 'matplotlib', sympy: 'sympy', statsmodels: 'statsmodels'
+    };
+    function detectPackages(src) {
+      const needed = [], re = /^\s*(?:import|from)\s+([a-zA-Z_][a-zA-Z0-9_]*)/gm; let m;
+      while ((m = re.exec(src)) !== null) {
+        const p = PKG_MAP[m[1].toLowerCase()]; if (p && !needed.includes(p)) needed.push(p);
+      }
+      return needed;
+    }
+    async function compileStrategy() {
+      const errEl = document.getElementById('strategy-error');
+      const btn = document.getElementById('run-sim-btn');
+      errEl.style.display = 'none';
+      try {
+        const pkgs = detectPackages(strategySource);
+        if (pkgs.length) {
+          const orig = btn.textContent; btn.disabled = true;
+          btn.textContent = '⟳ Loading ' + pkgs.join(', ') + '…';
+          try { await pyodide.loadPackage(pkgs); } finally { btn.disabled = false; btn.textContent = orig; }
+        }
+        pyodide.runPython(strategySource);
+        if (!pyodide.globals.has('strategy')) throw new Error('No top-level  strategy()  function found.');
+        pyStratFn = pyodide.globals.get('strategy');
+        const dummy = {
+          bid_price_1: 9999, ask_price_1: 10001, bid_volume_1: 5, ask_volume_1: 5,
+          bid_price_2: 9998, ask_price_2: 10002, bid_volume_2: 3, ask_volume_2: 3,
+          bid_price_3: 9997, ask_price_3: 10003, bid_volume_3: 2, ask_volume_3: 2,
+        };
+        const r = callStrategy(dummy, dummy, 0, 0, 0);
+        if (!r || typeof r !== 'object')
+          throw new Error('strategy() must return a dict/object');
+        return true;
+      } catch (e) {
+        errEl.style.display = 'block'; errEl.textContent = '⚠ ' + e.message;
+        pyStratFn = null; return false;
+      }
+    }
+    function callStrategy(rowC, rowP, posC, posP, step) {
+      const pyC = pyodide.toPy(rowC), pyP = pyodide.toPy(rowP); let pyResult;
+      try { pyResult = pyStratFn(pyC, pyP, posC, posP, step); }
+      finally {
+        if (pyC && typeof pyC.destroy === 'function') pyC.destroy();
+        if (pyP && typeof pyP.destroy === 'function') pyP.destroy();
+      }
+      if (pyResult == null) return null;
+      if (typeof pyResult.toJs === 'function') {
+        const js = pyResult.toJs({ dict_converter: Object.fromEntries });
+        pyResult.destroy(); return js;
+      }
+      return pyResult;
     }
 
-    const BOT_DOT = { 'MM Alpha': 'dot-mm1', 'MM Beta': 'dot-mm2', 'Noise Alpha': 'dot-nt1', 'Noise Beta': 'dot-nt2', 'StatArb Alpha': 'dot-sa1', 'Market': 'dot-mkt' };
+    // ════════════════════════════════════════════════════════════════════════════
+    //  STATE
+    // ════════════════════════════════════════════════════════════════════════════
+    let csvFiles = {}, dayOrder = [], strategySource = '';
 
-    function getMid(r) {
-      if (!r) return 0;
-      return ((r.bid_price_1 || 0) + (r.ask_price_1 || 0)) / 2;
-    }
-    function getSpread(r) {
-      if (!r || !r.ask_price_1 || !r.bid_price_1) return 1;
-      return r.ask_price_1 - r.bid_price_1;
+    let snaps = [];
+    let dayStart = {};
+    let allTrades = [];
+    let pnlHistory = [];
+    let posCHistory = [], posPHistory = [];
+
+    let currentViewIdx = 0;
+    let playTimer = null;
+    let isPlaying = false;
+
+    let cash = 0, posC = 0, posP = 0, lastFairC = 8000, lastFairP = 15000;
+    let totalSteps = 0, computedSteps = 0;
+    const POS_LIMIT_C = 600, POS_LIMIT_P = 300;
+    const ZOOM_MIN_RANGE = 10;
+
+    let pnlChart = null, posChart = null;
+
+    // ════════════════════════════════════════════════════════════════════════════
+    //  FAIR VALUE  (0.73 + 0.27 = 1.00 — bug-fixed)
+    // ════════════════════════════════════════════════════════════════════════════
+    function computeFairValue(row, base) {
+      if (!row) return base;
+      const b1 = row.bid_price_1 || 0, bv1 = row.bid_volume_1 || 1, a1 = row.ask_price_1 || 0, av1 = row.ask_volume_1 || 1;
+      const b2 = row.bid_price_2 || b1, bv2 = row.bid_volume_2 || 0, a2 = row.ask_price_2 || a1, av2 = row.ask_volume_2 || 0;
+      const b3 = row.bid_price_3 || b1, bv3 = row.bid_volume_3 || 0, a3 = row.ask_price_3 || a1, av3 = row.ask_volume_3 || 0;
+      const tbv = bv1 + bv2 + bv3, tav = av1 + av2 + av3;
+      const wBid = tbv > 0 ? (b1 * bv1 + b2 * bv2 + b3 * bv3) / tbv : (b1 || base);
+      const wAsk = tav > 0 ? (a1 * av1 + a2 * av2 + a3 * av3) / tav : (a1 || base);
+      const imb = (tbv - tav) / (tbv + tav + 1);
+      return Math.round(((wBid + wAsk) / 2 * 0.73 + base * 0.27 + imb * 0.6) * 100) / 100;
     }
 
-    // Bots (MMAlpha, MMBeta, NoiseAlpha, NoiseBeta, StatArbAlpha)
+    // ════════════════════════════════════════════════════════════════════════════
+    //  DETERMINISTIC RNG
+    // ════════════════════════════════════════════════════════════════════════════
+    let _rng = 42;
+    function rng() { _rng = (_rng * 1664525 + 1013904223) >>> 0; return _rng / 0xFFFFFFFF; }
+    function resetRng() { _rng = 42; }
+
+    // ════════════════════════════════════════════════════════════════════════════
+    //  BOT ENGINES
+    // ════════════════════════════════════════════════════════════════════════════
     function mmAlpha(row) {
-      if (!row) return [];
-      const fair = ((row.bid_price_1 || 9998) * 0.55 + (row.ask_price_1 || 10002) * 0.45);
-      const h = Math.max(1, (row.ask_price_1 - row.bid_price_1) * 0.5);
-      return [
-        { type: 'bid', price: Number((fair - h).toFixed(2)), qty: 10 + Math.floor(rng() * 10), from: 'MM Alpha' },
-        { type: 'ask', price: Number((fair + h).toFixed(2)), qty: 10 + Math.floor(rng() * 10), from: 'MM Alpha' }
-      ];
+      const b1 = row.bid_price_1 || 9998, bv1 = row.bid_volume_1 || 5, a1 = row.ask_price_1 || 10002, av1 = row.ask_volume_1 || 5;
+      const b2 = row.bid_price_2 || b1 - 1, bv2 = row.bid_volume_2 || 2, a2 = row.ask_price_2 || a1 + 1, av2 = row.ask_volume_2 || 2;
+      const fair = (b1 * bv1 + b2 * bv2) / (bv1 + bv2) * 0.55 + (a1 * av1 + a2 * av2) / (av1 + av2) * 0.45;
+      const h = Math.max(1.5, Math.min((a1 - b1) * 0.35 + 1, 6)) / 2;
+      return [{ type: 'bid', price: Math.floor(fair - h), qty: 6 + Math.floor(rng() * 4), from: 'MM Alpha' },
+      { type: 'ask', price: Math.ceil(fair + h), qty: 6 + Math.floor(rng() * 4), from: 'MM Alpha' }];
     }
     function mmBeta(row) {
-      if (!row) return [];
-      const mid = getMid(row);
-      const imb = (row.bid_volume_1 || 0) / ((row.bid_volume_1 || 1) + (row.ask_volume_1 || 1)) - 0.5;
-      const shift = imb * 2;
-      return [
-        { type: 'bid', price: Math.floor(mid + shift - 1), qty: 5, from: 'MM Beta' },
-        { type: 'ask', price: Math.ceil(mid + shift + 1), qty: 5, from: 'MM Beta' }
-      ];
+      const b1 = row.bid_price_1 || 9998, bv1 = row.bid_volume_1 || 5, a1 = row.ask_price_1 || 10002, av1 = row.ask_volume_1 || 5;
+      const b3 = row.bid_price_3 || b1 - 2, bv3 = row.bid_volume_3 || 1, a3 = row.ask_price_3 || a1 + 2, av3 = row.ask_volume_3 || 1;
+      const imb = (bv1 + bv3 - av1 - av3) / (bv1 + bv3 + av1 + av3 + 1);
+      const fair = (b1 + a1) / 2 + imb * 1.2, h = (Math.abs(imb) > 0.3 ? 3.5 + Math.abs(imb) * 2 : 2) / 2;
+      return [{ type: 'bid', price: Math.floor(fair - h - rng() * .5), qty: 5 + Math.floor(rng() * 5), from: 'MM Beta' },
+      { type: 'ask', price: Math.ceil(fair + h + rng() * .5), qty: 5 + Math.floor(rng() * 5), from: 'MM Beta' }];
     }
     function noiseAlpha(row) {
-      if (!row || rng() > 0.08) return [];
-      const side = rng() > 0.5 ? 'bid' : 'ask';
-      const mid = getMid(row);
-      // Aggressive: hit the best opposite price to trigger matches
-      const price = side === 'bid' ? (row.ask_price_1 || Math.ceil(mid)) : (row.bid_price_1 || Math.floor(mid));
-      return [{ type: side, price: price, qty: 1 + Math.floor(rng() * 5), from: 'Noise Alpha' }];
+      const b1 = row.bid_price_1 || 9998, a1 = row.ask_price_1 || 10002, mid = (b1 + a1) / 2;
+      const r1 = rng(), r2 = rng(), r3 = rng(), isBuy = r1 > .48, crosses = r2 < .18, qty = 1 + Math.floor(r3 * 8);
+      return isBuy ? [{ type: 'bid', price: crosses ? Math.ceil(a1 + rng()) : Math.floor(mid - rng() * 1.5), qty, from: 'Noise Alpha' }]
+        : [{ type: 'ask', price: crosses ? Math.floor(b1 - rng()) : Math.ceil(mid + rng() * 1.5), qty, from: 'Noise Alpha' }];
     }
     function noiseBeta(row) {
-      if (!row || rng() > 0.05) return [];
-      const side = rng() > 0.5 ? 'bid' : 'ask';
-      const mid = getMid(row);
-      const price = side === 'bid' ? (row.ask_price_1 || Math.ceil(mid)) : (row.bid_price_1 || Math.floor(mid));
-      return [{ type: side, price: price, qty: 2, from: 'Noise Beta' }];
+      const b1 = row.bid_price_1 || 9998, a1 = row.ask_price_1 || 10002, mid = (b1 + a1) / 2, dist = mid - 10000;
+      const r1 = rng(), r2 = rng();
+      if (dist > .5) { const q = Math.min(2 + Math.floor(Math.abs(dist) * .8 + r1 * 3), 12); return [{ type: 'ask', price: Math.ceil(mid - .5 + r2 * 1.5), qty: q, from: 'Noise Beta' }]; }
+      if (dist < -.5) { const q = Math.min(2 + Math.floor(Math.abs(dist) * .8 + r1 * 3), 12); return [{ type: 'bid', price: Math.floor(mid + .5 - r2 * 1.5), qty: q, from: 'Noise Beta' }]; }
+      const qty = 1 + Math.floor(r2 * 4);
+      return r1 > .5 ? [{ type: 'bid', price: Math.floor(mid - r1 * 2), qty, from: 'Noise Beta' }] : [{ type: 'ask', price: Math.ceil(mid + r1 * 2), qty, from: 'Noise Beta' }];
     }
-    let statArbMemory = [];
+    function allBotOrders(row, asset) { return [...mmAlpha(row), ...mmBeta(row), ...noiseAlpha(row), ...noiseBeta(row)].map(o => ({ ...o, asset })); }
     function statArbAlpha(rowC, rowP) {
-      if (!rowC || !rowP) return { c: [], p: [] };
-      const midC = getMid(rowC), midP = getMid(rowP);
-      const ratio = midC / midP;
-      statArbMemory.push(ratio);
-      if (statArbMemory.length > 30) statArbMemory.shift();
-      const avg = statArbMemory.reduce((a, b) => a + b, 0) / statArbMemory.length;
-      const std = Math.sqrt(statArbMemory.reduce((a, b) => a + Math.pow(b - avg, 2), 0) / statArbMemory.length) || 0.0001;
-      const z = (ratio - avg) / std;
-      const buyC = { type: 'bid', price: Math.floor(midC), qty: 2, from: 'StatArb Alpha' };
-      const sellC = { type: 'ask', price: Math.ceil(midC), qty: 2, from: 'StatArb Alpha' };
-      const buyP = { type: 'bid', price: Math.floor(midP), qty: 2, from: 'StatArb Alpha' };
-      const sellP = { type: 'ask', price: Math.ceil(midP), qty: 2, from: 'StatArb Alpha' };
-      if (z > 2.0) return { c: [sellC], p: [buyP] };
-      if (z < -2.0) return { c: [buyC], p: [sellP] };
-      return { c: [], p: [] };
+      const fC = computeFairValue(rowC, 8000), fP = computeFairValue(rowP, 15000), spread = fP / fC, tgt = 15000 / 8000;
+      const c = [], p = [];
+      if (spread > tgt + 0.001) { p.push({ type: 'ask', price: Math.ceil(fP - 1), qty: 4, from: 'StatArb Alpha', asset: 'PINA_COLADAS' }); c.push({ type: 'bid', price: Math.floor(fC + 1), qty: 8, from: 'StatArb Alpha', asset: 'COCONUTS' }); }
+      else if (spread < tgt - 0.001) { p.push({ type: 'bid', price: Math.floor(fP + 1), qty: 4, from: 'StatArb Alpha', asset: 'PINA_COLADAS' }); c.push({ type: 'ask', price: Math.ceil(fC - 1), qty: 8, from: 'StatArb Alpha', asset: 'COCONUTS' }); }
+      return { c, p };
     }
 
-    function allBotOrders(row, assetName) {
-      if (!row) return [];
-      return [...mmAlpha(row), ...mmBeta(row), ...noiseAlpha(row), ...noiseBeta(row)];
+    const BOT_DOT = { 'MM Alpha': 'dot-mm1', 'MM Beta': 'dot-mm2', 'Noise Alpha': 'dot-nt1', 'Noise Beta': 'dot-nt2', 'StatArb Alpha': 'dot-mm1', 'Market': 'dot-mkt' };
+
+    // ════════════════════════════════════════════════════════════════════════════
+    //  ORDER BOOK MATCHING ENGINE
+    // ════════════════════════════════════════════════════════════════════════════
+    const PRI = { student: 2, bot: 1, market: 0 };
+    function buildBook(row, bots, sBidPx, sBidQty, sAskPx, sAskQty) {
+      const bids = [], asks = [];
+      for (let i = 1; i <= 3; i++) {
+        const bp = row[`bid_price_${i}`], bv = row[`bid_volume_${i}`];
+        if (bp > 0 && bv > 0) bids.push({ price: bp, qty: bv, from: 'Market', isStudent: false, pri: PRI.market });
+        const ap = row[`ask_price_${i}`], av = row[`ask_volume_${i}`];
+        if (ap > 0 && av > 0) asks.push({ price: ap, qty: av, from: 'Market', isStudent: false, pri: PRI.market });
+      }
+      for (const o of bots) (o.type === 'bid' ? bids : asks).push({ price: o.price, qty: o.qty, from: o.from, isStudent: false, pri: PRI.bot });
+      if (sBidPx !== null && sBidQty > 0) bids.push({ price: sBidPx, qty: sBidQty, from: 'Student', isStudent: true, pri: PRI.student });
+      if (sAskPx !== null && sAskQty > 0) asks.push({ price: sAskPx, qty: sAskQty, from: 'Student', isStudent: true, pri: PRI.student });
+      bids.sort((a, b) => b.price - a.price || b.pri - a.pri);
+      asks.sort((a, b) => a.price - b.price || b.pri - a.pri);
+      return { bids, asks };
+    }
+    function matchBook(bids, asks) {
+      const fills = [];
+      while (bids.length && asks.length) {
+        const tb = bids[0], ta = asks[0]; if (tb.price < ta.price) break;
+        const fq = Math.min(tb.qty, ta.qty); if (fq <= 0) break;
+        fills.push({ bidFrom: tb.from, askFrom: ta.from, price: ta.price, qty: fq, bidIsStudent: tb.isStudent, askIsStudent: ta.isStudent });
+        tb.qty -= fq; ta.qty -= fq; if (tb.qty <= 0) bids.shift(); if (ta.qty <= 0) asks.shift();
+      }
+      return fills;
     }
 
-    // CSV UPLOAD
-    document.getElementById('csv-input').addEventListener('change', e => handleFiles(e.target.files));
-    const dz = document.getElementById('drop-zone');
-    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
-    dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
-    dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag-over'); handleFiles(e.dataTransfer.files); });
-
-    function handleFiles(files) {
+    // ════════════════════════════════════════════════════════════════════════════
+    //  CSV + PYTHON UPLOAD
+    // ════════════════════════════════════════════════════════════════════════════
+    document.getElementById('csv-input').addEventListener('change', e => handleCSVFiles(e.target.files));
+    const csvDz = document.getElementById('drop-zone');
+    csvDz.addEventListener('dragover', e => { e.preventDefault(); csvDz.classList.add('drag-over'); });
+    csvDz.addEventListener('dragleave', () => csvDz.classList.remove('drag-over'));
+    csvDz.addEventListener('drop', e => { e.preventDefault(); csvDz.classList.remove('drag-over'); handleCSVFiles(e.dataTransfer.files); });
+    function handleCSVFiles(files) {
       let done = 0;
       for (const f of files) {
-        const m = f.name.toLowerCase().match(/day_(-?\d)/);
-        const key = m ? `Day ${m[1]}` : f.name;
+        const m = f.name.toLowerCase().match(/day_(-?\d)/), key = m ? `Day ${m[1]}` : f.name;
         Papa.parse(f, {
           header: true, skipEmptyLines: true, complete: res => {
-            let rowsC = res.data.filter(r => (r.product || r.Product || '').toUpperCase() === 'COCONUTS').map(numify);
-            let rowsP = res.data.filter(r => (r.product || r.Product || '').toUpperCase() === 'PINA_COLADAS').map(numify);
-            csvFiles[key] = { c: rowsC, p: rowsP };
-            done++;
-            if (done === files.length) refreshDays();
+            const grouped = {};
+            res.data.forEach(r => {
+              const p = (r.product || r.Product || '').toUpperCase();
+              if (p === 'COCONUTS' || p === 'PINA_COLADAS') {
+                const t = r.timestamp || r.Timestamp || 0;
+                if (!grouped[t]) grouped[t] = { c: null, p: null };
+                if (p === 'COCONUTS') grouped[t].c = nr(r); else grouped[t].p = nr(r);
+                grouped[t].timestamp = t;
+              }
+            });
+            const rows = Object.values(grouped).sort((a, b) => a.timestamp - b.timestamp);
+            csvFiles[key] = rows;
+            if (++done === files.length) refreshDayOrder();
           }
         });
       }
     }
-
-    function numify(row) {
+    function nr(raw) {
       const o = {};
-      for (const [k, v] of Object.entries(row)) { const n = parseFloat(v); o[k.trim().toLowerCase().replace(/\s+/g, '_')] = isNaN(n) ? v : n; }
+      for (const [k, v] of Object.entries(raw)) { const key = k.trim().toLowerCase().replace(/\s+/g, '_'), n = parseFloat(v); o[key] = isNaN(n) ? v : n; }
       return o;
     }
-
-    function refreshDays() {
+    function refreshDayOrder() {
       dayOrder = Object.keys(csvFiles).sort((a, b) => parseInt(a.replace('Day ', '')) - parseInt(b.replace('Day ', '')));
-      document.getElementById('files-loaded').textContent = '★ ' + dayOrder.join(', ');
-      timeSeries = [];
-      const days = dayOrder.length;
-      if (days > 0) {
-        const firstDay = csvFiles[dayOrder[0]];
-        const len = Math.max(firstDay.c.length, firstDay.p.length);
-        for (let d = 0; d < days; d++) {
-          const dc = csvFiles[dayOrder[d]].c, dp = csvFiles[dayOrder[d]].p;
-          const dayData = [];
-          for (let i = 0; i < Math.max(dc.length, dp.length); i++) {
-            dayData.push({ timestamp: (dc[i] || dp[i])?.timestamp, c: dc[i], p: dp[i] });
-          }
-          timeSeries.push(dayData);
-        }
-      }
+      document.getElementById('files-loaded').textContent = '✓ ' + dayOrder.join(', ');
     }
 
-    // LocalStorage Logic
-    function saveToLocal() {
-      localStorage.setItem('pearls_strategy_source', document.getElementById('code-editor').value);
-    }
-    function loadPy(fname, src) {
-      const editor = document.getElementById('code-editor');
-      const el = document.getElementById('files-loaded-py');
-      if (!src) {
-        el.textContent = '★ No file selected';
-        strategySource = '';
-        return;
+    async function tryAutoLoadData() {
+      const candidates = [
+        { key: 'Day -1', path: 'data/prices_round_2_day_-1.csv' },
+        { key: 'Day 0', path: 'data/prices_round_2_day_0.csv' },
+        { key: 'Day 1', path: 'data/prices_round_2_day_1.csv' },
+      ];
+      const statusEl = document.getElementById('files-loaded');
+      statusEl.textContent = '⟳ Checking for default data…';
+      let loaded = 0;
+      for (const { key, path } of candidates) {
+        try {
+          const resp = await fetch(path); if (!resp.ok) continue;
+          const text = await resp.text();
+          const result = Papa.parse(text, { header: true, skipEmptyLines: true });
+          const grouped = {};
+          result.data.forEach(r => {
+            const p = (r.product || r.Product || '').toUpperCase();
+            if (p === 'COCONUTS' || p === 'PINA_COLADAS') {
+              const t = r.timestamp || r.Timestamp || 0;
+              if (!grouped[t]) grouped[t] = { c: null, p: null };
+              if (p === 'COCONUTS') grouped[t].c = nr(r); else grouped[t].p = nr(r);
+              grouped[t].timestamp = t;
+            }
+          });
+          const rows = Object.values(grouped).sort((a, b) => a.timestamp - b.timestamp);
+          if (rows.length) { csvFiles[key] = rows; loaded++; }
+        } catch (_) { }
       }
-      strategySource = src.trim();
-      editor.value = strategySource;
-      saveToLocal();
-      el.style.color = 'var(--pina)';
-      el.textContent = '★ Loaded: ' + (fname || 'Custom Strategy');
+      if (loaded > 0) refreshDayOrder();
+      else statusEl.textContent = '';
+    }
+    tryAutoLoadData();
+
+    document.getElementById('py-input').addEventListener('change', e => {
+      const f = e.target.files[0]; if (!f) return;
+      const r = new FileReader(); r.onload = ev => loadPyFile(ev.target.result, f.name); r.readAsText(f);
+    });
+    const pyDz = document.getElementById('py-drop-zone');
+    pyDz.addEventListener('dragover', e => { e.preventDefault(); pyDz.classList.add('drag-over'); });
+    pyDz.addEventListener('dragleave', () => pyDz.classList.remove('drag-over'));
+    pyDz.addEventListener('drop', e => {
+      e.preventDefault(); pyDz.classList.remove('drag-over');
+      const f = e.dataTransfer.files[0]; if (!f) return;
+      const r = new FileReader(); r.onload = ev => loadPyFile(ev.target.result, f.name); r.readAsText(f);
+    });
+    function loadPyFile(src, fname) {
+      const el = document.getElementById('py-loaded');
+      if (!/def\s+strategy\s*\(/.test(src)) { el.style.color = 'var(--danger)'; el.textContent = '✗ No strategy() found'; strategySource = ''; return; }
+      strategySource = src.trim(); el.style.color = 'var(--purple)'; el.textContent = '✓ Loaded: ' + fname;
       document.getElementById('strategy-error').style.display = 'none';
     }
 
-    function py2js(src) {
-      src = src.replace(/"{3}[\s\S]*?"{3}/g, '').replace(/'{3}[\s\S]*?'{3}/g, '').replace(/#.*/g, '');
-      src = src.split('\n').map(line => {
-        const lead = line.match(/^(\s*)/)[1];
-        const trimmed = line.trimStart();
-        if (/^[A-Za-z_]\w*\s*=/.test(trimmed) && /\s+if\s+.+\s+else\s+/.test(trimmed)) {
-          const m = trimmed.match(/^(.+?)\s+if\s+(.+?)\s+else\s+(.+)$/);
-          if (m) {
-            const eqIdx = m[1].indexOf('=');
-            if (eqIdx !== -1) {
-              const varPart = m[1].slice(0, eqIdx + 1), valExpr = m[1].slice(eqIdx + 1).trim();
-              return lead + varPart + ' (' + m[2].trim() + ' ? ' + valExpr + ' : ' + m[3].trim() + ')';
-            }
-          }
-        }
-        return line;
-      }).join('\n');
-      src = src.replace(/\bTrue\b/g, 'true').replace(/\bFalse\b/g, 'false').replace(/\bNone\b/g, 'null')
-        .replace(/\band\b/g, '&&').replace(/\bor\b/g, '||').replace(/\bnot\b/g, '!')
-        .replace(/\bint\s*\(/g, 'Math.trunc(').replace(/\bfloat\s*\(/g, 'Number(')
-        .replace(/\babs\s*\(/g, 'Math.abs(').replace(/\bmin\s*\(/g, 'Math.min(')
-        .replace(/\bmax\s*\(/g, 'Math.max(').replace(/\bround\s*\(/g, 'Math.round(')
-        .replace(/\bprint\s*\(/g, 'console.log(')
-        .replace(/(\w+)\[["'](\w+)["']\]/g, '$1.$2').replace(/\belif\b/g, 'else if');
-      const lines = src.split('\n'), out = [], indStack = [0], declared = new Set();
-      for (let i = 0; i < lines.length; i++) {
-        const raw = lines[i].trimEnd(); if (!raw.trim()) { out.push(''); continue; }
-        const indent = raw.length - raw.trimStart().length, content = raw.trimStart();
-        while (indStack.length > 1 && indStack[indStack.length - 1] > indent) { indStack.pop(); out.push(' '.repeat(indStack[indStack.length - 1]) + '}'); }
-        const isBlockOpener = /^(def |if |else if |else\s*$|else\s*:|for |while )/.test(content) && raw.trimEnd().endsWith(':');
-        if (isBlockOpener) {
-          let line = raw.trimEnd().slice(0, -1);
-          line = line.replace(/^(\s*)def\s+(\w+)\s*\(([^)]*)\)\s*$/, '$1function $2($3)');
-          line = line.replace(/^(\s*)else\s*$/, '$1else');
-          line = line.replace(/^(\s*)(if|else if)\s+(.+)$/, (_, sp, kw, cond) => {
-            cond = cond.trim(); if (!cond.startsWith('(')) cond = '(' + cond + ')'; return sp + kw + ' ' + cond;
-          });
-          out.push(line + ' {'); indStack.push(indent + 1);
-        } else {
-          const m = raw.match(/^(\s*)([A-Za-z_]\w*)\s*=[^=]/);
-          if (m && !declared.has(m[2]) && !/^(let|const|var|return|if|else|for|while|function|true|false|null)$/.test(m[2])) {
-            declared.add(m[2]); out.push(raw.replace(/^(\s*)([A-Za-z_]\w*)\s*=/, '$1let $2 ='));
-          } else out.push(raw);
-        }
-      }
-      while (indStack.length > 1) { indStack.pop(); out.push('}'); }
-      return out.join('\n');
-    }
-
-    function compileStrategy() {
-      const src = document.getElementById('code-editor').value;
-      const err = document.getElementById('strategy-error');
-      try {
-        const js = src.includes('def strategy') ? py2js(src) : src;
-        strategyFn = new Function('coconut_row', 'pina_row', 'pos_coconut', 'pos_pina', 'step',
-          js + '\nreturn strategy(coconut_row,pina_row,pos_coconut,pos_pina,step);'
-        );
-        const tr = { bid_price_1: 9999, ask_price_1: 10001, bid_volume_1: 5, ask_volume_1: 5 };
-        const r = strategyFn(tr, tr, 0, 0, 0);
-        if (typeof r !== 'object') throw new Error('strategy() must return a dictionary (object).');
-        err.style.display = 'none'; return true;
-      } catch (e) { err.style.display = 'block'; err.textContent = '✖ ' + e.message; return false; }
-    }
-
-    function startSimulation() {
+    // ════════════════════════════════════════════════════════════════════════════
+    //  START SIMULATION
+    // ════════════════════════════════════════════════════════════════════════════
+    async function startSimulation() {
       if (!dayOrder.length) { alert('Upload at least one CSV file.'); return; }
-      const src = document.getElementById('code-editor').value;
-      if (!src.trim()) { alert('Please enter your strategy code.'); return; }
-      if (!compileStrategy()) return;
-      cash = 0; posC = 0; posP = 0; pnlHistory = []; posCHistory = []; posPHistory = []; priceHistoryC = []; priceHistoryP = []; trades = [];
-      currentDayIdx = 0; currentStep = 0; completedSteps = 0;
-      lastPnlValue = 0; pendingLogEntries = [];
-      totalSteps = timeSeries.reduce((s, d) => s + d.length, 0);
-      statArbMemory = [];
-      resetBots(); resetRng();
+      if (!strategySource) { alert('Upload a Python strategy .py file.'); return; }
+      if (!pyodideReady) { alert('Python runtime still loading — please wait.'); return; }
+      const btn = document.getElementById('run-sim-btn'), orig = btn.textContent;
+      btn.disabled = true; btn.textContent = '⟳ Compiling…';
+      const ok = await compileStrategy();
+      btn.disabled = false; btn.textContent = orig;
+      if (!ok) return;
+      cash = 0; position = 0; lastFair = 10000;
+      snaps = []; dayStart = {}; allTrades = []; pnlHistory = []; posHistory = [];
+      computedSteps = 0; isPlaying = false;
+      if (playTimer) { clearInterval(playTimer); playTimer = null; }
+      totalSteps = dayOrder.reduce((s, d) => s + (csvFiles[d]?.length || 0), 0);
+      resetRng();
       document.getElementById('setup-view').style.display = 'none';
       document.getElementById('sim-view').style.display = 'block';
-      document.getElementById('final-banner').style.display = 'none';
+      document.getElementById('compute-overlay').style.display = 'block';
+      document.getElementById('results-view').style.display = 'none';
       document.getElementById('sim-error').style.display = 'none';
-      document.getElementById('trade-log-body').innerHTML = '';
-      buildTabs(); initCharts(); updateStats(null); renderBook(null, null, 'c'); renderBook(null, null, 'p');
+      initCharts();
+      await runComputationLoop();
     }
 
-    function buildTabs() {
+    // ════════════════════════════════════════════════════════════════════════════
+    //  COMPUTATION LOOP — pure compute, zero chart updates inside
+    // ════════════════════════════════════════════════════════════════════════════
+    async function runComputationLoop() {
+      const BATCH = 500; let di = 0, si = 0;
+      while (di < dayOrder.length) {
+        const rows = csvFiles[dayOrder[di]] || [];
+        if (si === 0) dayStart[dayOrder[di]] = snaps.length;
+        let n = 0;
+        while (si < rows.length && n < BATCH) { computeOneStep(di, si); si++; computedSteps++; n++; }
+        if (si >= rows.length) { di++; si = 0; }
+        const pct = totalSteps > 0 ? computedSteps / totalSteps : 0;
+        document.getElementById('compute-bar').style.width = (pct * 100) + '%';
+        document.getElementById('compute-pct').textContent = Math.round(pct * 100) + '%';
+        document.getElementById('cs-steps').textContent = computedSteps.toLocaleString();
+        const lp = cash + posC * lastFairC + posP * lastFairP;
+        document.getElementById('cs-pnl').textContent = (lp >= 0 ? '+' : '') + lp.toFixed(2);
+        document.getElementById('cs-pos').textContent = `C:${posC} | P:${posP}`;
+        document.getElementById('cs-cash').textContent = cash.toFixed(0);
+        await new Promise(r => setTimeout(r, 0));
+      }
+      onComputationComplete();
+    }
+
+    function computeOneStep(di, si) {
+      const stepData = csvFiles[dayOrder[di]][si]; if (!stepData) return;
+      const rowC = stepData.c, rowP = stepData.p, day = dayOrder[di], ts = stepData.timestamp ?? si;
+      const fC = computeFairValue(rowC, 8000), fP = computeFairValue(rowP, 15000);
+      lastFairC = fC; lastFairP = fP;
+      let oC = null, oP = null, stratErr = null;
+      let sBidPxC = null, sBidQtyC = 0, sAskPxC = null, sAskQtyC = 0;
+      let sBidPxP = null, sBidQtyP = 0, sAskPxP = null, sAskQtyP = 0;
+      try {
+        const o = callStrategy(rowC, rowP, posC, posP, si);
+        if (o) {
+          oC = o.COCONUTS; oP = o.PINA_COLADAS;
+          if (oC && typeof oC.bid === 'number' && isFinite(oC.bid)) { sBidPxC = oC.bid; sBidQtyC = Math.min(Math.abs(Number(oC.bid_qty) || 1), POS_LIMIT_C); }
+          if (oC && typeof oC.ask === 'number' && isFinite(oC.ask)) { sAskPxC = oC.ask; sAskQtyC = Math.min(Math.abs(Number(oC.ask_qty) || 1), POS_LIMIT_C); }
+          if (oP && typeof oP.bid === 'number' && isFinite(oP.bid)) { sBidPxP = oP.bid; sBidQtyP = Math.min(Math.abs(Number(oP.bid_qty) || 1), POS_LIMIT_P); }
+          if (oP && typeof oP.ask === 'number' && isFinite(oP.ask)) { sAskPxP = oP.ask; sAskQtyP = Math.min(Math.abs(Number(oP.ask_qty) || 1), POS_LIMIT_P); }
+        }
+      } catch (e) { stratErr = e.message; }
+
+      const botC = allBotOrders(rowC, 'COCONUTS'), botP = allBotOrders(rowP, 'PINA_COLADAS');
+      const sa = statArbAlpha(rowC, rowP); botC.push(...sa.c); botP.push(...sa.p);
+
+      const bkC = buildBook(rowC, botC, sBidPxC, sBidQtyC, sAskPxC, sAskQtyC);
+      const bkP = buildBook(rowP, botP, sBidPxP, sBidQtyP, sAskPxP, sAskQtyP);
+      const fillsC = matchBook(bkC.bids, bkC.asks), fillsP = matchBook(bkP.bids, bkP.asks);
+      const snapIdx = snaps.length, studentFills = [];
+
+      for (const f of fillsC) {
+        if (f.bidIsStudent) {
+          const can = Math.min(f.qty, POS_LIMIT_C - posC); if (can <= 0) continue;
+          cash -= can * f.price; posC += can;
+          const fl = { snapIdx, asset: 'COCONUTS', day, ts, side: 'BUY', placedPx: sBidPxC, placedQty: sBidQtyC, price: f.price, qty: can, from: f.askFrom, cashDelta: -(can * f.price) };
+          studentFills.push(fl); allTrades.push(fl);
+        } else if (f.askIsStudent) {
+          const can = Math.min(f.qty, POS_LIMIT_C + posC); if (can <= 0) continue;
+          cash += can * f.price; posC -= can;
+          const fl = { snapIdx, asset: 'COCONUTS', day, ts, side: 'SELL', placedPx: sAskPxC, placedQty: sAskQtyC, price: f.price, qty: can, from: f.bidFrom, cashDelta: can * f.price };
+          studentFills.push(fl); allTrades.push(fl);
+        }
+      }
+      for (const f of fillsP) {
+        if (f.bidIsStudent) {
+          const can = Math.min(f.qty, POS_LIMIT_P - posP); if (can <= 0) continue;
+          cash -= can * f.price; posP += can;
+          const fl = { snapIdx, asset: 'PINA_COLADAS', day, ts, side: 'BUY', placedPx: sBidPxP, placedQty: sBidQtyP, price: f.price, qty: can, from: f.askFrom, cashDelta: -(can * f.price) };
+          studentFills.push(fl); allTrades.push(fl);
+        } else if (f.askIsStudent) {
+          const can = Math.min(f.qty, POS_LIMIT_P + posP); if (can <= 0) continue;
+          cash += can * f.price; posP -= can;
+          const fl = { snapIdx, asset: 'PINA_COLADAS', day, ts, side: 'SELL', placedPx: sAskPxP, placedQty: sAskQtyP, price: f.price, qty: can, from: f.bidFrom, cashDelta: can * f.price };
+          studentFills.push(fl); allTrades.push(fl);
+        }
+      }
+      const pnl = cash + posC * fC + posP * fP;
+      snaps.push({ di, si, day, ts, cash, posC, posP, fC, fP, pnl, sBidPxC, sAskPxC, sBidPxP, sAskPxP, fills: studentFills, err: stratErr });
+      pnlHistory.push(pnl); posCHistory.push(posC); posPHistory.push(posP);
+    }
+
+    // ════════════════════════════════════════════════════════════════════════════
+    //  ON COMPUTATION COMPLETE
+    // ════════════════════════════════════════════════════════════════════════════
+    function onComputationComplete() {
+      document.getElementById('compute-overlay').style.display = 'none';
+      document.getElementById('results-view').style.display = 'block';
+      buildDayTabs();
+      updateChartsFull();
+      buildFullTradeLog();
+      buildBotSummary();   // ← new: render bot summary panel
+      currentViewIdx = 0;
+      viewSnap(0);
+      const last = snaps[snaps.length - 1];
+      const fp = last?.pnl || 0;
+      document.getElementById('final-pnl-display').textContent = (fp >= 0 ? '+' : '') + fp.toFixed(2);
+      document.getElementById('final-pnl-display').className = 'final-pnl ' + (fp >= 0 ? 'positive' : 'negative');
+      document.getElementById('final-sub').textContent =
+        'Final: Cash ' + (last?.cash || 0).toFixed(2) +
+        '  ·  Pos C: ' + (last?.posC || 0) + ' P: ' + (last?.posP || 0) +
+        '  ·  Fair C: ' + ((last?.fC) || 0).toFixed(0) + ' P: ' + ((last?.fP) || 0).toFixed(0) +
+        '  ·  ' + allTrades.length + ' fills  ·  ' + snaps.length.toLocaleString() + ' steps';
+      document.getElementById('final-banner').style.display = 'block';
+      document.getElementById('start-btn').innerHTML = '&#9654; START';
+      initSeekBar();   // ← new: wire up draggable seek bar
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ════════════════════════════════════════════════════════════════════════════
+    //  DAY TABS
+    // ════════════════════════════════════════════════════════════════════════════
+    function buildDayTabs() {
       const el = document.getElementById('day-tabs'); el.innerHTML = '';
       dayOrder.forEach((d, i) => {
-        const b = document.createElement('button');
-        b.className = 'day-tab' + (i === 0 ? ' active' : ''); b.textContent = d;
-        b.onclick = () => { if (!runInterval) jumpToDay(i); };
+        const b = document.createElement('button'); b.className = 'day-tab'; b.textContent = d;
+        b.onclick = () => { stopPlay(); viewSnap(dayStart[d] ?? 0); syncDayTab(i); };
         el.appendChild(b);
       });
     }
-
-    function jumpToDay(idx) {
-      currentDayIdx = idx; currentStep = 0; cash = 0; posC = 0; posP = 0; pnlHistory = []; posCHistory = []; posPHistory = []; priceHistoryC = []; priceHistoryP = []; trades = []; completedSteps = 0;
-      statArbMemory = []; resetBots(); resetRng();
-      for (let d = 0; d < idx; d++) { const rows = timeSeries[d] || []; for (let s = 0; s < rows.length; s++) { execStep(d, s, true, false); completedSteps++; } }
-      document.querySelectorAll('.day-tab').forEach((b, i) => b.classList.toggle('active', i === idx));
-      const tick = getCurrentTick();
-      updateStats(tick); updateCharts(); renderBook(tick ? tick.c : null, null, 'c'); renderBook(tick ? tick.p : null, null, 'p'); updateProgress();
+    function syncDayTab(di) {
+      document.querySelectorAll('.day-tab').forEach((b, i) => b.classList.toggle('active', i === di));
     }
 
-    function getCurrentTick() { return timeSeries[currentDayIdx]?.[currentStep] || null; }
-
-    const PRIORITY = { student: 2, bot: 1, market: 0 };
-
-    function buildBook(row, botOrders, studentBid, studentBidQty, studentAsk, studentAskQty) {
-      if (!row) return { bids: [], asks: [] };
-      const bids = [], asks = [];
-      for (let i = 1; i <= 3; i++) {
-        const bp = row[`bid_price_${i}`], bv = row[`bid_volume_${i}`];
-        if (bp && bv > 0) bids.push({ price: bp, qty: bv, from: 'Market', isStudent: false, priority: PRIORITY.market });
-        const ap = row[`ask_price_${i}`], av = row[`ask_volume_${i}`];
-        if (ap && av > 0) asks.push({ price: ap, qty: av, from: 'Market', isStudent: false, priority: PRIORITY.market });
-      }
-      for (const o of botOrders) {
-        const order = { price: o.price, qty: o.qty, from: o.from, isStudent: false, priority: PRIORITY.bot };
-        if (o.type === 'bid') bids.push(order); else asks.push(order);
-      }
-      if (studentBid !== null && studentBidQty > 0) bids.push({ price: studentBid, qty: studentBidQty, from: 'Student', isStudent: true, priority: PRIORITY.student });
-      if (studentAsk !== null && studentAskQty > 0) asks.push({ price: studentAsk, qty: studentAskQty, from: 'Student', isStudent: true, priority: PRIORITY.student });
-      bids.sort((a, b) => b.price - a.price || b.priority - a.priority);
-      asks.sort((a, b) => a.price - b.price || b.priority - a.priority);
-      return { bids, asks };
+    // ════════════════════════════════════════════════════════════════════════════
+    //  VIEW SNAP
+    // ════════════════════════════════════════════════════════════════════════════
+    function viewSnap(idx) {
+      if (idx < 0) idx = 0; if (idx >= snaps.length) idx = snaps.length - 1;
+      currentViewIdx = idx;
+      const snap = snaps[idx];
+      const stepData = csvFiles[dayOrder[snap.di]][snap.si];
+      setEl('stat-pnl', snap.pnl.toFixed(2), snap.pnl > 0 ? 'positive' : snap.pnl < 0 ? 'negative' : 'neutral');
+      setEl('stat-cash', snap.cash.toFixed(2), snap.cash > 0 ? 'positive' : snap.cash < 0 ? 'negative' : 'neutral');
+      const spC = snap.posC ?? 0, spP = snap.posP ?? 0;
+      document.getElementById('stat-pos').textContent = `C: ${spC} | P: ${spP}`;
+      document.getElementById('stat-pos').className = 'stat-value neutral';
+      document.getElementById('stat-fair').textContent = `C:${(snap.fC || 0).toFixed(0)}|P:${(snap.fP || 0).toFixed(0)}`;
+      const tradesNow = allTrades.filter(t => t.snapIdx <= idx);
+      const buyQty = tradesNow.filter(t => t.side === 'BUY').reduce((s, t) => s + t.qty, 0);
+      const sellQty = tradesNow.filter(t => t.side === 'SELL').reduce((s, t) => s + t.qty, 0);
+      setEl('stat-fills', tradesNow.length.toLocaleString(), 'purple');
+      document.getElementById('stat-fills-sub').textContent = 'B ' + buyQty + '  ·  S ' + sellQty + ' units';
+      setEl('stat-step', (idx + 1).toLocaleString(), 'neutral');
+      document.getElementById('stat-step-sub').textContent = snap.day + '  ts ' + snap.ts;
+      // Update seek bar fill + thumb
+      const pct = snaps.length > 1 ? idx / (snaps.length - 1) : 1;
+      updateSeekBarUI(pct);
+      document.getElementById('progress-label').textContent =
+        'Step ' + (idx + 1).toLocaleString() + ' / ' + snaps.length.toLocaleString() +
+        '  ·  ' + snap.day + '  ·  ts ' + snap.ts;
+      renderBook(stepData.c, snap.sBidPxC, snap.sAskPxC, 'c');
+      renderBook(stepData.p, snap.sBidPxP, snap.sAskPxP, 'p');
+      const errEl = document.getElementById('sim-error');
+      if (snap.err) { errEl.style.display = 'block'; errEl.textContent = 'Strategy error  ' + snap.day + '  step ' + snap.si + ': ' + snap.err; }
+      else { errEl.style.display = 'none'; }
+      updateTradeLogView(idx);
+      syncDayTab(snap.di);
     }
+    function setEl(id, txt, cls) { const el = document.getElementById(id); el.textContent = txt; el.className = 'stat-value ' + cls; }
 
-    function matchBook(bids, asks) {
-      const trades = [];
-      while (bids.length > 0 && asks.length > 0) {
-        const bestBid = bids[0], bestAsk = asks[0];
-        if (!bestBid || !bestAsk || bestBid.price < bestAsk.price) break;
-        const tradePrice = bestAsk.price, tradeQty = Math.min(bestBid.qty, bestAsk.qty);
-        if (tradeQty <= 0) break;
-        trades.push({ bidFrom: bestBid.from, askFrom: bestAsk.from, price: tradePrice, qty: tradeQty, bidIsStudent: bestBid.isStudent, askIsStudent: bestAsk.isStudent });
-        bestBid.qty -= tradeQty; bestAsk.qty -= tradeQty;
-        if (bestBid.qty <= 0) bids.shift(); if (bestAsk.qty <= 0) asks.shift();
-      }
-      return trades;
-    }
+    // ════════════════════════════════════════════════════════════════════════════
+    //  SEEK BAR — draggable + tooltip  (Change 1)
+    // ════════════════════════════════════════════════════════════════════════════
+    let _seekDragging = false;
 
-    function execStep(di, si, silent = false, renderNow = !silent) {
-      const stepData = timeSeries[di]?.[si]; if (!stepData) return;
-      const day = dayOrder[di], ts = stepData.timestamp ?? '-', rowC = stepData.c, rowP = stepData.p;
-      let studentOrders = null;
-      try { studentOrders = strategyFn(rowC, rowP, posC, posP, si); } catch (e) {
-        console.error("Strategy execution error at step", si, ":", e);
-        if (!silent) { const el = document.getElementById('sim-error'); el.style.display = 'block'; el.textContent = 'Strategy error: ' + e.message; }
-        const midC = getMid(rowC), midP = getMid(rowP), currPnl = cash + posC * midC + posP * midP;
-        pnlHistory.push(currPnl); posCHistory.push(posC); posPHistory.push(posP); priceHistoryC.push(midC); priceHistoryP.push(midP);
-        lastPnlValue = currPnl; return;
-      }
-      const botOrdersC = allBotOrders(rowC, 'COCONUTS'), botOrdersP = allBotOrders(rowP, 'PINA_COLADAS');
-      const saOrders = statArbAlpha(rowC, rowP); botOrdersC.push(...saOrders.c); botOrdersP.push(...saOrders.p);
-      const cO = studentOrders?.['COCONUTS'] || {}, pO = studentOrders?.['PINA_COLADAS'] || {};
-      const bookC = buildBook(rowC, botOrdersC, cO.bid ?? null, cO.bid_qty ?? 1, cO.ask ?? null, cO.ask_qty ?? 1);
-      const bookP = buildBook(rowP, botOrdersP, pO.bid ?? null, pO.bid_qty ?? 1, pO.ask ?? null, pO.ask_qty ?? 1);
-      const matchedC = matchBook(bookC.bids, bookC.asks), matchedP = matchBook(bookP.bids, bookP.asks);
-      const studentTrades = [];
-      for (const t of matchedC) {
-        if (botStats[t.bidFrom]) { botStats[t.bidFrom].posC += t.qty; botStats[t.bidFrom].cash -= t.qty * t.price; }
-        if (botStats[t.askFrom]) { botStats[t.askFrom].posC -= t.qty; botStats[t.askFrom].cash += t.qty * t.price; }
-        if (t.bidIsStudent) { const fill = Math.min(t.qty, POS_LIMIT_C - posC); if (fill > 0) { cash -= fill * t.price; posC += fill; studentTrades.push({ day, ts, asset: 'COCONUTS', side: 'BUY', price: t.price, qty: fill, from: t.askFrom, cashDelta: -fill * t.price }); } }
-        if (t.askIsStudent) { const fill = Math.min(t.qty, POS_LIMIT_C + posC); if (fill > 0) { cash += fill * t.price; posC -= fill; studentTrades.push({ day, ts, asset: 'COCONUTS', side: 'SELL', price: t.price, qty: fill, from: t.bidFrom, cashDelta: fill * t.price }); } }
-      }
-      for (const t of matchedP) {
-        if (botStats[t.bidFrom]) { botStats[t.bidFrom].posP += t.qty; botStats[t.bidFrom].cash -= t.qty * t.price; }
-        if (botStats[t.askFrom]) { botStats[t.askFrom].posP -= t.qty; botStats[t.askFrom].cash += t.qty * t.price; }
-        if (t.bidIsStudent) { const fill = Math.min(t.qty, POS_LIMIT_P - posP); if (fill > 0) { cash -= fill * t.price; posP += fill; studentTrades.push({ day, ts, asset: 'PINA_COLADAS', side: 'BUY', price: t.price, qty: fill, from: t.askFrom, cashDelta: -fill * t.price }); } }
-        if (t.askIsStudent) { const fill = Math.min(t.qty, POS_LIMIT_P + posP); if (fill > 0) { cash += fill * t.price; posP -= fill; studentTrades.push({ day, ts, asset: 'PINA_COLADAS', side: 'SELL', price: t.price, qty: fill, from: t.bidFrom, cashDelta: fill * t.price }); } }
-      }
-      const midC = getMid(rowC), midP = getMid(rowP), pnl = cash + (posC * midC) + (posP * midP);
-      pnlHistory.push(pnl); posCHistory.push(posC); posPHistory.push(posP); priceHistoryC.push(midC); priceHistoryP.push(midP);
-      if (studentTrades.length) pendingLogEntries.push(...studentTrades);
-      lastPnlValue = pnl; if (!silent && renderNow) refreshSimulationUI(stepData, rowC, rowP, cO, pO);
+    function updateSeekBarUI(pct) {
+      const fill = document.getElementById('progress-fill');
+      const thumb = document.getElementById('progress-thumb');
+      fill.style.width = (pct * 100) + '%';
+      thumb.style.left = (pct * 100) + '%';
+      thumb.style.display = 'block';
     }
 
-    function flushPendingLogs() {
-      if (!pendingLogEntries.length) return;
-      trades.push(...pendingLogEntries); appendLog(pendingLogEntries, lastPnlValue); pendingLogEntries = [];
+    function seekPctFromEvent(e) {
+      const bar = document.getElementById('progress-bar-outer');
+      const rect = bar.getBoundingClientRect();
+      return Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
     }
-    function refreshSimulationUI(stepData, rowC, rowP, cO, pO) {
-      updateStats(stepData); renderBook(rowC, cO, 'c'); renderBook(rowP, pO, 'p'); flushPendingLogs(); updateCharts(); updateProgress();
+
+    function showSeekTooltip(e, idx) {
+      const tip = document.getElementById('seek-tooltip');
+      const snap = snaps[Math.max(0, Math.min(idx, snaps.length - 1))];
+      if (!snap) return;
+      tip.textContent = 'Step ' + (idx + 1) + ' · ' + snap.day + ' ts ' + snap.ts + ' · PnL ' + snap.pnl.toFixed(2);
+      tip.style.left = e.clientX + 'px';
+      const bar = document.getElementById('progress-bar-outer');
+      const rect = bar.getBoundingClientRect();
+      tip.style.top = (rect.top + window.scrollY - 38) + 'px';
+      // convert to fixed — use clientY approach
+      tip.style.top = (rect.top - 38) + 'px';
+      tip.style.display = 'block';
     }
-    function getRunChunkSize() {
-      const delay = parseInt(document.getElementById('speed-input').value) || 0;
-      return delay === 0 ? 600 : (delay <= 5 ? 200 : (delay <= 25 ? 100 : 1));
-    }
-    function processRunChunk() {
-      if (runInterval === null) return;
-      let count = 0, done = false, chunk = getRunChunkSize();
-      while (count < chunk) {
-        const rows = timeSeries[currentDayIdx] || [];
-        if (currentStep >= rows.length) {
-          if (currentDayIdx < dayOrder.length - 1) { currentDayIdx++; currentStep = 0; document.querySelectorAll('.day-tab').forEach((b, i) => b.classList.toggle('active', i === currentDayIdx)); }
-          else { done = true; break; }
+    function hideSeekTooltip() { document.getElementById('seek-tooltip').style.display = 'none'; }
+
+    function initSeekBar() {
+      const bar = document.getElementById('progress-bar-outer');
+      // Remove any previous listeners by cloning
+      const newBar = bar.cloneNode(true);
+      bar.parentNode.replaceChild(newBar, bar);
+      // Re-get fresh reference
+      const b = document.getElementById('progress-bar-outer');
+
+      b.addEventListener('mousedown', e => {
+        e.preventDefault();
+        _seekDragging = true;
+        b.classList.add('dragging');
+        stopPlay();
+        const pct = seekPctFromEvent(e);
+        const idx = Math.round(pct * (snaps.length - 1));
+        viewSnap(idx);
+        showSeekTooltip(e, idx);
+      });
+
+      b.addEventListener('mousemove', e => {
+        if (!_seekDragging) {
+          const pct = seekPctFromEvent(e);
+          const idx = Math.round(pct * (snaps.length - 1));
+          showSeekTooltip(e, idx);
         }
-        execStep(currentDayIdx, currentStep, true, false); completedSteps++; currentStep++; count++;
-      }
-      const stepData = timeSeries[currentDayIdx]?.[Math.max(0, currentStep - 1)];
-      if (stepData) { updateStats(stepData); updateCharts(); updateProgress(); flushPendingLogs(); }
-      if (done) { clearTimeout(runInterval); runInterval = null; document.getElementById('run-btn').innerHTML = '&#9654;&#9654; RUN ALL'; finishSimulation(); return; }
-      runInterval = setTimeout(processRunChunk, parseInt(document.getElementById('speed-input').value) || 0);
+      });
+
+      b.addEventListener('mouseleave', () => {
+        if (!_seekDragging) hideSeekTooltip();
+      });
+
+      document.addEventListener('mousemove', e => {
+        if (!_seekDragging) return;
+        const pct = seekPctFromEvent(e);
+        const idx = Math.round(pct * (snaps.length - 1));
+        viewSnap(idx);
+        showSeekTooltip(e, idx);
+      });
+
+      document.addEventListener('mouseup', () => {
+        if (!_seekDragging) return;
+        _seekDragging = false;
+        document.getElementById('progress-bar-outer').classList.remove('dragging');
+        hideSeekTooltip();
+      });
     }
-    function updateProgress() { document.getElementById('progress-fill').style.width = (totalSteps > 0 ? completedSteps / totalSteps * 100 : 0) + '%'; }
-    function stepOnce() {
-      const rows = timeSeries[currentDayIdx] || [];
-      if (currentStep >= rows.length) {
-        if (currentDayIdx < dayOrder.length - 1) { currentDayIdx++; currentStep = 0; document.querySelectorAll('.day-tab').forEach((b, i) => b.classList.toggle('active', i === currentDayIdx)); }
-        else { finishSimulation(); return; }
-      }
-      execStep(currentDayIdx, currentStep); completedSteps++; currentStep++;
+
+    // ════════════════════════════════════════════════════════════════════════════
+    //  PLAYBACK — 100 steps / 16ms ≈ 6250 steps/sec → 30k steps in ~4.8s (Change 2)
+    // ════════════════════════════════════════════════════════════════════════════
+    function togglePlay() { isPlaying ? stopPlay() : startPlay(); }
+    function startPlay() {
+      if (currentViewIdx >= snaps.length - 1) viewSnap(0);
+      isPlaying = true;
+      document.getElementById('start-btn').innerHTML = '&#9646;&#9646; PAUSE';
+      playTimer = setInterval(() => {
+        const next = Math.min(currentViewIdx + 100, snaps.length - 1);
+        viewSnap(next);
+        if (next >= snaps.length - 1) stopPlay();
+      }, 16);
     }
-    function runAll() {
-      const btn = document.getElementById('run-btn');
-      if (runInterval !== null) { clearTimeout(runInterval); runInterval = null; btn.innerHTML = '&#9654;&#9654; RUN ALL'; return; }
-      btn.innerHTML = '&#10074;&#10074; PAUSE'; runInterval = setTimeout(processRunChunk, 0);
+    function stopPlay() {
+      if (playTimer) { clearInterval(playTimer); playTimer = null; }
+      isPlaying = false;
+      document.getElementById('start-btn').innerHTML = '&#9654; START';
     }
-    function finishSimulation() {
-      flushPendingLogs(); const p = lastPnlValue, el = document.getElementById('final-pnl-display');
-      el.textContent = (p >= 0 ? '+' : '') + p.toFixed(2); el.className = 'final-pnl ' + (p >= 0 ? 'positive' : 'negative');
-      document.getElementById('final-banner').style.display = 'block'; window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    function resetSim() {
-      if (runInterval !== null) { clearTimeout(runInterval); runInterval = null; }
-      document.getElementById('run-btn').innerHTML = '&#9654;&#9654; RUN ALL';
-      document.getElementById('setup-view').style.display = 'block'; document.getElementById('sim-view').style.display = 'none';
-      cash = 0; posC = 0; posP = 0; pnlHistory = []; posCHistory = []; posPHistory = []; priceHistoryC = []; priceHistoryP = []; trades = [];
-      currentDayIdx = 0; currentStep = 0; completedSteps = 0; pendingLogEntries = []; lastPnlValue = 0; resetBots();
-    }
-    function updateStats(stepData) {
-      const dp = lastPnlValue, pnlEl = document.getElementById('stat-pnl');
-      pnlEl.textContent = dp.toFixed(2); pnlEl.className = 'stat-value ' + (dp > 0 ? 'positive' : dp < 0 ? 'negative' : 'neutral');
-      const cEl = document.getElementById('stat-cash'); cEl.textContent = cash.toFixed(2); cEl.className = 'stat-value ' + (cash > 0 ? 'positive' : cash < 0 ? 'negative' : 'neutral');
-      const posCEl = document.getElementById('stat-pos-c'); posCEl.textContent = posC; posCEl.className = 'stat-value ' + (posC > 0 ? 'positive' : posC < 0 ? 'negative' : 'neutral');
-      const posPEl = document.getElementById('stat-pos-p'); posPEl.textContent = posP; posPEl.className = 'stat-value ' + (posP > 0 ? 'positive' : posP < 0 ? 'negative' : 'neutral');
-      const midC = stepData ? getMid(stepData.c) : (priceHistoryC.length ? priceHistoryC[priceHistoryC.length - 1] : 0);
-      const midP = stepData ? getMid(stepData.p) : (priceHistoryP.length ? priceHistoryP[priceHistoryP.length - 1] : 0);
-      document.getElementById('stat-step').textContent = completedSteps + ' / ' + totalSteps;
-      for (const bot in botStats) { if (!botStats[bot]) continue; botStats[bot].pnl = botStats[bot].cash + (botStats[bot].posC * midC) + (botStats[bot].posP * midP); botStats[bot].pnlHistory.push(botStats[bot].pnl); }
-    }
-    function renderBook(row, so, suffix) {
-      if (!suffix) return;
-      const aEl = document.getElementById(`book-asks-${suffix}`), bEl = document.getElementById(`book-bids-${suffix}`);
+    function stepBackward() { stopPlay(); if (currentViewIdx > 0) viewSnap(currentViewIdx - 1); }
+    function stepForward() { stopPlay(); if (currentViewIdx < snaps.length - 1) viewSnap(currentViewIdx + 1); }  // Change 3
+
+    // ════════════════════════════════════════════════════════════════════════════
+    //  ORDER BOOK
+    // ════════════════════════════════════════════════════════════════════════════
+    function renderBook(row, sBidPx, sAskPx, suffix) {
+      const aEl = document.getElementById('book-asks-' + suffix), bEl = document.getElementById('book-bids-' + suffix);
       aEl.innerHTML = ''; bEl.innerHTML = ''; if (!row) return;
       const asks = [], bids = [];
       for (let i = 3; i >= 1; i--) {
-        const ap = row[`ask_price_${i}`], av = row[`ask_volume_${i}`]; if (ap && av) asks.push({ price: ap, qty: av });
-        const bp = row[`bid_price_${i}`], bv = row[`bid_volume_${i}`]; if (bp && bv) bids.push({ price: bp, qty: bv });
+        const ap = row[`ask_price_${i}`], av = row[`ask_volume_${i}`]; if (ap > 0 && av > 0) asks.push({ price: ap, qty: av });
+        const bp = row[`bid_price_${i}`], bv = row[`bid_volume_${i}`]; if (bp > 0 && bv > 0) bids.push({ price: bp, qty: bv });
       }
       asks.sort((a, b) => b.price - a.price); bids.sort((a, b) => b.price - a.price);
-      for (const a of asks) { const d = document.createElement('div'); d.className = 'book-row ask'; if (so?.bid >= a.price) d.style.background = 'rgba(0,255,157,0.1)'; d.innerHTML = `<span class="price">${a.price}</span><span class="vol">${a.qty}</span>`; aEl.appendChild(d); }
-      if (so?.ask) { const d = document.createElement('div'); d.className = 'book-row ask'; d.style.borderLeft = '2px solid var(--accent)'; d.innerHTML = `<span class="price" style="color:var(--accent)">★ ${so.ask}</span><span class="vol" style="color:var(--accent)">YOU</span>`; aEl.appendChild(d); }
-      if (so?.bid) { const d = document.createElement('div'); d.className = 'book-row bid'; d.style.borderLeft = '2px solid var(--accent3)'; d.innerHTML = `<span class="price" style="color:var(--accent3)">★ ${so.bid}</span><span class="vol" style="color:var(--accent3)">YOU</span>`; bEl.appendChild(d); }
-      for (const b of bids) { const d = document.createElement('div'); d.className = 'book-row bid'; if (so?.ask <= b.price) d.style.background = 'rgba(0,212,255,0.1)'; d.innerHTML = `<span class="price">${b.price}</span><span class="vol">${b.qty}</span>`; bEl.appendChild(d); }
-    }
-    function appendLog(tm, pnl) {
-      const tb = document.getElementById('trade-log-body');
-      for (const t of tm) {
-        const tr = document.createElement('tr');
-        const sc = (t.side || '').includes('BUY') || (t.side || '').includes('BID') ? 'tag-buy' : ((t.side || '').includes('SELL') || (t.side || '').includes('ASK') ? 'tag-sell' : 'tag-neutral');
-        const dc = BOT_DOT[t.from] || 'dot-mkt', ac = t.asset === 'COCONUTS' ? 'tag-coconut' : 'tag-pina', cdClass = t.cashDelta > 0 ? 'tag-buy' : (t.cashDelta < 0 ? 'tag-sell' : ''), pnlClass = pnl >= 0 ? 'tag-buy' : 'tag-sell';
-        tr.innerHTML = `<td>${t.day}</td><td>${t.ts}</td><td class="${ac}">${t.asset}</td><td class="${sc}">${t.side}</td><td>${t.price}</td><td>${t.qty}</td><td><span class="bot-dot ${dc}"></span><span class="tag-bot" style="font-size: 0.85em">${t.from}</span></td><td class="${cdClass}">${t.cashDelta > 0 ? '+' : ''}${(t.cashDelta || 0).toFixed(2)}</td><td class="${pnlClass}">${pnl.toFixed(2)}</td>`;
-        tb.prepend(tr); while (tb.children.length > 500) tb.lastChild.remove();
-      }
-    }
-    function initCharts() {
-      if (priceChart) priceChart.destroy(); if (pnlChart) pnlChart.destroy();
-      const base = { responsive: true, animation: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { grid: { color: 'rgba(30,58,95,0.3)' }, ticks: { color: '#4a6080', font: { family: 'Space Mono', size: 9 } } } } };
-      let pO = JSON.parse(JSON.stringify(base)); pO.scales.yC = { type: 'linear', display: true, position: 'left', grid: { color: 'rgba(30,58,95,0.3)' }, ticks: { color: '#ffb142' } }; pO.scales.yP = { type: 'linear', display: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { color: '#34ace0' } }; delete pO.scales.y; pO.plugins.legend = { display: true, labels: { color: '#e2e8f0', font: { family: 'Space Mono', size: 10 } } };
-      priceChart = new Chart(document.getElementById('price-chart').getContext('2d'), { type: 'line', data: { labels: [], datasets: [{ label: 'Coconuts', data: [], yAxisID: 'yC', borderColor: '#ffb142', borderWidth: 1.5, pointRadius: 0, tension: 0.1 }, { label: 'Pina Coladas', data: [], yAxisID: 'yP', borderColor: '#34ace0', borderWidth: 1.5, pointRadius: 0, tension: 0.1 }] }, options: pO });
-      pnlChart = new Chart(document.getElementById('pnl-chart').getContext('2d'), { type: 'line', data: { labels: [], datasets: [{ data: [], borderColor: '#00cc7a', backgroundColor: 'rgba(0, 255, 157, 0.04)', borderWidth: 1.5, pointRadius: 0, fill: true, tension: 0.1 }] }, options: JSON.parse(JSON.stringify(base)) });
-    }
-    function updateCharts() {
-      if (!priceChart || !pnlChart) return; const N = pnlHistory.length, L = Array.from({ length: N }, (_, i) => i);
-      priceChart.data.labels = L; priceChart.data.datasets[0].data = priceHistoryC; priceChart.data.datasets[1].data = priceHistoryP; priceChart.update('none');
-      pnlChart.data.labels = L; pnlChart.data.datasets[0].data = pnlHistory; pnlChart.update('none');
+      const mk = (side, ph, vh, hl, lb) => {
+        const d = document.createElement('div'); d.className = 'book-row ' + side;
+        if (hl) d.style.background = hl; if (lb) d.style.borderLeft = lb;
+        d.innerHTML = `<span class="price">${ph}</span><span class="vol">${vh}</span>`; return d;
+      };
+      for (const a of asks) aEl.appendChild(mk('ask', a.price, a.qty, sBidPx >= a.price ? 'rgba(0,255,157,.10)' : null, null));
+      if (sAskPx != null) aEl.appendChild(mk('ask', `<span style="color:var(--accent)">&#9733; ${sAskPx}</span>`, `<span style="color:var(--accent)">YOU</span>`, null, '2px solid var(--accent)'));
+      if (sBidPx != null) bEl.appendChild(mk('bid', `<span style="color:var(--accent3)">&#9733; ${sBidPx}</span>`, `<span style="color:var(--accent3)">YOU</span>`, null, '2px solid var(--accent3)'));
+      for (const b of bids) bEl.appendChild(mk('bid', b.price, b.qty, sAskPx <= b.price ? 'rgba(0,212,255,.10)' : null, null));
     }
 
-    // Initialize Strategy on Page Load
-    window.addEventListener('load', () => {
-      const saved = localStorage.getItem('pearls_strategy_source');
-      if (saved) { document.getElementById('code-editor').value = saved; loadPy('Saved Logic', saved); }
-      else {
-        const tmpl = `def strategy(coconut_row, pina_row, pos_coconut, pos_pina, step):\n    # Simple Symmetric Market Maker\n    mid_c = (coconut_row['bid_price_1'] + coconut_row['ask_price_1']) / 2\n    mid_p = (pina_row['bid_price_1'] + pina_row['ask_price_1']) / 2\n    \n    return {\n        'COCONUTS': { 'bid': int(mid_c - 1), 'ask': int(mid_c + 1), 'bid_qty': 1, 'ask_qty': 1 },\n        'PINA_COLADAS': { 'bid': int(mid_p - 1), 'ask': int(mid_p + 1), 'bid_qty': 1, 'ask_qty': 1 }\n    }`;
-        document.getElementById('code-editor').value = tmpl; loadPy('Template', tmpl);
+    // ════════════════════════════════════════════════════════════════════════════
+    //  TRADE LOG
+    // ════════════════════════════════════════════════════════════════════════════
+    function buildFullTradeLog() {
+      const tb = document.getElementById('trade-log-body'); tb.innerHTML = '';
+      allTrades.slice(-200).reverse().forEach(t => appendTradeRow(tb, t));
+    }
+    function updateTradeLogView(upToSnapIdx) {
+      const tb = document.getElementById('trade-log-body'); tb.innerHTML = '';
+      allTrades.filter(t => t.snapIdx <= upToSnapIdx).slice(-100).reverse().forEach(t => appendTradeRow(tb, t));
+    }
+    function appendTradeRow(tb, t) {
+      const snap = snaps[t.snapIdx] || {}, tr = document.createElement('tr');
+      const sc = t.side === 'BUY' ? 'tag-buy' : 'tag-sell', dc = BOT_DOT[t.from] || 'dot-mkt', pnl = snap.pnl ?? 0;
+      tr.innerHTML =
+        `<td>${t.day}</td><td>${t.ts}</td><td class="${sc}">${t.side}</td>` +
+        `<td>${t.placedPx ?? '—'}</td><td>${t.placedQty ?? '—'}</td>` +
+        `<td>${t.price}</td><td>${t.qty}</td>` +
+        `<td><span class="bot-dot ${dc}"></span><span class="tag-bot">${t.from}</span></td>` +
+        `<td class="${t.cashDelta >= 0 ? 'tag-buy' : 'tag-sell'}">${t.cashDelta >= 0 ? '+' : ''}${t.cashDelta.toFixed(2)}</td>` +
+        `<td>${snap.position ?? ''}</td>` +
+        `<td class="${pnl >= 0 ? 'tag-buy' : 'tag-sell'}">${pnl.toFixed(2)}</td>`;
+      tb.appendChild(tr);
+    }
+    function downloadTradeLogCSV() {
+      if (!allTrades.length) { alert('No trades to download.'); return; }
+      const header='Day,Timestamp,Asset,Side,PlacedPrice,PlacedQty,FillPrice,ExecutedQty,Counterparty,CashDelta,Position,PnL\n';
+  const rows=allTrades.map(t=>{
+    const s=snaps[t.snapIdx]||{};
+    return[t.day,t.ts,t.asset,t.side,t.placedPx??'',t.placedQty??'',t.price,t.qty,'"'+t.from+'"',t.cashDelta.toFixed(2),t.asset==='COCONUTS'?(s.posC??0):(s.posP??0),(s.pnl??0).toFixed(2)].join(',');
+      }).join('\n');
+      const blob = new Blob([header + rows], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'pearls_trade_log.csv';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+    }
+
+    // ════════════════════════════════════════════════════════════════════════════
+    //  BOT SUMMARY  (Change 4)
+    //  For each bot, compute from allTrades (all student fills):
+    //    • executedTrades  = number of fill events where this bot was counterparty
+    //    • totalVolume     = sum of qty in those fills
+    //    • pnlEdge         = bot's mark-to-market edge vs fair value at the fill step
+    //        bot SOLD to student  →  edge per unit = fillPx - fair  (positive = sold above fair)
+    //        bot BOUGHT from student → edge per unit = fair - fillPx (positive = bought below fair)
+    //    • netPosition     = running net from all trades with student (starts at 0)
+    //        bot sold qty  → netPos -= qty
+    //        bot bought qty → netPos += qty
+    // ════════════════════════════════════════════════════════════════════════════
+    const BOT_META = [
+      { key: 'MM Alpha', cls: 'mm1', icon: '🔵' },
+      { key: 'MM Beta', cls: 'mm2', icon: '🟢' },
+      { key: 'Noise Alpha', cls: 'nt1', icon: '🟠' },
+      { key: 'Noise Beta', cls: 'nt2', icon: '🔴' },
+    ];
+
+    function buildBotSummary() {
+      const grid = document.getElementById('bot-summary-grid');
+      grid.innerHTML = '';
+
+      for (const meta of BOT_META) {
+        // Collect fills where this bot was counterparty to student
+        const botFills = allTrades.filter(t => t.from === meta.key);
+        const execTrades = botFills.length;
+        const totalVol = botFills.reduce((s, t) => s + t.qty, 0);
+
+        // PnL edge and net position
+    let pnlEdge  = 0;
+    let netPos   = 0;
+    for(const t of botFills){
+      const s = snaps[t.snapIdx];
+      const fair = t.asset==='COCONUTS' ? (s?.fC ?? 8000) : (s?.fP ?? 15000);
+          if (t.side === 'BUY') {
+            // Student bought → bot SOLD at t.price. Bot's edge = t.price - fair
+            pnlEdge += (t.price - fair) * t.qty;
+            netPos -= t.qty;   // bot sold
+          } else {
+            // Student sold → bot BOUGHT at t.price. Bot's edge = fair - t.price
+            pnlEdge += (fair - t.price) * t.qty;
+            netPos += t.qty;   // bot bought
+          }
+        }
+
+        const card = document.createElement('div');
+        card.className = 'bscard ' + meta.cls;
+        card.innerHTML =
+          `<div class="bscard-name">${meta.icon} ${meta.key}</div>` +
+          `<div class="bscard-row"><span class="bslabel">Exec Trades</span><span class="bsval neu">${execTrades.toLocaleString()}</span></div>` +
+          `<div class="bscard-row"><span class="bslabel">Total Volume</span><span class="bsval neu">${totalVol.toLocaleString()}</span></div>` +
+          `<div class="bscard-row"><span class="bslabel">PnL Edge</span><span class="bsval ${pnlEdge >= 0 ? 'pos' : 'neg'}">${pnlEdge >= 0 ? '+' : ''}${pnlEdge.toFixed(2)}</span></div>` +
+          `<div class="bscard-row"><span class="bslabel">Net Position</span><span class="bsval ${netPos > 0 ? 'pos' : netPos < 0 ? 'neg' : 'neu'}">${netPos >= 0 ? '+' : ''}${netPos}</span></div>`;
+        grid.appendChild(card);
       }
-    });
+    }
+
+    // ════════════════════════════════════════════════════════════════════════════
+    //  CHARTS — rendered exactly ONCE after computation
+    // ════════════════════════════════════════════════════════════════════════════
+    function initCharts() {
+      if (pnlChart) { pnlChart.destroy(); pnlChart = null; }
+      if (posChart) { posChart.destroy(); posChart = null; }
+
+      const makeZoomCfg = () => ({
+        zoom: {
+          wheel: { enabled: true, speed: .1 }, pinch: { enabled: true }, mode: 'x',
+          onZoom: ({ chart }) => {
+            const xS = chart.scales.x, N = chart.data.datasets[0]?.data?.length || 1;
+            if (xS.max - xS.min >= N - 1) chart.resetZoom();
+          },
+        },
+        pan: { enabled: true, mode: 'x' },
+        limits: { x: { minRange: ZOOM_MIN_RANGE } },
+      });
+
+      const xAxisCfg = {
+        display: true, type: 'linear',
+        title: { display: true, text: 'Step', color: '#4a6080', font: { family: 'Space Mono', size: 8 } },
+        ticks: { color: '#4a6080', font: { family: 'Space Mono', size: 8 }, maxTicksLimit: 8, autoSkip: true },
+        grid: { color: 'rgba(30,58,95,0.22)', drawBorder: false },
+      };
+      const yAxisCfg = {
+        grid: { color: 'rgba(30,58,95,0.22)', drawBorder: false },
+        ticks: { color: '#4a6080', font: { family: 'Space Mono', size: 9 } },
+      };
+      const tooltipCfg = {
+        backgroundColor: 'rgba(15,22,36,.95)', borderColor: 'rgba(0,212,255,.3)', borderWidth: 1,
+        titleColor: '#4a6080', bodyColor: '#e2e8f0', padding: 10,
+        titleFont: { family: 'Space Mono', size: 9 }, bodyFont: { family: 'Space Mono', size: 11 },
+      };
+      const baseOpts = (zCfg) => ({
+        responsive: true, animation: false,
+        interaction: { intersect: false, mode: 'index' },
+        plugins: { legend: { display: false }, tooltip: tooltipCfg, zoom: zCfg },
+        scales: { x: xAxisCfg, y: yAxisCfg },
+      });
+
+      pnlChart = new Chart(document.getElementById('pnl-chart').getContext('2d'), {
+        type: 'line',
+        data: { datasets: [{ data: [], label: 'PnL', borderColor: '#00ff9d', backgroundColor: 'rgba(0,255,157,.05)', borderWidth: 1.5, pointRadius: 0, fill: true, tension: 0.3 }] },
+        options: baseOpts(makeZoomCfg()),
+      });
+      posChart = new Chart(document.getElementById('pos-chart').getContext('2d'), {
+        type: 'line',
+        data: {
+          datasets: [
+            { data: [], label: 'Position', borderColor: '#00d4ff', backgroundColor: 'rgba(0,212,255,.05)', borderWidth: 1.5, pointRadius: 0, fill: true, tension: 0.3 },
+            { data: [], label: '+Limit', borderColor: 'rgba(255,71,87,.4)', borderDash: [4, 4], borderWidth: 1, pointRadius: 0 },
+            { data: [], label: '-Limit', borderColor: 'rgba(255,71,87,.4)', borderDash: [4, 4], borderWidth: 1, pointRadius: 0 },
+          ]
+        },
+        options: baseOpts(makeZoomCfg()),
+      });
+    }
+
+    function updateChartsFull(){
+  if(!pnlChart||!posChart)return;
+  const N=pnlHistory.length;
+  const pnlData=pnlHistory.map((v,i)=>({x:i,y:v}));
+  const posDataC=posCHistory.map((v,i)=>({x:i,y:v}));
+  const posDataP=posPHistory.map((v,i)=>({x:i,y:v}));
+  const limPC=posCHistory.map((_,i)=>({x:i,y:POS_LIMIT_C}));
+  const limNC=posCHistory.map((_,i)=>({x:i,y:-POS_LIMIT_C}));
+  const setLimits=(chart)=>{
+    const z=chart.options.plugins.zoom;
+    if(z&&z.limits){z.limits.x.min=0;z.limits.x.max=N-1;z.limits.x.minRange=ZOOM_MIN_RANGE;}
+  };
+  pnlChart.data.datasets[0].data=pnlData;setLimits(pnlChart);pnlChart.update();
+  posChart.data.datasets[0].data=posDataC;
+  posChart.data.datasets[0].label='Pos C';
+  if(!posChart.data.datasets[3]){
+     posChart.data.datasets.push({data:[],label:'Pos P',borderColor:'#ff6b35',backgroundColor:'rgba(255,107,53,.05)',borderWidth:1.5,pointRadius:0,fill:true,tension:0.3});
+  }
+  posChart.data.datasets[3].data=posDataP;
+  posChart.data.datasets[1].data=limPC;posChart.data.datasets[2].data=limNC;
+  setLimits(posChart);posChart.update();
+}
+    function resetZoomPnl() { if (pnlChart) pnlChart.resetZoom(); }
+    function resetZoomPos() { if (posChart) posChart.resetZoom(); }
+
+    // ════════════════════════════════════════════════════════════════════════════
+    //  RESET
+    // ════════════════════════════════════════════════════════════════════════════
+    function resetSim(){
+  stopPlay();
+  document.getElementById('setup-view').style.display='block';
+  document.getElementById('sim-view').style.display='none';
+  cash=0;posC=0;posP=0;lastFairC=8000;lastFairP=15000;
+  snaps=[];dayStart={};allTrades=[];pnlHistory=[];posCHistory=[];posPHistory=[];
+  computedSteps=0;currentViewIdx=0;
+}
   </script>
 </body>
 
 </html>
+```
