@@ -1,1004 +1,1704 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IMC Prosperity — PEARLS Simulator</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IMC Prosperity — COCONUTS & PINA COLADAS Simulator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap');
 
-  :root {
-    --bg: #080c18;
-    --surface: #0f1624;
-    --surface2: #161f30;
-    --surface3: #1c2840;
-    --border: #1e3a5f;
-    --accent: #00d4ff;
-    --accent2: #ff6b35;
-    --accent3: #00ff9d;
-    --text: #e2e8f0;
-    --text-muted: #4a6080;
-    --danger: #ff4757;
-    --success: #00ff9d;
-    --gold: #ffd700;
-    --purple: #a78bfa;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Space Mono', monospace;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background-image:
-      linear-gradient(rgba(0,212,255,0.022) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,212,255,0.022) 1px, transparent 1px);
-    background-size: 48px 48px;
-    pointer-events: none; z-index: 0;
-  }
-
-  body::after {
-    content: ''; position: fixed;
-    top: -40%; left: -20%; width: 60%; height: 80%;
-    background: radial-gradient(ellipse, rgba(0,212,255,0.035) 0%, transparent 70%);
-    pointer-events: none; z-index: 0;
-  }
-
-  .container { position: relative; z-index: 1; max-width: 1440px; margin: 0 auto; padding: 24px 28px; }
-
-  /* HEADER */
-  header { text-align: center; padding: 44px 0 36px; border-bottom: 1px solid var(--border); margin-bottom: 36px; }
-  .header-eyebrow { font-size: 0.63rem; letter-spacing: 5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; }
-  header h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(2.4rem, 6vw, 4rem); font-weight: 800;
-    background: linear-gradient(135deg, var(--accent) 0%, var(--accent3) 45%, var(--gold) 100%);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    letter-spacing: -3px; line-height: 1;
-  }
-  header .sub { color: var(--text-muted); margin-top: 10px; font-size: 0.7rem; letter-spacing: 2px; }
-  .badges { display: flex; gap: 8px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
-  .badge { display: inline-block; font-size: 0.6rem; padding: 3px 12px; border-radius: 20px; letter-spacing: 2px; text-transform: uppercase; }
-  .badge-blue  { background: rgba(0,212,255,0.08);  border: 1px solid rgba(0,212,255,0.3);  color: var(--accent); }
-  .badge-green { background: rgba(0,255,157,0.08);  border: 1px solid rgba(0,255,157,0.3);  color: var(--accent3); }
-  .badge-gold  { background: rgba(255,215,0,0.08);  border: 1px solid rgba(255,215,0,0.3);  color: var(--gold); }
-
-  /* PANELS */
-  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px; position: relative; overflow: hidden; }
-  .panel::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent), transparent 60%); }
-  .panel.gold-top::before   { background: linear-gradient(90deg, var(--gold), transparent 60%); }
-  .panel.green-top::before  { background: linear-gradient(90deg, var(--accent3), transparent 60%); }
-  .panel.purple-top::before { background: linear-gradient(90deg, var(--purple), transparent 60%); }
-  .panel h2 { font-family: 'Syne', sans-serif; font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
-  .panel h2.gold   { color: var(--gold); }
-  .panel h2.green  { color: var(--accent3); }
-  .panel h2.purple { color: var(--purple); }
-
-  /* SETUP */
-  .setup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
-  @media (max-width: 900px) { .setup-grid { grid-template-columns: 1fr; } }
-
-  .info-box { background: rgba(0,212,255,0.04); border: 1px solid rgba(0,212,255,0.15); border-radius: 10px; padding: 14px 18px; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 24px; line-height: 1.8; }
-  .info-box strong { color: var(--accent); }
-  .info-box .hl { color: var(--accent3); }
-
-  /* UPLOADS */
-  .upload-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-  @media (max-width: 700px) { .upload-row { grid-template-columns: 1fr; } }
-
-  .upload-zone { border: 2px dashed var(--border); border-radius: 10px; padding: 22px 14px; text-align: center; cursor: pointer; transition: all 0.2s; background: rgba(0,212,255,0.015); }
-  .upload-zone:hover, .upload-zone.drag-over { border-color: var(--accent); background: rgba(0,212,255,0.05); }
-  .upload-zone.py-zone { border-color: rgba(167,139,250,0.35); background: rgba(167,139,250,0.018); }
-  .upload-zone.py-zone:hover { border-color: var(--purple); background: rgba(167,139,250,0.05); }
-  .upload-zone input { display: none; }
-  .upload-icon { font-size: 1.5rem; margin-bottom: 6px; opacity: 0.75; }
-  .upload-zone p { color: var(--text-muted); font-size: 0.68rem; line-height: 1.6; }
-  .upload-zone p strong { color: var(--text); }
-  .files-loaded { color: var(--accent3); font-size: 0.7rem; margin-top: 6px; font-weight: 700; }
-  .py-loaded    { color: var(--purple);   font-size: 0.7rem; margin-top: 6px; font-weight: 700; }
-
-  label { display: block; font-size: 0.63rem; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px; margin-top: 16px; }
-
-  textarea, input[type="number"] { width: 100%; background: var(--surface2); border: 1px solid var(--border); color: var(--text); font-family: 'Space Mono', monospace; font-size: 0.74rem; border-radius: 8px; padding: 10px 14px; outline: none; transition: border-color 0.2s; resize: vertical; }
-  textarea:focus, input:focus { border-color: var(--accent); }
-  textarea { min-height: 220px; line-height: 1.7; }
-
-  /* DEMO CODE */
-  .demo-code-block { background: #0d1117; border: 1px solid var(--border); border-radius: 8px; padding: 16px; font-size: 0.7rem; line-height: 1.85; overflow-x: auto; white-space: pre; position: relative; }
-  .demo-code-block .kw  { color: #ff79c6; }
-  .demo-code-block .fn  { color: #50fa7b; }
-  .demo-code-block .st  { color: #f1fa8c; }
-  .demo-code-block .cm  { color: #6272a4; font-style: italic; }
-  .demo-code-block .num { color: #bd93f9; }
-  .demo-code-block .cls { color: #8be9fd; }
-  .demo-copy-btn { position: absolute; top: 10px; right: 10px; background: var(--surface3); border: 1px solid var(--border); color: var(--text-muted); font-family: 'Space Mono', monospace; font-size: 0.6rem; padding: 4px 10px; border-radius: 4px; cursor: pointer; letter-spacing: 1px; text-transform: uppercase; }
-  .demo-copy-btn:hover { color: var(--accent); border-color: var(--accent); }
-
-  .hint-box { font-size: 0.63rem; color: var(--text-muted); margin-top: 10px; line-height: 1.75; padding: 10px 14px; background: rgba(0,0,0,0.2); border-radius: 8px; border-left: 2px solid var(--accent2); }
-  .hint-box code { color: var(--accent); background: rgba(0,212,255,0.09); padding: 1px 5px; border-radius: 3px; }
-
-  /* BOT ROSTER */
-  .bot-roster { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  @media (max-width: 600px) { .bot-roster { grid-template-columns: 1fr; } }
-
-  .bot-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
-  .bot-card .bot-name  { font-family: 'Syne', sans-serif; font-size: 0.78rem; font-weight: 700; margin-bottom: 2px; }
-  .bot-card .bot-type  { font-size: 0.58rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
-  .bot-card .bot-desc  { color: var(--text-muted); font-size: 0.63rem; line-height: 1.6; }
-  .bot-card.mm1 { border-color: rgba(0,212,255,0.28); }   .bot-card.mm1 .bot-name { color: var(--accent); }
-  .bot-card.mm2 { border-color: rgba(0,255,157,0.28); }   .bot-card.mm2 .bot-name { color: var(--accent3); }
-  .bot-card.nt1 { border-color: rgba(255,107,53,0.28); }  .bot-card.nt1 .bot-name { color: var(--accent2); }
-  .bot-card.nt2 { border-color: rgba(255,71,87,0.28); }   .bot-card.nt2 .bot-name { color: var(--danger); }
-
-  .locked-info { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 9px 14px; font-size: 0.63rem; color: var(--text-muted); margin-top: 12px; display: flex; align-items: center; gap: 8px; }
-
-  /* BUTTONS */
-  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 24px; border-radius: 8px; border: none; font-family: 'Space Mono', monospace; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; letter-spacing: 1px; text-transform: uppercase; }
-  .btn-primary { background: linear-gradient(135deg, var(--accent) 0%, #0099cc 100%); color: #000; font-weight: 700; width: 100%; justify-content: center; margin-top: 20px; }
-  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,212,255,0.25); }
-  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
-  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
-  .btn-danger { background: var(--surface2); color: var(--danger); border: 1px solid rgba(255,71,87,0.35); }
-  .btn-danger:hover { border-color: var(--danger); background: rgba(255,71,87,0.07); }
-  .btn-green  { background: linear-gradient(135deg, var(--accent3), #00cc7a); color: #000; font-weight: 700; }
-  .btn-green:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,255,157,0.25); }
-
-  #strategy-error { background: rgba(255,71,87,0.07); border: 1px solid rgba(255,71,87,0.35); color: var(--danger); padding: 8px 12px; border-radius: 6px; font-size: 0.67rem; margin-top: 8px; display: none; line-height: 1.5; }
-
-  /* SIM VIEW */
-  #sim-view { display: none; }
-
-  .final-banner { display: none; background: linear-gradient(135deg, rgba(0,255,157,0.07), rgba(0,212,255,0.07)); border: 1px solid rgba(0,255,157,0.3); border-radius: 14px; padding: 28px; text-align: center; margin-bottom: 28px; }
-  .final-banner h2 { font-family: 'Syne', sans-serif; font-size: 0.9rem; letter-spacing: 4px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
-  .final-pnl { font-size: 3rem; font-family: 'Syne', sans-serif; font-weight: 800; line-height: 1; }
-  .final-pnl.positive { color: var(--success); }
-  .final-pnl.negative { color: var(--danger); }
-
-  .day-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-  .day-tab { padding: 6px 16px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface2); color: var(--text-muted); font-family: 'Space Mono', monospace; font-size: 0.68rem; cursor: pointer; transition: all 0.2s; }
-  .day-tab.active { border-color: var(--accent); color: var(--accent); background: rgba(0,212,255,0.08); }
-  .day-tab:hover { border-color: var(--accent); color: var(--accent); }
-
-  .sim-controls { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
-  .speed-control { display: flex; align-items: center; gap: 8px; margin-left: auto; }
-  .speed-control label { font-size: 0.62rem; color: var(--text-muted); margin: 0; }
-  .speed-control input { width: 76px; padding: 6px 8px; }
-
-  .progress-bar { height: 3px; background: var(--surface2); border-radius: 2px; margin-bottom: 20px; overflow: hidden; }
-  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3)); border-radius: 2px; transition: width 0.08s; width: 0%; }
-
-  .error-msg { background: rgba(255,71,87,0.07); border: 1px solid rgba(255,71,87,0.35); color: var(--danger); padding: 10px 14px; border-radius: 8px; font-size: 0.7rem; margin-bottom: 14px; display: none; }
-
-  .stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 24px; }
-  @media (max-width: 1100px) { .stats-row { grid-template-columns: repeat(3,1fr); } }
-  @media (max-width: 600px)  { .stats-row { grid-template-columns: repeat(2,1fr); } }
-
-  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 14px; position: relative; overflow: hidden; }
-  .stat-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; }
-  .stat-card.pnl::after  { background: var(--accent3); }
-  .stat-card.cash::after { background: var(--gold); }
-  .stat-card.pos::after  { background: var(--accent); }
-  .stat-card.fair::after { background: var(--accent2); }
-  .stat-card.step::after { background: var(--text-muted); }
-  .stat-label { font-size: 0.57rem; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
-  .stat-value { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; line-height: 1; }
-  .stat-value.positive { color: var(--success); }
-  .stat-value.negative { color: var(--danger); }
-  .stat-value.neutral  { color: var(--text); }
-
-  .chart-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 24px; }
-  @media (max-width: 900px) { .chart-grid { grid-template-columns: 1fr; } }
-  .chart-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
-  .chart-panel h3 { font-size: 0.62rem; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
-
-  .book-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-  .book-side h4 { font-size: 0.62rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
-  .book-side.bids h4 { color: var(--success); }
-  .book-side.asks h4 { color: var(--danger); }
-  .book-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 10px; border-radius: 4px; font-size: 0.7rem; margin-bottom: 3px; }
-  .book-row.bid { background: rgba(0,255,157,0.04); }
-  .book-row.ask { background: rgba(255,71,87,0.04); }
-  .book-row .price { font-weight: 700; }
-  .book-row.bid .price { color: var(--success); }
-  .book-row.ask .price { color: var(--danger); }
-  .book-row .vol { color: var(--text-muted); font-size: 0.64rem; }
-
-  .trade-log { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 24px; }
-  .trade-log h3 { font-size: 0.62rem; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
-  .log-table { width: 100%; border-collapse: collapse; font-size: 0.67rem; }
-  .log-table th { text-align: left; padding: 6px 10px; color: var(--text-muted); font-weight: 400; letter-spacing: 1px; text-transform: uppercase; font-size: 0.57rem; border-bottom: 1px solid var(--border); }
-  .log-table td { padding: 6px 10px; border-bottom: 1px solid rgba(30,58,95,0.2); }
-  .log-table tr:hover td { background: rgba(255,255,255,0.01); }
-  .tag-buy  { color: var(--success); }
-  .tag-sell { color: var(--danger); }
-  .tag-bot  { color: var(--text-muted); font-size: 0.6rem; }
-
-  .bot-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
-  .dot-mm1 { background: var(--accent); }
-  .dot-mm2 { background: var(--accent3); }
-  .dot-nt1 { background: var(--accent2); }
-  .dot-nt2 { background: var(--danger); }
-  .dot-mkt { background: var(--text-muted); }
-</style>
-</head>
-<body>
-<div class="container">
-
-  <!-- HEADER -->
-  <header>
-    <div class="header-eyebrow">IMC Prosperity · Round 1</div>
-    <h1>PEARLS SIMULATOR</h1>
-    <p class="sub">Upload your strategy · Backtest against live bots · Discover the fair value</p>
-    <div class="badges">
-      <span class="badge badge-blue">⬡ Market Microstructure</span>
-      <span class="badge badge-green">✦ 4 Active Bots</span>
-      <span class="badge badge-gold">⚑ Position Limit ±20</span>
-    </div>
-  </header>
-
-  <!-- ══════════ SETUP VIEW ══════════ -->
-  <div id="setup-view">
-
-    <div class="info-box">
-      <strong>How it works:</strong> Upload your CSV price files + your Python strategy file.
-      The engine calls your <span class="hl">strategy(row, position, step)</span> function at every timestep,
-      matches your orders against 4 bots and the real order book, and tracks
-      <strong>PnL = Cash + Position × Fair Value</strong>.
-      The fair value formula is hidden — your job is to figure it out.
-    </div>
-
-    <div class="setup-grid">
-
-      <!-- LEFT: uploads + bot roster -->
-      <div class="panel purple-top">
-        <h2 class="purple">⬆ Upload Files</h2>
-
-        <div class="upload-row">
-          <div class="upload-zone" id="drop-zone" onclick="document.getElementById('csv-input').click()">
-            <div class="upload-icon">📊</div>
-            <p><strong>CSV Data Files</strong><br>prices_round_1_day_-2.csv<br>through day_2.csv</p>
-            <div class="files-loaded" id="files-loaded"></div>
-            <input type="file" id="csv-input" multiple accept=".csv">
-          </div>
-          <div class="upload-zone py-zone" id="py-drop-zone" onclick="document.getElementById('py-input').click()">
-            <div class="upload-icon">🐍</div>
-            <p><strong>Strategy .py File</strong><br>Must contain a<br><code style="color:var(--purple);font-size:0.65rem;">strategy(row,position,step)</code> fn</p>
-            <div class="py-loaded" id="py-loaded"></div>
-            <input type="file" id="py-input" accept=".py">
-          </div>
-        </div>
-
-        <label>Active Bots (Fixed — cannot be changed)</label>
-        <div class="bot-roster">
-          <div class="bot-card mm1">
-            <div class="bot-name">🔵 MM Alpha</div>
-            <div class="bot-type" style="color:var(--accent)">Market Maker · v1</div>
-            <div class="bot-desc">Quotes around a volume-weighted fair value. Spread is derived from the current book depth and recent volatility signal.</div>
-          </div>
-          <div class="bot-card mm2">
-            <div class="bot-name">🟢 MM Beta</div>
-            <div class="bot-type" style="color:var(--accent3)">Market Maker · v2</div>
-            <div class="bot-desc">Uses a momentum-shifted fair price anchored to order flow imbalance. Widens spread dynamically under pressure.</div>
-          </div>
-          <div class="bot-card nt1">
-            <div class="bot-name">🟠 Noise Alpha</div>
-            <div class="bot-type" style="color:var(--accent2)">Noise Trader · v1</div>
-            <div class="bot-desc">Fires random-direction, random-size orders. Occasionally crosses the spread to create urgency.</div>
-          </div>
-          <div class="bot-card nt2">
-            <div class="bot-name">🔴 Noise Beta</div>
-            <div class="bot-type" style="color:var(--danger)">Noise Trader · v2</div>
-            <div class="bot-desc">Mean-reverting noise around 10 000. Buys below anchor, sells above it — size scales with distance.</div>
-          </div>
-        </div>
-
-        <div class="locked-info">
-          🔒 &nbsp;Bot logic, position limit (±20), and fair value formula are fixed and cannot be modified.
-        </div>
-      </div>
-
-      <!-- RIGHT: strategy contract reference -->
-      <div class="panel green-top">
-        <h2 class="green">&#x1F40D; Strategy Contract</h2>
-
-        <div class="demo-code-block"><span class="cm"># Your .py file must define this function:</span>
-
-<span class="kw">def</span> <span class="fn">strategy</span>(row, position, step):
-    <span class="cm"># row      -- dict, one timestep of order-book data
-    # position -- int,  your current PEARLS holding (max ±20)
-    # step     -- int,  timestep index (0-based)
-
-    # Example: simple ±1 market-making around mid</span>
-    best_bid = row[<span class="st">"bid_price_1"</span>]
-    best_ask = row[<span class="st">"ask_price_1"</span>]
-    mid = (best_bid + best_ask) / <span class="num">2</span>
-
-    <span class="kw">return</span> {
-        <span class="st">"bid"</span>:     <span class="fn">int</span>(mid) - <span class="num">1</span>,   <span class="cm"># limit buy price</span>
-        <span class="st">"ask"</span>:     <span class="fn">int</span>(mid) + <span class="num">1</span>,   <span class="cm"># limit sell price</span>
-        <span class="st">"bid_qty"</span>: <span class="num">3</span>,             <span class="cm"># units to buy</span>
-        <span class="st">"ask_qty"</span>: <span class="num">3</span>,             <span class="cm"># units to sell</span>
+    :root {
+      --bg: #080c18;
+      --surface: #0f1624;
+      --surface2: #161f30;
+      --surface3: #1c2840;
+      --border: #1e3a5f;
+      --accent: #00d4ff;
+      --accent2: #ff6b35;
+      --accent3: #00ff9d;
+      --text: #e2e8f0;
+      --text-muted: #4a6080;
+      --danger: #ff4757;
+      --success: #00ff9d;
+      --gold: #ffd700;
+      --purple: #a78bfa;
+      --coconut: #ffb142;
+      --pina: #34ace0;
     }
-</div>
 
-        <div id="strategy-error"></div>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        <div class="hint-box" style="margin-top:14px;">
-          <strong style="color:var(--accent2)">Available row keys</strong><br>
-          <code>bid_price_1</code> &nbsp;<code>bid_volume_1</code> &nbsp;&#8212; best bid<br>
-          <code>ask_price_1</code> &nbsp;<code>ask_volume_1</code> &nbsp;&#8212; best ask<br>
-          <code>bid_price_2</code> &nbsp;<code>bid_price_3</code> &nbsp;&#8212; deeper bids<br>
-          <code>ask_price_2</code> &nbsp;<code>ask_price_3</code> &nbsp;&#8212; deeper asks<br>
-          <code>bid_volume_2/3</code> &nbsp;<code>ask_volume_2/3</code><br><br>
-          <strong style="color:var(--accent2)">Supported Python builtins</strong><br>
-          <code>int()</code> &nbsp;<code>abs()</code> &nbsp;<code>min()</code> &nbsp;<code>max()</code> &nbsp;<code>round()</code> &nbsp;<code>float()</code><br><br>
-          <strong style="color:var(--accent2)">Rules</strong><br>
-          Position capped at <strong style="color:var(--text)">&#177;20</strong>. Oversized orders are trimmed automatically.
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 212, 255, 0.022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 212, 255, 0.022) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: -40%;
+      left: -20%;
+      width: 60%;
+      height: 80%;
+      background: radial-gradient(ellipse, rgba(0, 212, 255, 0.035) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 24px 28px;
+    }
+
+    /* HEADER */
+    header {
+      text-align: center;
+      padding: 44px 0 36px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 36px;
+    }
+
+    .header-eyebrow {
+      font-size: 0.63rem;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    header h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--coconut) 0%, var(--pina) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -3px;
+      line-height: 1;
+    }
+
+    header .sub {
+      color: var(--text-muted);
+      margin-top: 10px;
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+    }
+
+    .badges {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.6rem;
+      padding: 3px 12px;
+      border-radius: 20px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .badge-blue {
+      background: rgba(0, 212, 255, 0.08);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      color: var(--accent);
+    }
+
+    .badge-green {
+      background: rgba(0, 255, 157, 0.08);
+      border: 1px solid rgba(0, 255, 157, 0.3);
+      color: var(--accent3);
+    }
+
+    .badge-gold {
+      background: rgba(255, 215, 0, 0.08);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      color: var(--gold);
+    }
+
+    .badge-coconut {
+      background: rgba(255, 177, 66, 0.08);
+      border: 1px solid rgba(255, 177, 66, 0.3);
+      color: var(--coconut);
+    }
+
+    .badge-pina {
+      background: rgba(52, 172, 224, 0.08);
+      border: 1px solid rgba(52, 172, 224, 0.3);
+      color: var(--pina);
+    }
+
+    /* PANELS */
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent 60%);
+    }
+
+    .panel.gold-top::before {
+      background: linear-gradient(90deg, var(--gold), transparent 60%);
+    }
+
+    .panel.green-top::before {
+      background: linear-gradient(90deg, var(--pina), transparent 60%);
+    }
+
+    .panel.purple-top::before {
+      background: linear-gradient(90deg, var(--coconut), transparent 60%);
+    }
+
+    .panel h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 18px;
+    }
+
+    .panel h2.gold {
+      color: var(--gold);
+    }
+
+    .panel h2.green {
+      color: var(--pina);
+    }
+
+    .panel h2.purple {
+      color: var(--coconut);
+    }
+
+    /* SETUP */
+    .setup-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 1000px) {
+      .setup-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .info-box {
+      background: rgba(0, 212, 255, 0.04);
+      border: 1px solid rgba(0, 212, 255, 0.15);
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      line-height: 1.8;
+    }
+
+    .info-box strong {
+      color: var(--accent);
+    }
+
+    .info-box .hl {
+      color: var(--accent3);
+    }
+
+    /* UPLOADS */
+    .upload-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 700px) {
+      .upload-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: 10px;
+      padding: 22px 14px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: rgba(0, 212, 255, 0.015);
+    }
+
+    .upload-zone:hover,
+    .upload-zone.drag-over {
+      border-color: var(--coconut);
+      background: rgba(255, 177, 66, 0.05);
+    }
+
+    .upload-zone.py-zone {
+      border-color: rgba(52, 172, 224, 0.35);
+      background: rgba(52, 172, 224, 0.018);
+    }
+
+    .upload-zone.py-zone:hover {
+      border-color: var(--pina);
+      background: rgba(52, 172, 224, 0.05);
+    }
+
+    .upload-zone input {
+      display: none;
+    }
+
+    .upload-icon {
+      font-size: 1.5rem;
+      margin-bottom: 6px;
+      opacity: 0.75;
+    }
+
+    .upload-zone p {
+      color: var(--text-muted);
+      font-size: 0.68rem;
+      line-height: 1.6;
+    }
+
+    .upload-zone p strong {
+      color: var(--text);
+    }
+
+    .files-loaded {
+      color: var(--coconut);
+      font-size: 0.7rem;
+      margin-top: 6px;
+      font-weight: 700;
+    }
+
+    .py-loaded {
+      color: var(--pina);
+      font-size: 0.7rem;
+      margin-top: 6px;
+      font-weight: 700;
+    }
+
+    label {
+      display: block;
+      font-size: 0.63rem;
+      color: var(--text-muted);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      margin-top: 16px;
+    }
+
+    textarea,
+    input[type="number"] {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.74rem;
+      border-radius: 8px;
+      padding: 10px 14px;
+      outline: none;
+      transition: border-color 0.2s;
+      resize: vertical;
+    }
+
+    textarea:focus,
+    input:focus {
+      border-color: var(--accent);
+    }
+
+    textarea {
+      min-height: 220px;
+      line-height: 1.7;
+    }
+
+    /* DEMO CODE */
+    .demo-code-block {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      font-size: 0.7rem;
+      line-height: 1.85;
+      overflow-x: auto;
+      white-space: pre;
+      position: relative;
+    }
+
+    .code-editor {
+      width: 100%;
+      height: 480px;
+      background: #050810;
+      color: #e2e8f0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85rem;
+      resize: vertical;
+      line-height: 1.5;
+      outline: none;
+      white-space: pre;
+      tab-size: 4;
+    }
+
+    .code-editor:focus {
+      border-color: var(--pina);
+      box-shadow: 0 0 10px rgba(52, 172, 224, 0.15);
+    }
+
+    .demo-code-block .kw {
+      color: #ff79c6;
+    }
+
+    .demo-code-block .fn {
+      color: #50fa7b;
+    }
+
+    .demo-code-block .st {
+      color: #f1fa8c;
+    }
+
+    .demo-code-block .cm {
+      color: #6272a4;
+      font-style: italic;
+    }
+
+    .demo-code-block .num {
+      color: #bd93f9;
+    }
+
+    .demo-code-block .cls {
+      color: #8be9fd;
+    }
+
+    .hint-box {
+      font-size: 0.63rem;
+      color: var(--text-muted);
+      margin-top: 10px;
+      line-height: 1.75;
+      padding: 10px 14px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      border-left: 2px solid var(--pina);
+    }
+
+    .hint-box code {
+      color: var(--accent);
+      background: rgba(0, 212, 255, 0.09);
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+
+    /* BOT ROSTER */
+    .bot-roster {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .bot-roster {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .bot-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+
+    .bot-card .bot-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .bot-card .bot-type {
+      font-size: 0.58rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .bot-card .bot-desc {
+      color: var(--text-muted);
+      font-size: 0.63rem;
+      line-height: 1.6;
+    }
+
+    .bot-card.mm1 {
+      border-color: rgba(0, 212, 255, 0.28);
+    }
+
+    .bot-card.mm1 .bot-name {
+      color: var(--accent);
+    }
+
+    .bot-card.mm2 {
+      border-color: rgba(0, 255, 157, 0.28);
+    }
+
+    .bot-card.mm2 .bot-name {
+      color: var(--accent3);
+    }
+
+    .bot-card.nt1 {
+      border-color: rgba(255, 107, 53, 0.28);
+    }
+
+    .bot-card.nt1 .bot-name {
+      color: var(--accent2);
+    }
+
+    .bot-card.nt2 {
+      border-color: rgba(255, 71, 87, 0.28);
+    }
+
+    .bot-card.nt2 .bot-name {
+      color: var(--danger);
+    }
+
+    .bot-card.sa1 {
+      border-color: rgba(167, 139, 250, 0.28);
+    }
+
+    .bot-card.sa1 .bot-name {
+      color: var(--purple);
+    }
+
+    .locked-info {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 14px;
+      font-size: 0.63rem;
+      color: var(--text-muted);
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* BUTTONS */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 24px;
+      border-radius: 8px;
+      border: none;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--coconut) 0%, var(--pina) 100%);
+      color: #000;
+      font-weight: 700;
+      width: 100%;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(52, 172, 224, 0.25);
+    }
+
+    .btn-secondary {
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-danger {
+      background: var(--surface2);
+      color: var(--danger);
+      border: 1px solid rgba(255, 71, 87, 0.35);
+    }
+
+    .btn-danger:hover {
+      border-color: var(--danger);
+      background: rgba(255, 71, 87, 0.07);
+    }
+
+    .btn-green {
+      background: linear-gradient(135deg, var(--accent3), #00cc7a);
+      color: #000;
+      font-weight: 700;
+    }
+
+    .btn-green:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(0, 255, 157, 0.25);
+    }
+
+    #strategy-error {
+      background: rgba(255, 71, 87, 0.07);
+      border: 1px solid rgba(255, 71, 87, 0.35);
+      color: var(--danger);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.67rem;
+      margin-top: 8px;
+      display: none;
+      line-height: 1.5;
+    }
+
+    /* SIM VIEW */
+    #sim-view {
+      display: none;
+    }
+
+    .final-banner {
+      display: none;
+      background: linear-gradient(135deg, rgba(0, 255, 157, 0.07), rgba(0, 212, 255, 0.07));
+      border: 1px solid rgba(0, 255, 157, 0.3);
+      border-radius: 14px;
+      padding: 28px;
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .final-banner h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.9rem;
+      letter-spacing: 4px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .final-pnl {
+      font-size: 3rem;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .final-pnl.positive {
+      color: var(--success);
+    }
+
+    .final-pnl.negative {
+      color: var(--danger);
+    }
+
+    .day-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .day-tab {
+      padding: 6px 16px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text-muted);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.68rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .day-tab.active {
+      border-color: var(--pina);
+      color: var(--pina);
+      background: rgba(52, 172, 224, 0.08);
+    }
+
+    .day-tab:hover {
+      border-color: var(--pina);
+      color: var(--pina);
+    }
+
+    .sim-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .speed-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+    }
+
+    .speed-control label {
+      font-size: 0.62rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    .speed-control input {
+      width: 76px;
+      padding: 6px 8px;
+    }
+
+    .progress-bar {
+      height: 3px;
+      background: var(--surface2);
+      border-radius: 2px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--coconut), var(--pina));
+      border-radius: 2px;
+      transition: width 0.08s;
+      width: 0%;
+    }
+
+    .error-msg {
+      background: rgba(255, 71, 87, 0.07);
+      border: 1px solid rgba(255, 71, 87, 0.35);
+      color: var(--danger);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.7rem;
+      margin-bottom: 14px;
+      display: none;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 14px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+    }
+
+    .stat-card.pnl::after {
+      background: var(--accent3);
+    }
+
+    .stat-card.cash::after {
+      background: var(--gold);
+    }
+
+    .stat-card.pos-c::after {
+      background: var(--coconut);
+    }
+
+    .stat-card.pos-p::after {
+      background: var(--pina);
+    }
+
+    .stat-label {
+      font-size: 0.57rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .stat-value.positive {
+      color: var(--success);
+    }
+
+    .stat-value.negative {
+      color: var(--danger);
+    }
+
+    .stat-value.neutral {
+      color: var(--text);
+    }
+
+    .chart-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .chart-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .chart-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .chart-panel h3 {
+      font-size: 0.62rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+
+    .books-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .bot-pnl-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .bot-pnl-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 1000px) {
+      .books-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .book-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .book-side h4 {
+      font-size: 0.62rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .book-side.bids h4 {
+      color: var(--success);
+    }
+
+    .book-side.asks h4 {
+      color: var(--danger);
+    }
+
+    .book-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      margin-bottom: 3px;
+    }
+
+    .book-row.bid {
+      background: rgba(0, 255, 157, 0.04);
+    }
+
+    .book-row.ask {
+      background: rgba(255, 71, 87, 0.04);
+    }
+
+    .book-row .price {
+      font-weight: 700;
+    }
+
+    .book-row.bid .price {
+      color: var(--success);
+    }
+
+    .book-row.ask .price {
+      color: var(--danger);
+    }
+
+    .book-row .vol {
+      color: var(--text-muted);
+      font-size: 0.64rem;
+    }
+
+    .trade-log {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .trade-log h3 {
+      font-size: 0.62rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+
+    .log-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.67rem;
+    }
+
+    .log-table th {
+      text-align: left;
+      padding: 6px 10px;
+      color: var(--text-muted);
+      font-weight: 400;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-size: 0.57rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .log-table td {
+      padding: 6px 10px;
+      border-bottom: 1px solid rgba(30, 58, 95, 0.2);
+    }
+
+    .log-table tr:hover td {
+      background: rgba(255, 255, 255, 0.01);
+    }
+
+    .tag-buy {
+      color: var(--success);
+    }
+
+    .tag-sell {
+      color: var(--danger);
+    }
+
+    .tag-bot {
+      color: var(--text-muted);
+      font-size: 0.6rem;
+    }
+
+    .tag-coconut {
+      color: var(--coconut);
+      font-weight: 700;
+    }
+
+    .tag-pina {
+      color: var(--pina);
+      font-weight: 700;
+    }
+
+    .bot-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+
+    .dot-mm1 {
+      background: var(--accent);
+    }
+
+    .dot-mm2 {
+      background: var(--accent3);
+    }
+
+    .dot-nt1 {
+      background: var(--accent2);
+    }
+
+    .dot-nt2 {
+      background: var(--danger);
+    }
+
+    .dot-sa1 {
+      background: var(--purple);
+    }
+
+    .dot-mkt {
+      background: var(--text-muted);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <!-- HEADER -->
+    <header>
+      <div class="header-eyebrow">IMC Prosperity · Round 2</div>
+      <h1>COCONUTS & PINA COLADAS<br>SIMULATOR</h1>
+      <p class="sub">Upload your strategy · Discover the connection · Beat the Arbitrageurs</p>
+      <div class="badges">
+        <span class="badge badge-blue">&#8645; Multi-Asset Market</span>
+        <span class="badge badge-green">&#10022; 5 Active Bots</span>
+        <span class="badge badge-coconut">Coconuts Limit: &plusmn;600</span>
+        <span class="badge badge-pina">Pina Coladas Limit: &plusmn;300</span>
+      </div>
+    </header>
+
+    <!-- ---------- SETUP VIEW ---------- -->
+    <div id="setup-view">
+      <div class="info-box">
+        <strong>The Challenge:</strong> You are tasked with trading two assets: <strong>COCONUTS</strong> and
+        <strong>PINA_COLADAS</strong>.
+        Upload the historical price data and your Python trading logic. The engine will call your <span
+          class="hl">strategy()</span> function at every timestep, providing the order books and your current inventory
+        for both assets. Your PnL is continuously evaluated at the current market Mid-Prices.
+      </div>
+
+      <div class="setup-grid">
+        <!-- LEFT: uploads + bot roster -->
+        <div class="panel purple-top">
+          <h2 class="purple">&#11014; Upload Files</h2>
+
+          <div class="upload-row">
+            <div class="upload-zone" id="drop-zone" onclick="document.getElementById('csv-input').click()">
+              <div class="upload-icon">📊</div>
+              <p><strong>Round 2 CSV Data Files</strong><br>prices_round_2_day_-1.csv<br>through day_1.csv</p>
+              <div class="files-loaded" id="files-loaded"></div>
+              <input type="file" id="csv-input" multiple accept=".csv">
+            </div>
+            <div class="upload-zone py-zone" id="py-drop-zone" onclick="document.getElementById('py-input').click()">
+              <div class="upload-icon">&#128013;</div>
+              <p><strong>Strategy .py File</strong><br>Must contain a<br><code
+                  style="color:var(--pina);font-size:0.65rem;">strategy(...)</code> fn</p>
+              <div class="py-loaded" id="py-loaded"></div>
+              <input type="file" id="py-input" accept=".py">
+            </div>
+          </div>
+
+          <label>Active Bots (Fixed — cannot be changed)</label>
+          <div class="bot-roster">
+            <div class="bot-card mm1">
+              <div class="bot-name">&#128309; MM Alpha</div>
+              <div class="bot-type" style="color:var(--accent)">Market Maker</div>
+              <div class="bot-desc">Quotes symmetrically around volume-weighted mid. Trades independently on both
+                assets.</div>
+            </div>
+            <div class="bot-card mm2">
+              <div class="bot-name">&#128994; MM Beta</div>
+              <div class="bot-type" style="color:var(--accent3)">Momentum MM</div>
+              <div class="bot-desc">Shifts quotes using order flow imbalance. Trades independently on both assets.</div>
+            </div>
+            <div class="bot-card nt1">
+              <div class="bot-name">&#128993; Noise Alpha</div>
+              <div class="bot-type" style="color:var(--accent2)">Random Noise</div>
+              <div class="bot-desc">Fires random-direction orders on both assets to create noise.</div>
+            </div>
+            <div class="bot-card nt2">
+              <div class="bot-name">&#128308; Noise Beta</div>
+              <div class="bot-type" style="color:var(--danger)">Mean Reversion</div>
+              <div class="bot-desc">Trades against local spikes on a short-term moving average.</div>
+            </div>
+            <div class="bot-card sa1" style="grid-column: 1 / -1;">
+              <div class="bot-name">&#128995; StatArb Alpha</div>
+              <div class="bot-type" style="color:var(--purple)">Advanced Strategy Bot</div>
+              <div class="bot-desc">Monitors both assets simultaneously. If it spots a pricing inefficiency between
+                them, it will aggressively cross the spread to capture the arbitrage.</div>
+            </div>
+          </div>
         </div>
 
-        <button class="btn btn-primary" onclick="startSimulation()">&#9654; RUN SIMULATION</button>
+        <!-- RIGHT: strategy contract reference -->
+        <div class="panel green-top">
+          <h2 class="green">&#x1F40D; Strategy Contract</h2>
+
+          <div id="editor-container" style="position:relative;">
+            <textarea id="code-editor" class="code-editor" spellcheck="false"
+              placeholder="# Write your strategy here..."></textarea>
+            <div id="save-status"
+              style="position:absolute; bottom:10px; right:20px; font-size:0.7rem; color:var(--text-muted); opacity:0.7;">
+            </div>
+          </div>
+
+          <div id="strategy-error"></div>
+
+          <div class="hint-box" style="margin-top:14px;">
+            <strong style="color:var(--pina)">Important Rules</strong><br>
+            Positions are strictly capped at <strong style="color:var(--coconut)">&plusmn;600</strong> for Coconuts and
+            <strong style="color:var(--pina)">&plusmn;300</strong> for Pina Coladas. If your orders would exceed this,
+            the
+            exchange
+            engine will automatically reduce the size of your fill.<br><br>
+            If your algorithm does not want to trade an asset for a timestep, omit keys like `"bid"` and `"ask"` for
+            that asset.
+          </div>
+
+          <button class="btn btn-primary" onclick="startSimulation()">&#9654; RUN SIMULATION</button>
+        </div>
+      </div>
+    </div><!-- /setup-view -->
+
+    <!-- ---------- SIM VIEW ---------- -->
+    <div id="sim-view">
+      <div class="final-banner" id="final-banner">
+        <h2>Simulation Complete</h2>
+        <div class="final-pnl" id="final-pnl-display"></div>
+        <p style="color:var(--text-muted);margin-top:10px;font-size:0.68rem;">Total PnL Evaluated at Final Mid Prices
+        </p>
       </div>
 
-    </div>
-  </div><!-- /setup-view -->
+      <div class="day-tabs" id="day-tabs"></div>
 
-  <!-- ══════════ SIM VIEW ══════════ -->
-  <div id="sim-view">
-
-    <div class="final-banner" id="final-banner">
-      <h2>Simulation Complete</h2>
-      <div class="final-pnl" id="final-pnl-display"></div>
-      <p style="color:var(--text-muted);margin-top:10px;font-size:0.68rem;">Total PnL · Cash + Position × Fair Value</p>
-    </div>
-
-    <div class="day-tabs" id="day-tabs"></div>
-
-    <div class="sim-controls">
-      <button class="btn btn-green" id="run-btn" onclick="runAll()">▶▶ RUN ALL</button>
-      <button class="btn btn-secondary" onclick="stepOnce()">▶ STEP</button>
-      <button class="btn btn-danger" onclick="resetSim()">↺ RESET</button>
-      <div class="speed-control">
-        <label>DELAY (ms)</label>
-        <input type="number" id="speed-input" value="25" min="0" max="2000">
+      <div class="sim-controls">
+        <button class="btn btn-green" id="run-btn" onclick="runAll()">&#9654;&#9654; RUN ALL</button>
+        <button class="btn btn-secondary" onclick="stepOnce()">&#9654; STEP</button>
+        <button class="btn btn-danger" onclick="resetSim()">&#8634; RESET</button>
+        <div class="speed-control">
+          <label>DELAY (ms)</label>
+          <input type="number" id="speed-input" value="25" min="0" max="2000">
+        </div>
       </div>
-    </div>
 
-    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
-    <div class="error-msg" id="sim-error"></div>
-
-    <div class="stats-row">
-      <div class="stat-card pnl">  <div class="stat-label">Total PnL</div>  <div class="stat-value neutral" id="stat-pnl">0.00</div></div>
-      <div class="stat-card cash"> <div class="stat-label">Cash</div>        <div class="stat-value neutral" id="stat-cash">0.00</div></div>
-      <div class="stat-card pos">  <div class="stat-label">Position</div>    <div class="stat-value neutral" id="stat-pos">0</div></div>
-      <div class="stat-card fair"> <div class="stat-label">Fair Value (?)</div><div class="stat-value neutral" id="stat-fair">—</div></div>
-      <div class="stat-card step"> <div class="stat-label">Progress</div>    <div class="stat-value neutral" id="stat-step">0 / 0</div></div>
-    </div>
-
-    <div class="chart-grid">
-      <div class="chart-panel"><h3>📈 PnL Over Time</h3><canvas id="pnl-chart" height="160"></canvas></div>
-      <div class="chart-panel"><h3>📦 Position Over Time</h3><canvas id="pos-chart" height="160"></canvas></div>
-    </div>
-
-    <div class="panel" style="margin-bottom:20px;">
-      <h2>Order Book — PEARLS</h2>
-      <div class="book-grid">
-        <div class="book-side asks"><h4>Ask Side (Sellers)</h4><div id="book-asks"></div></div>
-        <div class="book-side bids"><h4>Bid Side (Buyers)</h4><div id="book-bids"></div></div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
       </div>
-    </div>
+      <div class="error-msg" id="sim-error"></div>
 
-    <div class="trade-log">
-      <h3>Trade Log &nbsp;
-        <span style="font-size:0.55rem;color:var(--text-muted);letter-spacing:0;text-transform:none;font-family:'Space Mono',monospace;">
-          <span class="bot-dot dot-mm1"></span>MM Alpha &nbsp;
-          <span class="bot-dot dot-mm2"></span>MM Beta &nbsp;
-          <span class="bot-dot dot-nt1"></span>Noise Alpha &nbsp;
-          <span class="bot-dot dot-nt2"></span>Noise Beta &nbsp;
-          <span class="bot-dot dot-mkt"></span>Market
-        </span>
-      </h3>
-      <div style="overflow-x:auto;max-height:280px;overflow-y:auto;">
-        <table class="log-table">
-          <thead><tr><th>Day</th><th>Timestamp</th><th>Side</th><th>Price</th><th>Qty</th><th>Counterparty</th><th>Cash Δ</th><th>Position</th><th>PnL</th></tr></thead>
-          <tbody id="trade-log-body"></tbody>
-        </table>
+      <div class="stats-row" style="margin-bottom: 8px;">
+        <div class="stat-card pnl">
+          <div class="stat-label">Total PnL</div>
+          <div class="stat-value neutral" id="stat-pnl">0.00</div>
+        </div>
+        <div class="stat-card cash">
+          <div class="stat-label">Cash</div>
+          <div class="stat-value neutral" id="stat-cash">0.00</div>
+        </div>
+        <div class="stat-card pos-c">
+          <div class="stat-label">Coconut Pos</div>
+          <div class="stat-value neutral" id="stat-pos-c">0</div>
+        </div>
+        <div class="stat-card pos-p">
+          <div class="stat-label">Pina Coladas Pos</div>
+          <div class="stat-value neutral" id="stat-pos-p">0</div>
+        </div>
+        <div class="stat-card steps">
+          <div class="stat-label">Time Step</div>
+          <div class="stat-value neutral" id="stat-step">0 / 0</div>
+        </div>
       </div>
+
+      <div class="chart-grid">
+        <div class="chart-panel">
+          <h3 style="color:var(--pina)">📈 Mid Price Observation</h3>
+          <canvas id="price-chart" height="160"></canvas>
+        </div>
+        <div class="chart-panel">
+          <h3>💰 Total PnL</h3>
+          <canvas id="pnl-chart" height="160"></canvas>
+        </div>
+      </div>
+
+      <div class="books-container">
+        <div class="panel purple-top">
+          <h2 class="purple">Coconuts Book</h2>
+          <div class="book-grid">
+            <div class="book-side asks">
+              <h4>Asks</h4>
+              <div id="book-asks-c"></div>
+            </div>
+            <div class="book-side bids">
+              <h4>Bids</h4>
+              <div id="book-bids-c"></div>
+            </div>
+          </div>
+        </div>
+        <div class="panel green-top">
+          <h2 class="green">Pina Coladas Book</h2>
+          <div class="book-grid">
+            <div class="book-side asks">
+              <h4>Asks</h4>
+              <div id="book-asks-p"></div>
+            </div>
+            <div class="book-side bids">
+              <h4>Bids</h4>
+              <div id="book-bids-p"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="trade-log">
+        <h3>Trade Log &nbsp;
+          <span
+            style="font-size:0.55rem;color:var(--text-muted);letter-spacing:0;text-transform:none;font-family:'Space Mono',monospace;">
+            <span class="bot-dot dot-mm1"></span>MM Alpha &nbsp;
+            <span class="bot-dot dot-mm2"></span>MM Beta &nbsp;
+            <span class="bot-dot dot-nt1"></span>Noise Alpha &nbsp;
+            <span class="bot-dot dot-nt2"></span>Noise Beta &nbsp;
+            <span class="bot-dot dot-sa1"></span>StatArb Alpha &nbsp;
+            <span class="bot-dot dot-mkt"></span>Market
+          </span>
+        </h3>
+        <div style="overflow-x:auto;max-height:280px;overflow-y:auto;">
+          <table class="log-table">
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Timestamp</th>
+                <th>Asset</th>
+                <th>Side</th>
+                <th>Price</th>
+                <th>Qty</th>
+                <th>Counterparty</th>
+                <th>Cash &Delta;</th>
+                <th>PnL</th>
+              </tr>
+            </thead>
+            <tbody id="trade-log-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <button class="btn btn-secondary" onclick="resetSim()" style="margin-bottom:32px;">&larr; Back to Setup</button>
     </div>
+  </div><!-- /container -->
 
-    <button class="btn btn-secondary" onclick="resetSim()" style="margin-bottom:32px;">← Back to Setup</button>
-  </div>
+  <script>
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    //  Global State
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    let csvFiles = {}, dayOrder = [];
+    let timeSeries = [];
+    let strategySource = '';
+    let currentDayIdx = 0, currentStep = 0;
+    let cash = 0, posC = 0, posP = 0;
+    let pnlHistory = [], posCHistory = [], posPHistory = [], priceHistoryC = [], priceHistoryP = [];
+    let trades = [];
+    let runInterval = null, strategyFn = null;
+    const POS_LIMIT_C = 600;
+    const POS_LIMIT_P = 300;
+    let totalSteps = 0, completedSteps = 0;
+    let priceChart = null, pnlChart = null;
+    let pendingLogEntries = [];
+    let lastPnlValue = 0;
 
-</div><!-- /container -->
+    let _seed = 42;
+    function rng() { _seed = (_seed * 1664525 + 1013904223) >>> 0; return _seed / 0xFFFFFFFF; }
+    function resetRng() { _seed = 42; }
 
-<script>
-// ════════════════════════════════════════════════════════════════════════════
-//  STATE
-// ════════════════════════════════════════════════════════════════════════════
-let csvFiles = {}, dayOrder = [];
-let strategySource = '';
-let currentDayIdx = 0, currentStep = 0;
-let cash = 0, position = 0;
-let pnlHistory = [], posHistory = [], trades = [];
-let runInterval = null, strategyFn = null;
-const POS_LIMIT = 20;
-let totalSteps = 0, completedSteps = 0;
-let pnlChart = null, posChart = null;
+    let botStats = {};
+    function resetBots() {
+      botStats = {
+        'MM Alpha': { cash: 0, posC: 0, posP: 0, pnl: 0, pnlHistory: [] },
+        'MM Beta': { cash: 0, posC: 0, posP: 0, pnl: 0, pnlHistory: [] },
+        'Noise Alpha': { cash: 0, posC: 0, posP: 0, pnl: 0, pnlHistory: [] },
+        'Noise Beta': { cash: 0, posC: 0, posP: 0, pnl: 0, pnlHistory: [] },
+        'StatArb Alpha': { cash: 0, posC: 0, posP: 0, pnl: 0, pnlHistory: [] }
+      };
+    }
 
-// ════════════════════════════════════════════════════════════════════════════
-//  HIDDEN FAIR VALUE  (formula not exposed to students)
-// ════════════════════════════════════════════════════════════════════════════
-function computeFairValue(row) {
-  if (!row) return 10000;
-  const b1=row.bid_price_1||0, bv1=row.bid_volume_1||1;
-  const a1=row.ask_price_1||0, av1=row.ask_volume_1||1;
-  const b2=row.bid_price_2||b1, bv2=row.bid_volume_2||0;
-  const a2=row.ask_price_2||a1, av2=row.ask_volume_2||0;
-  const b3=row.bid_price_3||b1, bv3=row.bid_volume_3||0;
-  const a3=row.ask_price_3||a1, av3=row.ask_volume_3||0;
-  const tbv=bv1+bv2+bv3, tav=av1+av2+av3;
-  const wBid=tbv>0?(b1*bv1+b2*bv2+b3*bv3)/tbv:b1;
-  const wAsk=tav>0?(a1*av1+a2*av2+a3*av3)/tav:a1;
-  const imb=(tbv-tav)/(tbv+tav+1);
-  const mid=(wBid+wAsk)/2;
-  return Math.round((mid*0.72 + 10000*0.27 + imb*0.6)*100)/100;
-}
+    const BOT_DOT = { 'MM Alpha': 'dot-mm1', 'MM Beta': 'dot-mm2', 'Noise Alpha': 'dot-nt1', 'Noise Beta': 'dot-nt2', 'StatArb Alpha': 'dot-sa1', 'Market': 'dot-mkt' };
 
-// ════════════════════════════════════════════════════════════════════════════
-//  BOTS  (all formulas hidden)
-// ════════════════════════════════════════════════════════════════════════════
-let _seed = 42;
-function rng() { _seed=(_seed*1664525+1013904223)>>>0; return _seed/0xFFFFFFFF; }
-function resetRng() { _seed = 42; }
+    function getMid(r) {
+      if (!r) return 0;
+      return ((r.bid_price_1 || 0) + (r.ask_price_1 || 0)) / 2;
+    }
+    function getSpread(r) {
+      if (!r || !r.ask_price_1 || !r.bid_price_1) return 1;
+      return r.ask_price_1 - r.bid_price_1;
+    }
 
-// ── MM Alpha: volume-weighted fair + volatility-derived spread ───────────────
-function mmAlpha(row) {
-  const b1=row.bid_price_1||9998, bv1=row.bid_volume_1||5;
-  const a1=row.ask_price_1||10002, av1=row.ask_volume_1||5;
-  const b2=row.bid_price_2||b1-1, bv2=row.bid_volume_2||2;
-  const a2=row.ask_price_2||a1+1, av2=row.ask_volume_2||2;
-  const wBid=(b1*bv1+b2*bv2)/(bv1+bv2);
-  const wAsk=(a1*av1+a2*av2)/(av1+av2);
-  const fair=wBid*0.55+wAsk*0.45;
-  const spread=Math.max(1.5,Math.min((a1-b1)*0.35+1,6));
-  const h=spread/2;
-  return [
-    {type:'bid',price:Math.floor(fair-h),   qty:6+Math.floor(rng()*4),from:'MM Alpha'},
-    {type:'ask',price:Math.ceil(fair+h),    qty:6+Math.floor(rng()*4),from:'MM Alpha'},
-  ];
-}
+    // Bots (MMAlpha, MMBeta, NoiseAlpha, NoiseBeta, StatArbAlpha)
+    function mmAlpha(row) {
+      if (!row) return [];
+      const fair = ((row.bid_price_1 || 9998) * 0.55 + (row.ask_price_1 || 10002) * 0.45);
+      const h = Math.max(1, (row.ask_price_1 - row.bid_price_1) * 0.5);
+      return [
+        { type: 'bid', price: Number((fair - h).toFixed(2)), qty: 10 + Math.floor(rng() * 10), from: 'MM Alpha' },
+        { type: 'ask', price: Number((fair + h).toFixed(2)), qty: 10 + Math.floor(rng() * 10), from: 'MM Alpha' }
+      ];
+    }
+    function mmBeta(row) {
+      if (!row) return [];
+      const mid = getMid(row);
+      const imb = (row.bid_volume_1 || 0) / ((row.bid_volume_1 || 1) + (row.ask_volume_1 || 1)) - 0.5;
+      const shift = imb * 2;
+      return [
+        { type: 'bid', price: Math.floor(mid + shift - 1), qty: 5, from: 'MM Beta' },
+        { type: 'ask', price: Math.ceil(mid + shift + 1), qty: 5, from: 'MM Beta' }
+      ];
+    }
+    function noiseAlpha(row) {
+      if (!row || rng() > 0.08) return [];
+      const side = rng() > 0.5 ? 'bid' : 'ask';
+      const mid = getMid(row);
+      // Aggressive: hit the best opposite price to trigger matches
+      const price = side === 'bid' ? (row.ask_price_1 || Math.ceil(mid)) : (row.bid_price_1 || Math.floor(mid));
+      return [{ type: side, price: price, qty: 1 + Math.floor(rng() * 5), from: 'Noise Alpha' }];
+    }
+    function noiseBeta(row) {
+      if (!row || rng() > 0.05) return [];
+      const side = rng() > 0.5 ? 'bid' : 'ask';
+      const mid = getMid(row);
+      const price = side === 'bid' ? (row.ask_price_1 || Math.ceil(mid)) : (row.bid_price_1 || Math.floor(mid));
+      return [{ type: side, price: price, qty: 2, from: 'Noise Beta' }];
+    }
+    let statArbMemory = [];
+    function statArbAlpha(rowC, rowP) {
+      if (!rowC || !rowP) return { c: [], p: [] };
+      const midC = getMid(rowC), midP = getMid(rowP);
+      const ratio = midC / midP;
+      statArbMemory.push(ratio);
+      if (statArbMemory.length > 30) statArbMemory.shift();
+      const avg = statArbMemory.reduce((a, b) => a + b, 0) / statArbMemory.length;
+      const std = Math.sqrt(statArbMemory.reduce((a, b) => a + Math.pow(b - avg, 2), 0) / statArbMemory.length) || 0.0001;
+      const z = (ratio - avg) / std;
+      const buyC = { type: 'bid', price: Math.floor(midC), qty: 2, from: 'StatArb Alpha' };
+      const sellC = { type: 'ask', price: Math.ceil(midC), qty: 2, from: 'StatArb Alpha' };
+      const buyP = { type: 'bid', price: Math.floor(midP), qty: 2, from: 'StatArb Alpha' };
+      const sellP = { type: 'ask', price: Math.ceil(midP), qty: 2, from: 'StatArb Alpha' };
+      if (z > 2.0) return { c: [sellC], p: [buyP] };
+      if (z < -2.0) return { c: [buyC], p: [sellP] };
+      return { c: [], p: [] };
+    }
 
-// ── MM Beta: momentum-shifted fair + imbalance-widened spread ───────────────
-function mmBeta(row) {
-  const b1=row.bid_price_1||9998, bv1=row.bid_volume_1||5;
-  const a1=row.ask_price_1||10002, av1=row.ask_volume_1||5;
-  const b3=row.bid_price_3||b1-2, bv3=row.bid_volume_3||1;
-  const a3=row.ask_price_3||a1+2, av3=row.ask_volume_3||1;
-  const imb=(bv1+bv3-av1-av3)/(bv1+bv3+av1+av3+1);
-  const fair=(b1+a1)/2+imb*1.2;
-  const spread=Math.abs(imb)>0.3?3.5+Math.abs(imb)*2:2;
-  const h=spread/2;
-  return [
-    {type:'bid',price:Math.floor(fair-h-rng()*0.5),qty:5+Math.floor(rng()*5),from:'MM Beta'},
-    {type:'ask',price:Math.ceil(fair+h+rng()*0.5), qty:5+Math.floor(rng()*5),from:'MM Beta'},
-  ];
-}
+    function allBotOrders(row, assetName) {
+      if (!row) return [];
+      return [...mmAlpha(row), ...mmBeta(row), ...noiseAlpha(row), ...noiseBeta(row)];
+    }
 
-// ── Noise Alpha: pure random direction + occasional aggression ───────────────
-function noiseAlpha(row) {
-  const b1=row.bid_price_1||9998, a1=row.ask_price_1||10002;
-  const mid=(b1+a1)/2;
-  const r1=rng(),r2=rng(),r3=rng();
-  const isBuy=r1>0.48, crosses=r2<0.18, qty=1+Math.floor(r3*8);
-  return isBuy
-    ? [{type:'bid',price:crosses?Math.ceil(a1+rng()):Math.floor(mid-rng()*1.5),qty,from:'Noise Alpha'}]
-    : [{type:'ask',price:crosses?Math.floor(b1-rng()):Math.ceil(mid+rng()*1.5),qty,from:'Noise Alpha'}];
-}
+    // CSV UPLOAD
+    document.getElementById('csv-input').addEventListener('change', e => handleFiles(e.target.files));
+    const dz = document.getElementById('drop-zone');
+    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+    dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+    dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag-over'); handleFiles(e.dataTransfer.files); });
 
-// ── Noise Beta: mean-reverting around 10 000 ─────────────────────────────────
-function noiseBeta(row) {
-  const b1=row.bid_price_1||9998, a1=row.ask_price_1||10002;
-  const mid=(b1+a1)/2, dist=mid-10000;
-  const r1=rng(),r2=rng();
-  if (dist>0.5) {
-    const qty=Math.min(2+Math.floor(Math.abs(dist)*0.8+r1*3),12);
-    return [{type:'ask',price:Math.ceil(mid-0.5+r2*1.5),qty,from:'Noise Beta'}];
-  } else if (dist<-0.5) {
-    const qty=Math.min(2+Math.floor(Math.abs(dist)*0.8+r1*3),12);
-    return [{type:'bid',price:Math.floor(mid+0.5-r2*1.5),qty,from:'Noise Beta'}];
-  }
-  const qty=1+Math.floor(r2*4);
-  return r1>0.5
-    ?[{type:'bid',price:Math.floor(mid-r1*2),qty,from:'Noise Beta'}]
-    :[{type:'ask',price:Math.ceil(mid+r1*2), qty,from:'Noise Beta'}];
-}
+    function handleFiles(files) {
+      let done = 0;
+      for (const f of files) {
+        const m = f.name.toLowerCase().match(/day_(-?\d)/);
+        const key = m ? `Day ${m[1]}` : f.name;
+        Papa.parse(f, {
+          header: true, skipEmptyLines: true, complete: res => {
+            let rowsC = res.data.filter(r => (r.product || r.Product || '').toUpperCase() === 'COCONUTS').map(numify);
+            let rowsP = res.data.filter(r => (r.product || r.Product || '').toUpperCase() === 'PINA_COLADAS').map(numify);
+            csvFiles[key] = { c: rowsC, p: rowsP };
+            done++;
+            if (done === files.length) refreshDays();
+          }
+        });
+      }
+    }
 
-function allBotOrders(row) {
-  return [...mmAlpha(row),...mmBeta(row),...noiseAlpha(row),...noiseBeta(row)];
-}
+    function numify(row) {
+      const o = {};
+      for (const [k, v] of Object.entries(row)) { const n = parseFloat(v); o[k.trim().toLowerCase().replace(/\s+/g, '_')] = isNaN(n) ? v : n; }
+      return o;
+    }
 
-const BOT_DOT = {'MM Alpha':'dot-mm1','MM Beta':'dot-mm2','Noise Alpha':'dot-nt1','Noise Beta':'dot-nt2','Market':'dot-mkt'};
-
-// ════════════════════════════════════════════════════════════════════════════
-//  CSV UPLOAD
-// ════════════════════════════════════════════════════════════════════════════
-document.getElementById('csv-input').addEventListener('change',e=>handleFiles(e.target.files));
-const dz=document.getElementById('drop-zone');
-dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over');});
-dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
-dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag-over');handleFiles(e.dataTransfer.files);});
-
-function handleFiles(files) {
-  let done=0;
-  for (const f of files) {
-    const m=f.name.toLowerCase().match(/day_(-?\d)/);
-    const key=m?`Day ${m[1]}`:f.name;
-    Papa.parse(f,{header:true,skipEmptyLines:true,complete:res=>{
-      let rows=res.data.filter(r=>(r.product||r.Product||'').toUpperCase().includes('PEARL')).map(numify);
-      if(!rows.length) rows=res.data.map(numify);
-      csvFiles[key]=rows; done++;
-      if(done===files.length) refreshDays();
-    }});
-  }
-}
-
-function numify(row) {
-  const o={};
-  for(const[k,v] of Object.entries(row)){const n=parseFloat(v);o[k.trim().toLowerCase().replace(/\s+/g,'_')]=isNaN(n)?v:n;}
-  return o;
-}
-
-function refreshDays() {
-  dayOrder=Object.keys(csvFiles).sort((a,b)=>parseInt(a.replace('Day ',''))-parseInt(b.replace('Day ','')));
-  document.getElementById('files-loaded').textContent='✓ '+dayOrder.join(', ');
-}
-
-// ════════════════════════════════════════════════════════════════════════════
-//  PYTHON UPLOAD
-// ════════════════════════════════════════════════════════════════════════════
-document.getElementById('py-input').addEventListener('change',e=>{
-  const f=e.target.files[0]; if(!f) return;
-  const r=new FileReader();
-  r.onload=ev=>loadPy(ev.target.result,f.name);
-  r.readAsText(f);
-});
-const pydz=document.getElementById('py-drop-zone');
-pydz.addEventListener('dragover',e=>{e.preventDefault();pydz.classList.add('drag-over');});
-pydz.addEventListener('dragleave',()=>pydz.classList.remove('drag-over'));
-pydz.addEventListener('drop',e=>{
-  e.preventDefault();pydz.classList.remove('drag-over');
-  const f=e.dataTransfer.files[0];if(!f)return;
-  const r=new FileReader();r.onload=ev=>loadPy(ev.target.result,f.name);r.readAsText(f);
-});
-
-function loadPy(src,fname) {
-  const el=document.getElementById('py-loaded');
-  if(!/def\s+strategy\s*\(/.test(src)){
-    el.style.color='var(--danger)';
-    el.textContent='✗ No strategy() function found';
-    strategySource='';
-    return;
-  }
-  strategySource=src.trim();
-  el.style.color='var(--purple)';
-  el.textContent='✓ Loaded: '+fname;
-  document.getElementById('strategy-error').style.display='none';
-}
-
-// ════════════════════════════════════════════════════════════════════════════
-//  PYTHON → JS TRANSPILER
-// ════════════════════════════════════════════════════════════════════════════
-function py2js(src) {
-  // Strip triple-quoted docstrings and line comments
-  src = src.replace(/"{3}[\s\S]*?"{3}/g, '');
-  src = src.replace(/'{3}[\s\S]*?'{3}/g, '');
-  src = src.replace(/#.*/g, '');
-
-  // Convert Python inline ternary:  VAL if COND else ALT
-  // Process line-by-line to preserve indentation correctly.
-  // Only triggers on assignment lines that contain the pattern.
-  src = src.split('\n').map(line => {
-    const lead = line.match(/^(\s*)/)[1];
-    const trimmed = line.trimStart();
-    if (/^[A-Za-z_]\w*\s*=/.test(trimmed) && /\s+if\s+.+\s+else\s+/.test(trimmed)) {
-      const m = trimmed.match(/^(.+?)\s+if\s+(.+?)\s+else\s+(.+)$/);
-      if (m) {
-        const eqIdx = m[1].indexOf('=');
-        if (eqIdx !== -1) {
-          const varPart = m[1].slice(0, eqIdx + 1);
-          const valExpr = m[1].slice(eqIdx + 1).trim();
-          return lead + varPart + ' (' + m[2].trim() + ' ? ' + valExpr + ' : ' + m[3].trim() + ')';
+    function refreshDays() {
+      dayOrder = Object.keys(csvFiles).sort((a, b) => parseInt(a.replace('Day ', '')) - parseInt(b.replace('Day ', '')));
+      document.getElementById('files-loaded').textContent = '★ ' + dayOrder.join(', ');
+      timeSeries = [];
+      const days = dayOrder.length;
+      if (days > 0) {
+        const firstDay = csvFiles[dayOrder[0]];
+        const len = Math.max(firstDay.c.length, firstDay.p.length);
+        for (let d = 0; d < days; d++) {
+          const dc = csvFiles[dayOrder[d]].c, dp = csvFiles[dayOrder[d]].p;
+          const dayData = [];
+          for (let i = 0; i < Math.max(dc.length, dp.length); i++) {
+            dayData.push({ timestamp: (dc[i] || dp[i])?.timestamp, c: dc[i], p: dp[i] });
+          }
+          timeSeries.push(dayData);
         }
       }
     }
-    return line;
-  }).join('\n');
 
-  // Token replacements
-  src = src
-    .replace(/\bTrue\b/g,  'true')
-    .replace(/\bFalse\b/g, 'false')
-    .replace(/\bNone\b/g,  'null')
-    .replace(/\band\b/g,   '&&')
-    .replace(/\bor\b/g,    '||')
-    .replace(/\bnot\b/g,   '!')
-    .replace(/\bint\s*\(/g,   'Math.trunc(')
-    .replace(/\bfloat\s*\(/g, 'Number(')
-    .replace(/\babs\s*\(/g,   'Math.abs(')
-    .replace(/\bmin\s*\(/g,   'Math.min(')
-    .replace(/\bmax\s*\(/g,   'Math.max(')
-    .replace(/\bround\s*\(/g, 'Math.round(')
-    .replace(/\bprint\s*\(/g, 'console.log(')
-    .replace(/row\[["'](\w+)["']\]/g, 'row.$1')
-    .replace(/\belif\b/g, 'else if');
-
-  // Line-by-line: indentation -> braces, auto-declare variables with let
-  const lines = src.split('\n');
-  const out = [];
-  const indStack = [0];
-  const declared = new Set();
-
-  for (let i = 0; i < lines.length; i++) {
-    const raw = lines[i].trimEnd();
-    if (!raw.trim()) { out.push(''); continue; }
-    const indent = raw.length - raw.trimStart().length;
-    const content = raw.trimStart();
-
-    while (indStack.length > 1 && indStack[indStack.length - 1] >= indent) {
-      indStack.pop();
-      out.push(' '.repeat(indStack[indStack.length - 1]) + '}');
+    // LocalStorage Logic
+    function saveToLocal() {
+      localStorage.setItem('pearls_strategy_source', document.getElementById('code-editor').value);
+    }
+    function loadPy(fname, src) {
+      const editor = document.getElementById('code-editor');
+      const el = document.getElementById('files-loaded-py');
+      if (!src) {
+        el.textContent = '★ No file selected';
+        strategySource = '';
+        return;
+      }
+      strategySource = src.trim();
+      editor.value = strategySource;
+      saveToLocal();
+      el.style.color = 'var(--pina)';
+      el.textContent = '★ Loaded: ' + (fname || 'Custom Strategy');
+      document.getElementById('strategy-error').style.display = 'none';
     }
 
-    const isBlockOpener =
-      /^(def |if |else if |else\s*$|else\s*:|for |while )/.test(content)
-      && raw.trimEnd().endsWith(':');
+    function py2js(src) {
+      src = src.replace(/"{3}[\s\S]*?"{3}/g, '').replace(/'{3}[\s\S]*?'{3}/g, '').replace(/#.*/g, '');
+      src = src.split('\n').map(line => {
+        const lead = line.match(/^(\s*)/)[1];
+        const trimmed = line.trimStart();
+        if (/^[A-Za-z_]\w*\s*=/.test(trimmed) && /\s+if\s+.+\s+else\s+/.test(trimmed)) {
+          const m = trimmed.match(/^(.+?)\s+if\s+(.+?)\s+else\s+(.+)$/);
+          if (m) {
+            const eqIdx = m[1].indexOf('=');
+            if (eqIdx !== -1) {
+              const varPart = m[1].slice(0, eqIdx + 1), valExpr = m[1].slice(eqIdx + 1).trim();
+              return lead + varPart + ' (' + m[2].trim() + ' ? ' + valExpr + ' : ' + m[3].trim() + ')';
+            }
+          }
+        }
+        return line;
+      }).join('\n');
+      src = src.replace(/\bTrue\b/g, 'true').replace(/\bFalse\b/g, 'false').replace(/\bNone\b/g, 'null')
+        .replace(/\band\b/g, '&&').replace(/\bor\b/g, '||').replace(/\bnot\b/g, '!')
+        .replace(/\bint\s*\(/g, 'Math.trunc(').replace(/\bfloat\s*\(/g, 'Number(')
+        .replace(/\babs\s*\(/g, 'Math.abs(').replace(/\bmin\s*\(/g, 'Math.min(')
+        .replace(/\bmax\s*\(/g, 'Math.max(').replace(/\bround\s*\(/g, 'Math.round(')
+        .replace(/\bprint\s*\(/g, 'console.log(')
+        .replace(/(\w+)\[["'](\w+)["']\]/g, '$1.$2').replace(/\belif\b/g, 'else if');
+      const lines = src.split('\n'), out = [], indStack = [0], declared = new Set();
+      for (let i = 0; i < lines.length; i++) {
+        const raw = lines[i].trimEnd(); if (!raw.trim()) { out.push(''); continue; }
+        const indent = raw.length - raw.trimStart().length, content = raw.trimStart();
+        while (indStack.length > 1 && indStack[indStack.length - 1] > indent) { indStack.pop(); out.push(' '.repeat(indStack[indStack.length - 1]) + '}'); }
+        const isBlockOpener = /^(def |if |else if |else\s*$|else\s*:|for |while )/.test(content) && raw.trimEnd().endsWith(':');
+        if (isBlockOpener) {
+          let line = raw.trimEnd().slice(0, -1);
+          line = line.replace(/^(\s*)def\s+(\w+)\s*\(([^)]*)\)\s*$/, '$1function $2($3)');
+          line = line.replace(/^(\s*)else\s*$/, '$1else');
+          line = line.replace(/^(\s*)(if|else if)\s+(.+)$/, (_, sp, kw, cond) => {
+            cond = cond.trim(); if (!cond.startsWith('(')) cond = '(' + cond + ')'; return sp + kw + ' ' + cond;
+          });
+          out.push(line + ' {'); indStack.push(indent + 1);
+        } else {
+          const m = raw.match(/^(\s*)([A-Za-z_]\w*)\s*=[^=]/);
+          if (m && !declared.has(m[2]) && !/^(let|const|var|return|if|else|for|while|function|true|false|null)$/.test(m[2])) {
+            declared.add(m[2]); out.push(raw.replace(/^(\s*)([A-Za-z_]\w*)\s*=/, '$1let $2 ='));
+          } else out.push(raw);
+        }
+      }
+      while (indStack.length > 1) { indStack.pop(); out.push('}'); }
+      return out.join('\n');
+    }
 
-    if (isBlockOpener) {
-      let line = raw.trimEnd().slice(0, -1);
-      line = line.replace(/^(\s*)def\s+(\w+)\s*\(([^)]*)\)\s*$/, '$1function $2($3)');
-      line = line.replace(/^(\s*)else\s*$/, '$1else');
-      line = line.replace(/^(\s*)(if|else if)\s+(.+)$/, (_, sp, kw, cond) => {
-        cond = cond.trim();
-        if (!cond.startsWith('(')) cond = '(' + cond + ')';
-        return sp + kw + ' ' + cond;
+    function compileStrategy() {
+      const src = document.getElementById('code-editor').value;
+      const err = document.getElementById('strategy-error');
+      try {
+        const js = src.includes('def strategy') ? py2js(src) : src;
+        strategyFn = new Function('coconut_row', 'pina_row', 'pos_coconut', 'pos_pina', 'step',
+          js + '\nreturn strategy(coconut_row,pina_row,pos_coconut,pos_pina,step);'
+        );
+        const tr = { bid_price_1: 9999, ask_price_1: 10001, bid_volume_1: 5, ask_volume_1: 5 };
+        const r = strategyFn(tr, tr, 0, 0, 0);
+        if (typeof r !== 'object') throw new Error('strategy() must return a dictionary (object).');
+        err.style.display = 'none'; return true;
+      } catch (e) { err.style.display = 'block'; err.textContent = '✖ ' + e.message; return false; }
+    }
+
+    function startSimulation() {
+      if (!dayOrder.length) { alert('Upload at least one CSV file.'); return; }
+      const src = document.getElementById('code-editor').value;
+      if (!src.trim()) { alert('Please enter your strategy code.'); return; }
+      if (!compileStrategy()) return;
+      cash = 0; posC = 0; posP = 0; pnlHistory = []; posCHistory = []; posPHistory = []; priceHistoryC = []; priceHistoryP = []; trades = [];
+      currentDayIdx = 0; currentStep = 0; completedSteps = 0;
+      lastPnlValue = 0; pendingLogEntries = [];
+      totalSteps = timeSeries.reduce((s, d) => s + d.length, 0);
+      statArbMemory = [];
+      resetBots(); resetRng();
+      document.getElementById('setup-view').style.display = 'none';
+      document.getElementById('sim-view').style.display = 'block';
+      document.getElementById('final-banner').style.display = 'none';
+      document.getElementById('sim-error').style.display = 'none';
+      document.getElementById('trade-log-body').innerHTML = '';
+      buildTabs(); initCharts(); updateStats(null); renderBook(null, null, 'c'); renderBook(null, null, 'p');
+    }
+
+    function buildTabs() {
+      const el = document.getElementById('day-tabs'); el.innerHTML = '';
+      dayOrder.forEach((d, i) => {
+        const b = document.createElement('button');
+        b.className = 'day-tab' + (i === 0 ? ' active' : ''); b.textContent = d;
+        b.onclick = () => { if (!runInterval) jumpToDay(i); };
+        el.appendChild(b);
       });
-      out.push(line + ' {');
-      indStack.push(indent + 1);
-    } else {
-      const m = raw.match(/^(\s*)([A-Za-z_]\w*)\s*=[^=]/);
-      if (m && !declared.has(m[2]) &&
-          !/^(let|const|var|return|if|else|for|while|function|true|false|null)$/.test(m[2])) {
-        declared.add(m[2]);
-        out.push(raw.replace(/^(\s*)([A-Za-z_]\w*)\s*=/, '$1let $2 ='));
-      } else {
-        out.push(raw);
+    }
+
+    function jumpToDay(idx) {
+      currentDayIdx = idx; currentStep = 0; cash = 0; posC = 0; posP = 0; pnlHistory = []; posCHistory = []; posPHistory = []; priceHistoryC = []; priceHistoryP = []; trades = []; completedSteps = 0;
+      statArbMemory = []; resetBots(); resetRng();
+      for (let d = 0; d < idx; d++) { const rows = timeSeries[d] || []; for (let s = 0; s < rows.length; s++) { execStep(d, s, true, false); completedSteps++; } }
+      document.querySelectorAll('.day-tab').forEach((b, i) => b.classList.toggle('active', i === idx));
+      const tick = getCurrentTick();
+      updateStats(tick); updateCharts(); renderBook(tick ? tick.c : null, null, 'c'); renderBook(tick ? tick.p : null, null, 'p'); updateProgress();
+    }
+
+    function getCurrentTick() { return timeSeries[currentDayIdx]?.[currentStep] || null; }
+
+    const PRIORITY = { student: 2, bot: 1, market: 0 };
+
+    function buildBook(row, botOrders, studentBid, studentBidQty, studentAsk, studentAskQty) {
+      if (!row) return { bids: [], asks: [] };
+      const bids = [], asks = [];
+      for (let i = 1; i <= 3; i++) {
+        const bp = row[`bid_price_${i}`], bv = row[`bid_volume_${i}`];
+        if (bp && bv > 0) bids.push({ price: bp, qty: bv, from: 'Market', isStudent: false, priority: PRIORITY.market });
+        const ap = row[`ask_price_${i}`], av = row[`ask_volume_${i}`];
+        if (ap && av > 0) asks.push({ price: ap, qty: av, from: 'Market', isStudent: false, priority: PRIORITY.market });
+      }
+      for (const o of botOrders) {
+        const order = { price: o.price, qty: o.qty, from: o.from, isStudent: false, priority: PRIORITY.bot };
+        if (o.type === 'bid') bids.push(order); else asks.push(order);
+      }
+      if (studentBid !== null && studentBidQty > 0) bids.push({ price: studentBid, qty: studentBidQty, from: 'Student', isStudent: true, priority: PRIORITY.student });
+      if (studentAsk !== null && studentAskQty > 0) asks.push({ price: studentAsk, qty: studentAskQty, from: 'Student', isStudent: true, priority: PRIORITY.student });
+      bids.sort((a, b) => b.price - a.price || b.priority - a.priority);
+      asks.sort((a, b) => a.price - b.price || b.priority - a.priority);
+      return { bids, asks };
+    }
+
+    function matchBook(bids, asks) {
+      const trades = [];
+      while (bids.length > 0 && asks.length > 0) {
+        const bestBid = bids[0], bestAsk = asks[0];
+        if (!bestBid || !bestAsk || bestBid.price < bestAsk.price) break;
+        const tradePrice = bestAsk.price, tradeQty = Math.min(bestBid.qty, bestAsk.qty);
+        if (tradeQty <= 0) break;
+        trades.push({ bidFrom: bestBid.from, askFrom: bestAsk.from, price: tradePrice, qty: tradeQty, bidIsStudent: bestBid.isStudent, askIsStudent: bestAsk.isStudent });
+        bestBid.qty -= tradeQty; bestAsk.qty -= tradeQty;
+        if (bestBid.qty <= 0) bids.shift(); if (bestAsk.qty <= 0) asks.shift();
+      }
+      return trades;
+    }
+
+    function execStep(di, si, silent = false, renderNow = !silent) {
+      const stepData = timeSeries[di]?.[si]; if (!stepData) return;
+      const day = dayOrder[di], ts = stepData.timestamp ?? '-', rowC = stepData.c, rowP = stepData.p;
+      let studentOrders = null;
+      try { studentOrders = strategyFn(rowC, rowP, posC, posP, si); } catch (e) {
+        console.error("Strategy execution error at step", si, ":", e);
+        if (!silent) { const el = document.getElementById('sim-error'); el.style.display = 'block'; el.textContent = 'Strategy error: ' + e.message; }
+        const midC = getMid(rowC), midP = getMid(rowP), currPnl = cash + posC * midC + posP * midP;
+        pnlHistory.push(currPnl); posCHistory.push(posC); posPHistory.push(posP); priceHistoryC.push(midC); priceHistoryP.push(midP);
+        lastPnlValue = currPnl; return;
+      }
+      const botOrdersC = allBotOrders(rowC, 'COCONUTS'), botOrdersP = allBotOrders(rowP, 'PINA_COLADAS');
+      const saOrders = statArbAlpha(rowC, rowP); botOrdersC.push(...saOrders.c); botOrdersP.push(...saOrders.p);
+      const cO = studentOrders?.['COCONUTS'] || {}, pO = studentOrders?.['PINA_COLADAS'] || {};
+      const bookC = buildBook(rowC, botOrdersC, cO.bid ?? null, cO.bid_qty ?? 1, cO.ask ?? null, cO.ask_qty ?? 1);
+      const bookP = buildBook(rowP, botOrdersP, pO.bid ?? null, pO.bid_qty ?? 1, pO.ask ?? null, pO.ask_qty ?? 1);
+      const matchedC = matchBook(bookC.bids, bookC.asks), matchedP = matchBook(bookP.bids, bookP.asks);
+      const studentTrades = [];
+      for (const t of matchedC) {
+        if (botStats[t.bidFrom]) { botStats[t.bidFrom].posC += t.qty; botStats[t.bidFrom].cash -= t.qty * t.price; }
+        if (botStats[t.askFrom]) { botStats[t.askFrom].posC -= t.qty; botStats[t.askFrom].cash += t.qty * t.price; }
+        if (t.bidIsStudent) { const fill = Math.min(t.qty, POS_LIMIT_C - posC); if (fill > 0) { cash -= fill * t.price; posC += fill; studentTrades.push({ day, ts, asset: 'COCONUTS', side: 'BUY', price: t.price, qty: fill, from: t.askFrom, cashDelta: -fill * t.price }); } }
+        if (t.askIsStudent) { const fill = Math.min(t.qty, POS_LIMIT_C + posC); if (fill > 0) { cash += fill * t.price; posC -= fill; studentTrades.push({ day, ts, asset: 'COCONUTS', side: 'SELL', price: t.price, qty: fill, from: t.bidFrom, cashDelta: fill * t.price }); } }
+      }
+      for (const t of matchedP) {
+        if (botStats[t.bidFrom]) { botStats[t.bidFrom].posP += t.qty; botStats[t.bidFrom].cash -= t.qty * t.price; }
+        if (botStats[t.askFrom]) { botStats[t.askFrom].posP -= t.qty; botStats[t.askFrom].cash += t.qty * t.price; }
+        if (t.bidIsStudent) { const fill = Math.min(t.qty, POS_LIMIT_P - posP); if (fill > 0) { cash -= fill * t.price; posP += fill; studentTrades.push({ day, ts, asset: 'PINA_COLADAS', side: 'BUY', price: t.price, qty: fill, from: t.askFrom, cashDelta: -fill * t.price }); } }
+        if (t.askIsStudent) { const fill = Math.min(t.qty, POS_LIMIT_P + posP); if (fill > 0) { cash += fill * t.price; posP -= fill; studentTrades.push({ day, ts, asset: 'PINA_COLADAS', side: 'SELL', price: t.price, qty: fill, from: t.bidFrom, cashDelta: fill * t.price }); } }
+      }
+      const midC = getMid(rowC), midP = getMid(rowP), pnl = cash + (posC * midC) + (posP * midP);
+      pnlHistory.push(pnl); posCHistory.push(posC); posPHistory.push(posP); priceHistoryC.push(midC); priceHistoryP.push(midP);
+      if (studentTrades.length) pendingLogEntries.push(...studentTrades);
+      lastPnlValue = pnl; if (!silent && renderNow) refreshSimulationUI(stepData, rowC, rowP, cO, pO);
+    }
+
+    function flushPendingLogs() {
+      if (!pendingLogEntries.length) return;
+      trades.push(...pendingLogEntries); appendLog(pendingLogEntries, lastPnlValue); pendingLogEntries = [];
+    }
+    function refreshSimulationUI(stepData, rowC, rowP, cO, pO) {
+      updateStats(stepData); renderBook(rowC, cO, 'c'); renderBook(rowP, pO, 'p'); flushPendingLogs(); updateCharts(); updateProgress();
+    }
+    function getRunChunkSize() {
+      const delay = parseInt(document.getElementById('speed-input').value) || 0;
+      return delay === 0 ? 600 : (delay <= 5 ? 200 : (delay <= 25 ? 100 : 1));
+    }
+    function processRunChunk() {
+      if (runInterval === null) return;
+      let count = 0, done = false, chunk = getRunChunkSize();
+      while (count < chunk) {
+        const rows = timeSeries[currentDayIdx] || [];
+        if (currentStep >= rows.length) {
+          if (currentDayIdx < dayOrder.length - 1) { currentDayIdx++; currentStep = 0; document.querySelectorAll('.day-tab').forEach((b, i) => b.classList.toggle('active', i === currentDayIdx)); }
+          else { done = true; break; }
+        }
+        execStep(currentDayIdx, currentStep, true, false); completedSteps++; currentStep++; count++;
+      }
+      const stepData = timeSeries[currentDayIdx]?.[Math.max(0, currentStep - 1)];
+      if (stepData) { updateStats(stepData); updateCharts(); updateProgress(); flushPendingLogs(); }
+      if (done) { clearTimeout(runInterval); runInterval = null; document.getElementById('run-btn').innerHTML = '&#9654;&#9654; RUN ALL'; finishSimulation(); return; }
+      runInterval = setTimeout(processRunChunk, parseInt(document.getElementById('speed-input').value) || 0);
+    }
+    function updateProgress() { document.getElementById('progress-fill').style.width = (totalSteps > 0 ? completedSteps / totalSteps * 100 : 0) + '%'; }
+    function stepOnce() {
+      const rows = timeSeries[currentDayIdx] || [];
+      if (currentStep >= rows.length) {
+        if (currentDayIdx < dayOrder.length - 1) { currentDayIdx++; currentStep = 0; document.querySelectorAll('.day-tab').forEach((b, i) => b.classList.toggle('active', i === currentDayIdx)); }
+        else { finishSimulation(); return; }
+      }
+      execStep(currentDayIdx, currentStep); completedSteps++; currentStep++;
+    }
+    function runAll() {
+      const btn = document.getElementById('run-btn');
+      if (runInterval !== null) { clearTimeout(runInterval); runInterval = null; btn.innerHTML = '&#9654;&#9654; RUN ALL'; return; }
+      btn.innerHTML = '&#10074;&#10074; PAUSE'; runInterval = setTimeout(processRunChunk, 0);
+    }
+    function finishSimulation() {
+      flushPendingLogs(); const p = lastPnlValue, el = document.getElementById('final-pnl-display');
+      el.textContent = (p >= 0 ? '+' : '') + p.toFixed(2); el.className = 'final-pnl ' + (p >= 0 ? 'positive' : 'negative');
+      document.getElementById('final-banner').style.display = 'block'; window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function resetSim() {
+      if (runInterval !== null) { clearTimeout(runInterval); runInterval = null; }
+      document.getElementById('run-btn').innerHTML = '&#9654;&#9654; RUN ALL';
+      document.getElementById('setup-view').style.display = 'block'; document.getElementById('sim-view').style.display = 'none';
+      cash = 0; posC = 0; posP = 0; pnlHistory = []; posCHistory = []; posPHistory = []; priceHistoryC = []; priceHistoryP = []; trades = [];
+      currentDayIdx = 0; currentStep = 0; completedSteps = 0; pendingLogEntries = []; lastPnlValue = 0; resetBots();
+    }
+    function updateStats(stepData) {
+      const dp = lastPnlValue, pnlEl = document.getElementById('stat-pnl');
+      pnlEl.textContent = dp.toFixed(2); pnlEl.className = 'stat-value ' + (dp > 0 ? 'positive' : dp < 0 ? 'negative' : 'neutral');
+      const cEl = document.getElementById('stat-cash'); cEl.textContent = cash.toFixed(2); cEl.className = 'stat-value ' + (cash > 0 ? 'positive' : cash < 0 ? 'negative' : 'neutral');
+      const posCEl = document.getElementById('stat-pos-c'); posCEl.textContent = posC; posCEl.className = 'stat-value ' + (posC > 0 ? 'positive' : posC < 0 ? 'negative' : 'neutral');
+      const posPEl = document.getElementById('stat-pos-p'); posPEl.textContent = posP; posPEl.className = 'stat-value ' + (posP > 0 ? 'positive' : posP < 0 ? 'negative' : 'neutral');
+      const midC = stepData ? getMid(stepData.c) : (priceHistoryC.length ? priceHistoryC[priceHistoryC.length - 1] : 0);
+      const midP = stepData ? getMid(stepData.p) : (priceHistoryP.length ? priceHistoryP[priceHistoryP.length - 1] : 0);
+      document.getElementById('stat-step').textContent = completedSteps + ' / ' + totalSteps;
+      for (const bot in botStats) { if (!botStats[bot]) continue; botStats[bot].pnl = botStats[bot].cash + (botStats[bot].posC * midC) + (botStats[bot].posP * midP); botStats[bot].pnlHistory.push(botStats[bot].pnl); }
+    }
+    function renderBook(row, so, suffix) {
+      if (!suffix) return;
+      const aEl = document.getElementById(`book-asks-${suffix}`), bEl = document.getElementById(`book-bids-${suffix}`);
+      aEl.innerHTML = ''; bEl.innerHTML = ''; if (!row) return;
+      const asks = [], bids = [];
+      for (let i = 3; i >= 1; i--) {
+        const ap = row[`ask_price_${i}`], av = row[`ask_volume_${i}`]; if (ap && av) asks.push({ price: ap, qty: av });
+        const bp = row[`bid_price_${i}`], bv = row[`bid_volume_${i}`]; if (bp && bv) bids.push({ price: bp, qty: bv });
+      }
+      asks.sort((a, b) => b.price - a.price); bids.sort((a, b) => b.price - a.price);
+      for (const a of asks) { const d = document.createElement('div'); d.className = 'book-row ask'; if (so?.bid >= a.price) d.style.background = 'rgba(0,255,157,0.1)'; d.innerHTML = `<span class="price">${a.price}</span><span class="vol">${a.qty}</span>`; aEl.appendChild(d); }
+      if (so?.ask) { const d = document.createElement('div'); d.className = 'book-row ask'; d.style.borderLeft = '2px solid var(--accent)'; d.innerHTML = `<span class="price" style="color:var(--accent)">★ ${so.ask}</span><span class="vol" style="color:var(--accent)">YOU</span>`; aEl.appendChild(d); }
+      if (so?.bid) { const d = document.createElement('div'); d.className = 'book-row bid'; d.style.borderLeft = '2px solid var(--accent3)'; d.innerHTML = `<span class="price" style="color:var(--accent3)">★ ${so.bid}</span><span class="vol" style="color:var(--accent3)">YOU</span>`; bEl.appendChild(d); }
+      for (const b of bids) { const d = document.createElement('div'); d.className = 'book-row bid'; if (so?.ask <= b.price) d.style.background = 'rgba(0,212,255,0.1)'; d.innerHTML = `<span class="price">${b.price}</span><span class="vol">${b.qty}</span>`; bEl.appendChild(d); }
+    }
+    function appendLog(tm, pnl) {
+      const tb = document.getElementById('trade-log-body');
+      for (const t of tm) {
+        const tr = document.createElement('tr');
+        const sc = (t.side || '').includes('BUY') || (t.side || '').includes('BID') ? 'tag-buy' : ((t.side || '').includes('SELL') || (t.side || '').includes('ASK') ? 'tag-sell' : 'tag-neutral');
+        const dc = BOT_DOT[t.from] || 'dot-mkt', ac = t.asset === 'COCONUTS' ? 'tag-coconut' : 'tag-pina', cdClass = t.cashDelta > 0 ? 'tag-buy' : (t.cashDelta < 0 ? 'tag-sell' : ''), pnlClass = pnl >= 0 ? 'tag-buy' : 'tag-sell';
+        tr.innerHTML = `<td>${t.day}</td><td>${t.ts}</td><td class="${ac}">${t.asset}</td><td class="${sc}">${t.side}</td><td>${t.price}</td><td>${t.qty}</td><td><span class="bot-dot ${dc}"></span><span class="tag-bot" style="font-size: 0.85em">${t.from}</span></td><td class="${cdClass}">${t.cashDelta > 0 ? '+' : ''}${(t.cashDelta || 0).toFixed(2)}</td><td class="${pnlClass}">${pnl.toFixed(2)}</td>`;
+        tb.prepend(tr); while (tb.children.length > 500) tb.lastChild.remove();
       }
     }
-  }
-  while (indStack.length > 1) { indStack.pop(); out.push('}'); }
-  return out.join('\n');
-}
+    function initCharts() {
+      if (priceChart) priceChart.destroy(); if (pnlChart) pnlChart.destroy();
+      const base = { responsive: true, animation: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { grid: { color: 'rgba(30,58,95,0.3)' }, ticks: { color: '#4a6080', font: { family: 'Space Mono', size: 9 } } } } };
+      let pO = JSON.parse(JSON.stringify(base)); pO.scales.yC = { type: 'linear', display: true, position: 'left', grid: { color: 'rgba(30,58,95,0.3)' }, ticks: { color: '#ffb142' } }; pO.scales.yP = { type: 'linear', display: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { color: '#34ace0' } }; delete pO.scales.y; pO.plugins.legend = { display: true, labels: { color: '#e2e8f0', font: { family: 'Space Mono', size: 10 } } };
+      priceChart = new Chart(document.getElementById('price-chart').getContext('2d'), { type: 'line', data: { labels: [], datasets: [{ label: 'Coconuts', data: [], yAxisID: 'yC', borderColor: '#ffb142', borderWidth: 1.5, pointRadius: 0, tension: 0.1 }, { label: 'Pina Coladas', data: [], yAxisID: 'yP', borderColor: '#34ace0', borderWidth: 1.5, pointRadius: 0, tension: 0.1 }] }, options: pO });
+      pnlChart = new Chart(document.getElementById('pnl-chart').getContext('2d'), { type: 'line', data: { labels: [], datasets: [{ data: [], borderColor: '#00cc7a', backgroundColor: 'rgba(0, 255, 157, 0.04)', borderWidth: 1.5, pointRadius: 0, fill: true, tension: 0.1 }] }, options: JSON.parse(JSON.stringify(base)) });
+    }
+    function updateCharts() {
+      if (!priceChart || !pnlChart) return; const N = pnlHistory.length, L = Array.from({ length: N }, (_, i) => i);
+      priceChart.data.labels = L; priceChart.data.datasets[0].data = priceHistoryC; priceChart.data.datasets[1].data = priceHistoryP; priceChart.update('none');
+      pnlChart.data.labels = L; pnlChart.data.datasets[0].data = pnlHistory; pnlChart.update('none');
+    }
 
-
-function compileStrategy(){
-  const src=strategySource;
-  const err=document.getElementById('strategy-error');
-  try{
-    const js=src.includes('def strategy')?py2js(src):src;
-    strategyFn=new Function('row','position','step',
-      js + '\nreturn strategy(row,position,step);'
-    );
-    const tr={bid_price_1:9999,ask_price_1:10001,bid_volume_1:5,ask_volume_1:5,bid_price_2:9998,ask_price_2:10002,bid_volume_2:3,ask_volume_2:3,bid_price_3:9997,ask_price_3:10003,bid_volume_3:2,ask_volume_3:2};
-    const r=strategyFn(tr,0,0);
-    if(typeof r!=='object'||typeof r.bid!=='number'||typeof r.ask!=='number')throw new Error('strategy() must return an object with numeric "bid" and "ask".');
-    err.style.display='none';return true;
-  }catch(e){err.style.display='block';err.textContent='⚠ '+e.message;return false;}
-}
-
-// ════════════════════════════════════════════════════════════════════════════
-//  SIMULATION ENGINE
-// ════════════════════════════════════════════════════════════════════════════
-function startSimulation(){
-  if(!dayOrder.length){alert('Upload at least one CSV file.');return;}
-  if(!strategySource){alert('Upload a Python strategy .py file.');return;}
-  if(!compileStrategy())return;
-  cash=0;position=0;pnlHistory=[];posHistory=[];trades=[];
-  currentDayIdx=0;currentStep=0;completedSteps=0;
-  totalSteps=dayOrder.reduce((s,d)=>s+(csvFiles[d]?.length||0),0);
-  resetRng();
-  document.getElementById('setup-view').style.display='none';
-  document.getElementById('sim-view').style.display='block';
-  document.getElementById('final-banner').style.display='none';
-  document.getElementById('sim-error').style.display='none';
-  document.getElementById('trade-log-body').innerHTML='';
-  buildTabs();initCharts();updateStats(null);renderBook(null,null);
-}
-
-function buildTabs(){
-  const el=document.getElementById('day-tabs');el.innerHTML='';
-  dayOrder.forEach((d,i)=>{
-    const b=document.createElement('button');
-    b.className='day-tab'+(i===0?' active':'');b.textContent=d;
-    b.onclick=()=>{if(!runInterval)jumpToDay(i);};
-    el.appendChild(b);
-  });
-}
-
-function jumpToDay(idx){
-  currentDayIdx=idx;currentStep=0;cash=0;position=0;pnlHistory=[];posHistory=[];trades=[];completedSteps=0;resetRng();
-  for(let d=0;d<idx;d++){const rows=csvFiles[dayOrder[d]]||[];for(let s=0;s<rows.length;s++){execStep(d,s,true);completedSteps++;}}
-  document.querySelectorAll('.day-tab').forEach((b,i)=>b.classList.toggle('active',i===idx));
-  updateStats(getCurrentRow());updateCharts();renderBook(getCurrentRow(),null);updateProgress();
-}
-
-function getCurrentRow(){return csvFiles[dayOrder[currentDayIdx]]?.[currentStep]||null;}
-
-// ── Priority constants (higher = matched first at same price) ─────────────────
-const PRIORITY = { student: 2, bot: 1, market: 0 };
-
-// ── Build one side of the order book as a flat sorted array of order objects ──
-// Each order: { price, qty (mutable), from, side, isStudent, priority }
-function buildBook(row, botOrders, studentBid, studentBidQty, studentAsk, studentAskQty) {
-  const bids = [];
-  const asks = [];
-
-  // 1. Market levels from CSV
-  for (let i = 1; i <= 3; i++) {
-    const bp = row[`bid_price_${i}`], bv = row[`bid_volume_${i}`];
-    if (bp && bv > 0) bids.push({ price: bp, qty: bv, from: 'Market', isStudent: false, priority: PRIORITY.market });
-    const ap = row[`ask_price_${i}`], av = row[`ask_volume_${i}`];
-    if (ap && av > 0) asks.push({ price: ap, qty: av, from: 'Market', isStudent: false, priority: PRIORITY.market });
-  }
-
-  // 2. Bot orders
-  for (const o of botOrders) {
-    const order = { price: o.price, qty: o.qty, from: o.from, isStudent: false, priority: PRIORITY.bot };
-    if (o.type === 'bid') bids.push(order);
-    else asks.push(order);
-  }
-
-  // 3. Student orders — highest priority at same price level
-  if (studentBid !== null && studentBidQty > 0) {
-    bids.push({ price: studentBid, qty: studentBidQty, from: 'Student', isStudent: true, priority: PRIORITY.student });
-  }
-  if (studentAsk !== null && studentAskQty > 0) {
-    asks.push({ price: studentAsk, qty: studentAskQty, from: 'Student', isStudent: true, priority: PRIORITY.student });
-  }
-
-  // 4. Sort:
-  //    bids  → descending price, then descending priority (student first)
-  //    asks  → ascending  price, then descending priority (student first)
-  bids.sort((a, b) => b.price - a.price || b.priority - a.priority);
-  asks.sort((a, b) => a.price - b.price || b.priority - a.priority);
-
-  return { bids, asks };
-}
-
-// ── Core continuous matching loop ─────────────────────────────────────────────
-// Returns array of trade events: { makerFrom, takerFrom, price, qty, makerSide }
-function matchBook(bids, asks) {
-  const trades = [];
-
-  while (bids.length > 0 && asks.length > 0) {
-    const bestBid = bids[0];
-    const bestAsk = asks[0];
-
-    if (bestBid.price < bestAsk.price) break; // no more crosses
-
-    const tradePrice = bestAsk.price; // resting ask is the maker
-    const tradeQty   = Math.min(bestBid.qty, bestAsk.qty);
-    if (tradeQty <= 0) break;
-
-    trades.push({
-      bidFrom:  bestBid.from,
-      askFrom:  bestAsk.from,
-      price:    tradePrice,
-      qty:      tradeQty,
-      bidIsStudent: bestBid.isStudent,
-      askIsStudent: bestAsk.isStudent,
+    // Initialize Strategy on Page Load
+    window.addEventListener('load', () => {
+      const saved = localStorage.getItem('pearls_strategy_source');
+      if (saved) { document.getElementById('code-editor').value = saved; loadPy('Saved Logic', saved); }
+      else {
+        const tmpl = `def strategy(coconut_row, pina_row, pos_coconut, pos_pina, step):\n    # Simple Symmetric Market Maker\n    mid_c = (coconut_row['bid_price_1'] + coconut_row['ask_price_1']) / 2\n    mid_p = (pina_row['bid_price_1'] + pina_row['ask_price_1']) / 2\n    \n    return {\n        'COCONUTS': { 'bid': int(mid_c - 1), 'ask': int(mid_c + 1), 'bid_qty': 1, 'ask_qty': 1 },\n        'PINA_COLADAS': { 'bid': int(mid_p - 1), 'ask': int(mid_p + 1), 'bid_qty': 1, 'ask_qty': 1 }\n    }`;
+        document.getElementById('code-editor').value = tmpl; loadPy('Template', tmpl);
+      }
     });
-
-    bestBid.qty -= tradeQty;
-    bestAsk.qty -= tradeQty;
-
-    if (bestBid.qty <= 0) bids.shift();
-    if (bestAsk.qty <= 0) asks.shift();
-  }
-
-  return trades;
-}
-
-function execStep(di, si, silent = false) {
-  const row = csvFiles[dayOrder[di]]?.[si];
-  if (!row) return;
-
-  const day  = dayOrder[di];
-  const fair = computeFairValue(row);
-  const ts   = row.timestamp ?? '—';
-
-  // ── Get student orders ──────────────────────────────────────────────────
-  let sb = null, sa = null, sbq = 0, saq = 0;
-  try {
-    const o = strategyFn(row, position, si);
-    sb  = typeof o.bid     === 'number' ? o.bid : null;
-    sa  = typeof o.ask     === 'number' ? o.ask : null;
-    sbq = Math.min(Math.abs(o.bid_qty || 1), POS_LIMIT);
-    saq = Math.min(Math.abs(o.ask_qty || 1), POS_LIMIT);
-  } catch(e) {
-    if (!silent) {
-      const el = document.getElementById('sim-error');
-      el.style.display = 'block';
-      el.textContent = 'Strategy error: ' + e.message;
-    }
-    pnlHistory.push(cash + position * fair);
-    posHistory.push(position);
-    return;
-  }
-
-  // ── Get bot orders ──────────────────────────────────────────────────────
-  const botOrders = allBotOrders(row);
-
-  // ── Build full order book ───────────────────────────────────────────────
-  const { bids, asks } = buildBook(row, botOrders, sb, sbq, sa, saq);
-
-  // ── Run matching engine ─────────────────────────────────────────────────
-  const matched = matchBook(bids, asks);
-
-  // ── Process trades: update student cash/position only ──────────────────
-  const studentTrades = [];
-
-  for (const t of matched) {
-    // Student bought  (student was bidder, hit a resting ask)
-    if (t.bidIsStudent) {
-      const posAfter = position + t.qty;
-      // Enforce position limit: reduce fill if needed
-      const canBuy = Math.min(t.qty, POS_LIMIT - position);
-      if (canBuy <= 0) continue;
-      const fill = canBuy;
-      cash     -= fill * t.price;
-      position += fill;
-      studentTrades.push({ day, ts, side: 'BUY',  price: t.price, qty: fill, from: t.askFrom, cashDelta: -fill * t.price });
-    }
-    // Student sold  (student was asker, hit a resting bid)
-    else if (t.askIsStudent) {
-      const canSell = Math.min(t.qty, POS_LIMIT + position);
-      if (canSell <= 0) continue;
-      const fill = canSell;
-      cash     += fill * t.price;
-      position -= fill;
-      studentTrades.push({ day, ts, side: 'SELL', price: t.price, qty: fill, from: t.bidFrom, cashDelta: fill * t.price });
-    }
-    // Bot vs bot / bot vs market — no cash/position effect for student, skip silently
-  }
-
-  const pnl = cash + position * fair;
-  pnlHistory.push(pnl);
-  posHistory.push(position);
-
-  if (!silent && studentTrades.length) {
-    trades.push(...studentTrades);
-    appendLog(studentTrades, pnl);
-  }
-  if (!silent) {
-    updateStats(row, pnl, fair);
-    renderBook(row, { bid: sb, ask: sa });
-    updateCharts();
-    updateProgress();
-  }
-}
-
-function updateProgress(){document.getElementById('progress-fill').style.width=(totalSteps>0?completedSteps/totalSteps*100:0)+'%';}
-
-function stepOnce(){
-  const rows=csvFiles[dayOrder[currentDayIdx]]||[];
-  if(currentStep>=rows.length){
-    if(currentDayIdx<dayOrder.length-1){currentDayIdx++;currentStep=0;document.querySelectorAll('.day-tab').forEach((b,i)=>b.classList.toggle('active',i===currentDayIdx));}
-    else{finishSimulation();return;}
-  }
-  execStep(currentDayIdx,currentStep);completedSteps++;currentStep++;
-}
-
-function runAll(){
-  const btn=document.getElementById('run-btn');
-  if(runInterval){clearInterval(runInterval);runInterval=null;btn.textContent='▶▶ RUN ALL';return;}
-  btn.textContent='⏸ PAUSE';
-  const spd=parseInt(document.getElementById('speed-input').value)||25;
-  runInterval=setInterval(()=>{
-    stepOnce();
-    const rows=csvFiles[dayOrder[currentDayIdx]]||[];
-    if(currentDayIdx>=dayOrder.length-1&&currentStep>=rows.length){clearInterval(runInterval);runInterval=null;btn.textContent='▶▶ RUN ALL';finishSimulation();}
-  },spd);
-}
-
-function finishSimulation(){
-  const p=pnlHistory[pnlHistory.length-1]||0;
-  const el=document.getElementById('final-pnl-display');
-  el.textContent=(p>=0?'+':'')+p.toFixed(2);
-  el.className='final-pnl '+(p>=0?'positive':'negative');
-  document.getElementById('final-banner').style.display='block';
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function resetSim(){
-  if(runInterval){clearInterval(runInterval);runInterval=null;}
-  document.getElementById('run-btn').textContent='▶▶ RUN ALL';
-  document.getElementById('setup-view').style.display='block';
-  document.getElementById('sim-view').style.display='none';
-  cash=0;position=0;pnlHistory=[];posHistory=[];trades=[];
-  currentDayIdx=0;currentStep=0;completedSteps=0;
-  document.getElementById('progress-fill').style.width='0%';
-}
-
-// ════════════════════════════════════════════════════════════════════════════
-//  UI
-// ════════════════════════════════════════════════════════════════════════════
-function updateStats(row,pnl,fair){
-  const fv=fair??(row?computeFairValue(row):null);
-  const dp=pnl??(pnlHistory.length?pnlHistory[pnlHistory.length-1]:0);
-  const pnlEl=document.getElementById('stat-pnl');
-  pnlEl.textContent=dp.toFixed(2);pnlEl.className='stat-value '+(dp>0?'positive':dp<0?'negative':'neutral');
-  const cEl=document.getElementById('stat-cash');
-  cEl.textContent=cash.toFixed(2);cEl.className='stat-value '+(cash>0?'positive':cash<0?'negative':'neutral');
-  const posEl=document.getElementById('stat-pos');
-  posEl.textContent=position;posEl.className='stat-value '+(position>0?'positive':position<0?'negative':'neutral');
-  document.getElementById('stat-fair').textContent=fv?fv.toFixed(2):'—';
-  document.getElementById('stat-step').textContent=completedSteps+' / '+totalSteps;
-}
-
-function renderBook(row,so){
-  const aEl=document.getElementById('book-asks'),bEl=document.getElementById('book-bids');
-  aEl.innerHTML='';bEl.innerHTML='';if(!row)return;
-  const asks=[],bids=[];
-  for(let i=3;i>=1;i--){
-    const ap=row[`ask_price_${i}`],av=row[`ask_volume_${i}`];if(ap&&av)asks.push({price:ap,qty:av});
-    const bp=row[`bid_price_${i}`],bv=row[`bid_volume_${i}`];if(bp&&bv)bids.push({price:bp,qty:bv});
-  }
-  asks.sort((a,b)=>b.price-a.price);bids.sort((a,b)=>b.price-a.price);
-  for(const a of asks){const d=document.createElement('div');d.className='book-row ask';if(so?.bid>=a.price)d.style.background='rgba(0,255,157,0.1)';d.innerHTML=`<span class="price">${a.price}</span><span class="vol">${a.qty}</span>`;aEl.appendChild(d);}
-  if(so?.ask){const d=document.createElement('div');d.className='book-row ask';d.style.borderLeft='2px solid var(--accent)';d.innerHTML=`<span class="price" style="color:var(--accent)">★ ${so.ask}</span><span class="vol" style="color:var(--accent)">YOU</span>`;aEl.appendChild(d);}
-  if(so?.bid){const d=document.createElement('div');d.className='book-row bid';d.style.borderLeft='2px solid var(--accent3)';d.innerHTML=`<span class="price" style="color:var(--accent3)">★ ${so.bid}</span><span class="vol" style="color:var(--accent3)">YOU</span>`;bEl.appendChild(d);}
-  for(const b of bids){const d=document.createElement('div');d.className='book-row bid';if(so?.ask<=b.price)d.style.background='rgba(0,212,255,0.1)';d.innerHTML=`<span class="price">${b.price}</span><span class="vol">${b.qty}</span>`;bEl.appendChild(d);}
-}
-
-function appendLog(tm,pnl){
-  const tb=document.getElementById('trade-log-body');
-  for(const t of tm){
-    const tr=document.createElement('tr');
-    const sc=t.side==='BUY'?'tag-buy':'tag-sell';
-    const dc=BOT_DOT[t.from]||'dot-mkt';
-    tr.innerHTML=`<td>${t.day}</td><td>${t.ts}</td><td class="${sc}">${t.side}</td><td>${t.price}</td><td>${t.qty}</td><td><span class="bot-dot ${dc}"></span><span class="tag-bot">${t.from}</span></td><td class="${t.cashDelta>=0?'tag-buy':'tag-sell'}">${t.cashDelta>=0?'+':''}${t.cashDelta.toFixed(2)}</td><td>${position}</td><td class="${pnl>=0?'tag-buy':'tag-sell'}">${pnl.toFixed(2)}</td>`;
-    tb.prepend(tr);while(tb.children.length>300)tb.lastChild.remove();
-  }
-}
-
-// ════════════════════════════════════════════════════════════════════════════
-//  CHARTS
-// ════════════════════════════════════════════════════════════════════════════
-function initCharts(){
-  if(pnlChart)pnlChart.destroy();if(posChart)posChart.destroy();
-  const base={responsive:true,animation:false,plugins:{legend:{display:false}},scales:{x:{display:false},y:{grid:{color:'rgba(30,58,95,0.3)'},ticks:{color:'#4a6080',font:{family:'Space Mono',size:9}}}}};
-  pnlChart=new Chart(document.getElementById('pnl-chart').getContext('2d'),{type:'line',data:{labels:[],datasets:[{data:[],borderColor:'#00ff9d',backgroundColor:'rgba(0,255,157,0.04)',borderWidth:1.5,pointRadius:0,fill:true,tension:0.3}]},options:JSON.parse(JSON.stringify(base))});
-  posChart=new Chart(document.getElementById('pos-chart').getContext('2d'),{type:'line',data:{labels:[],datasets:[{data:[],borderColor:'#00d4ff',backgroundColor:'rgba(0,212,255,0.04)',borderWidth:1.5,pointRadius:0,fill:true,tension:0.3},{data:[],borderColor:'rgba(255,71,87,0.3)',borderDash:[4,4],borderWidth:1,pointRadius:0},{data:[],borderColor:'rgba(255,71,87,0.3)',borderDash:[4,4],borderWidth:1,pointRadius:0}]},options:JSON.parse(JSON.stringify(base))});
-}
-
-function updateCharts(){
-  if(!pnlChart||!posChart)return;
-  const N=pnlHistory.length,L=Array.from({length:N},(_,i)=>i);
-  pnlChart.data.labels=L;pnlChart.data.datasets[0].data=pnlHistory;pnlChart.update('none');
-  posChart.data.labels=L;posChart.data.datasets[0].data=posHistory;
-  posChart.data.datasets[1].data=Array(N).fill(POS_LIMIT);
-  posChart.data.datasets[2].data=Array(N).fill(-POS_LIMIT);
-  posChart.update('none');
-}
-
-</script>
+  </script>
 </body>
+
 </html>
