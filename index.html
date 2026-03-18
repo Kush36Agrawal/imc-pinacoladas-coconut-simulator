@@ -1665,13 +1665,15 @@
       }
     }
     function callStrategy(rowC, rowP, posC, posP, step) {
-      const mapC = new Map(Object.entries(rowC || {}));
-      const mapP = new Map(Object.entries(rowP || {}));
-      const pyC = pyodide.toPy(mapC), pyP = pyodide.toPy(mapP); let pyResult;
+      let pyC = null, pyP = null, loader = pyodide.runPython("import json\njson.loads");
+      if (rowC) pyC = loader(JSON.stringify(rowC)); else pyC = loader("{}");
+      if (rowP) pyP = loader(JSON.stringify(rowP)); else pyP = loader("{}");
+      let pyResult;
       try { pyResult = pyStratFn(pyC, pyP, posC, posP, step); }
       finally {
         if (pyC && typeof pyC.destroy === 'function') pyC.destroy();
         if (pyP && typeof pyP.destroy === 'function') pyP.destroy();
+        if (loader && typeof loader.destroy === 'function') loader.destroy();
       }
       if (pyResult == null) return null;
       if (typeof pyResult.toJs === 'function') {
@@ -1758,7 +1760,7 @@
       const qty = 1 + Math.floor(r2 * 4);
       return r1 > .5 ? [{ type: 'bid', price: Math.floor(mid - r1 * 2), qty, from: 'Noise Beta' }] : [{ type: 'ask', price: Math.ceil(mid + r1 * 2), qty, from: 'Noise Beta' }];
     }
-    function allBotOrders(row, asset) { if(!row) return []; return [...mmAlpha(row), ...mmBeta(row), ...noiseAlpha(row), ...noiseBeta(row)].map(o => ({ ...o, asset })); }
+    function allBotOrders(row, asset) { if (!row) return []; return [...mmAlpha(row), ...mmBeta(row), ...noiseAlpha(row), ...noiseBeta(row)].map(o => ({ ...o, asset })); }
     function statArbAlpha(rowC, rowP) {
       const fC = computeFairValue(rowC, 8000), fP = computeFairValue(rowP, 15000), spread = fP / fC, tgt = 15000 / 8000;
       const c = [], p = [];
