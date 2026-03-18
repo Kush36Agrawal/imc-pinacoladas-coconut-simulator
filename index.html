@@ -434,6 +434,14 @@
       color: var(--danger);
     }
 
+    .bot-card.sa {
+      border-color: rgba(167, 139, 250, .28);
+    }
+
+    .bot-card.sa .bot-name {
+      color: var(--purple);
+    }
+
     .locked-info {
       background: var(--surface2);
       border: 1px solid var(--border);
@@ -1351,6 +1359,12 @@
               <div class="bot-type" style="color:var(--danger)">Noise Trader &middot; v2</div>
               <div class="bot-desc">Mean-reverting around 10&nbsp;000. Size scales with distance from anchor.</div>
             </div>
+            <div class="bot-card sa">
+              <div class="bot-name">&#x1F7E3; StatArb Alpha</div>
+              <div class="bot-type" style="color:var(--purple)">Statistical Arbitrage</div>
+              <div class="bot-desc">Exploits ratio mispricing between Coconuts and Pina Coladas. Aggressive entries.
+              </div>
+            </div>
           </div>
           <div class="locked-info">&#x1F512; &nbsp;Bot logic, position limit (&plusmn;600, &plusmn;300), and fair value
             formula are fixed.</div>
@@ -1857,9 +1871,9 @@
 
     async function tryAutoLoadData() {
       const candidates = [
-        { key: 'Day -1', path: 'data/prices_round_2_day_-1.csv' },
-        { key: 'Day 0', path: 'data/prices_round_2_day_0.csv' },
-        { key: 'Day 1', path: 'data/prices_round_2_day_1.csv' },
+        { key: 'Day -1', path: 'prices_round_2_day_-1.csv' },
+        { key: 'Day 0', path: 'prices_round_2_day_0.csv' },
+        { key: 'Day 1', path: 'prices_round_2_day_1.csv' },
       ];
       const statusEl = document.getElementById('files-loaded');
       statusEl.textContent = '⟳ Checking for default data…';
