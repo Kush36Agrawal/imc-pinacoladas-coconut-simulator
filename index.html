@@ -1906,8 +1906,8 @@
       const ok = await compileStrategy();
       btn.disabled = false; btn.textContent = orig;
       if (!ok) return;
-      cash = 0; position = 0; lastFair = 10000;
-      snaps = []; dayStart = {}; allTrades = []; pnlHistory = []; posHistory = [];
+      cash = 0; posC = 0; posP = 0; lastFairC = 8000; lastFairP = 15000;
+      snaps = []; dayStart = {}; allTrades = []; pnlHistory = []; posCHistory = []; posPHistory = [];
       computedSteps = 0; isPlaying = false;
       if (playTimer) { clearInterval(playTimer); playTimer = null; }
       totalSteps = dayOrder.reduce((s, d) => s + (csvFiles[d]?.length || 0), 0);
