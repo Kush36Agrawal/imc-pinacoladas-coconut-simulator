@@ -1757,37 +1757,41 @@
     // ════════════════════════════════════════════════════════════════════════════
     //  BOT ENGINES
     // ════════════════════════════════════════════════════════════════════════════
-    function mmAlpha(row) {
-      const b1 = row.bid_price_1 || 9998, bv1 = row.bid_volume_1 || 5, a1 = row.ask_price_1 || 10002, av1 = row.ask_volume_1 || 5;
+    function mmAlpha(row, base) {
+      const b1 = row.bid_price_1 || (base - 2), bv1 = row.bid_volume_1 || 5, a1 = row.ask_price_1 || (base + 2), av1 = row.ask_volume_1 || 5;
       const b2 = row.bid_price_2 || b1 - 1, bv2 = row.bid_volume_2 || 2, a2 = row.ask_price_2 || a1 + 1, av2 = row.ask_volume_2 || 2;
       const fair = (b1 * bv1 + b2 * bv2) / (bv1 + bv2) * 0.55 + (a1 * av1 + a2 * av2) / (av1 + av2) * 0.45;
       const h = Math.max(1.5, Math.min((a1 - b1) * 0.35 + 1, 6)) / 2;
       return [{ type: 'bid', price: Math.floor(fair - h), qty: 6 + Math.floor(rng() * 4), from: 'MM Alpha' },
       { type: 'ask', price: Math.ceil(fair + h), qty: 6 + Math.floor(rng() * 4), from: 'MM Alpha' }];
     }
-    function mmBeta(row) {
-      const b1 = row.bid_price_1 || 9998, bv1 = row.bid_volume_1 || 5, a1 = row.ask_price_1 || 10002, av1 = row.ask_volume_1 || 5;
+    function mmBeta(row, base) {
+      const b1 = row.bid_price_1 || (base - 2), bv1 = row.bid_volume_1 || 5, a1 = row.ask_price_1 || (base + 2), av1 = row.ask_volume_1 || 5;
       const b3 = row.bid_price_3 || b1 - 2, bv3 = row.bid_volume_3 || 1, a3 = row.ask_price_3 || a1 + 2, av3 = row.ask_volume_3 || 1;
       const imb = (bv1 + bv3 - av1 - av3) / (bv1 + bv3 + av1 + av3 + 1);
       const fair = (b1 + a1) / 2 + imb * 1.2, h = (Math.abs(imb) > 0.3 ? 3.5 + Math.abs(imb) * 2 : 2) / 2;
       return [{ type: 'bid', price: Math.floor(fair - h - rng() * .5), qty: 5 + Math.floor(rng() * 5), from: 'MM Beta' },
       { type: 'ask', price: Math.ceil(fair + h + rng() * .5), qty: 5 + Math.floor(rng() * 5), from: 'MM Beta' }];
     }
-    function noiseAlpha(row) {
-      const b1 = row.bid_price_1 || 9998, a1 = row.ask_price_1 || 10002, mid = (b1 + a1) / 2;
+    function noiseAlpha(row, base) {
+      const b1 = row.bid_price_1 || (base - 2), a1 = row.ask_price_1 || (base + 2), mid = (b1 + a1) / 2;
       const r1 = rng(), r2 = rng(), r3 = rng(), isBuy = r1 > .48, crosses = r2 < .18, qty = 1 + Math.floor(r3 * 8);
       return isBuy ? [{ type: 'bid', price: crosses ? Math.ceil(a1 + rng()) : Math.floor(mid - rng() * 1.5), qty, from: 'Noise Alpha' }]
         : [{ type: 'ask', price: crosses ? Math.floor(b1 - rng()) : Math.ceil(mid + rng() * 1.5), qty, from: 'Noise Alpha' }];
     }
-    function noiseBeta(row) {
-      const b1 = row.bid_price_1 || 9998, a1 = row.ask_price_1 || 10002, mid = (b1 + a1) / 2, dist = mid - 10000;
+    function noiseBeta(row, base) {
+      const b1 = row.bid_price_1 || (base - 2), a1 = row.ask_price_1 || (base + 2), mid = (b1 + a1) / 2, dist = mid - base;
       const r1 = rng(), r2 = rng();
       if (dist > .5) { const q = Math.min(2 + Math.floor(Math.abs(dist) * .8 + r1 * 3), 12); return [{ type: 'ask', price: Math.ceil(mid - .5 + r2 * 1.5), qty: q, from: 'Noise Beta' }]; }
       if (dist < -.5) { const q = Math.min(2 + Math.floor(Math.abs(dist) * .8 + r1 * 3), 12); return [{ type: 'bid', price: Math.floor(mid + .5 - r2 * 1.5), qty: q, from: 'Noise Beta' }]; }
       const qty = 1 + Math.floor(r2 * 4);
       return r1 > .5 ? [{ type: 'bid', price: Math.floor(mid - r1 * 2), qty, from: 'Noise Beta' }] : [{ type: 'ask', price: Math.ceil(mid + r1 * 2), qty, from: 'Noise Beta' }];
     }
-    function allBotOrders(row, asset) { if (!row) return []; return [...mmAlpha(row), ...mmBeta(row), ...noiseAlpha(row), ...noiseBeta(row)].map(o => ({ ...o, asset })); }
+    function allBotOrders(row, asset) {
+      if (!row) return [];
+      const base = (asset === 'COCONUTS' ? 8000 : 15000);
+      return [...mmAlpha(row, base), ...mmBeta(row, base), ...noiseAlpha(row, base), ...noiseBeta(row, base)].map(o => ({ ...o, asset }));
+    }
     function statArbAlpha(rowC, rowP) {
       const fC = computeFairValue(rowC, 8000), fP = computeFairValue(rowP, 15000), spread = fP / fC, tgt = 15000 / 8000;
       const c = [], p = [];
@@ -1821,6 +1825,11 @@
       const fills = [];
       while (bids.length && asks.length) {
         const tb = bids[0], ta = asks[0]; if (tb.price < ta.price) break;
+        if (tb.isStudent && ta.isStudent) {
+          // Wash trade prevention: if both cross, pop the one that was placed deeper or just break
+          // In this engine, we'll simply break to prevent the student from trading with themselves.
+          break;
+        }
         const fq = Math.min(tb.qty, ta.qty); if (fq <= 0) break;
         fills.push({ bidFrom: tb.from, askFrom: ta.from, price: ta.price, qty: fq, bidIsStudent: tb.isStudent, askIsStudent: ta.isStudent });
         tb.qty -= fq; ta.qty -= fq; if (tb.qty <= 0) bids.shift(); if (ta.qty <= 0) asks.shift();

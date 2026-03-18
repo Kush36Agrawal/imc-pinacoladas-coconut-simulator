@@ -117,18 +117,18 @@ Each row represents a **snapshot of the order book**.
 Students implement a function:
 
 ```python
-def strategy(coconut_row, pina_row, coconut_position, pina_position, step):
+def strategy(coconut_row, pina_row, pos_coconut, pos_pina, step):
 ```
 
 ### Parameters
 
-| Parameter          | Description                 |
-| ------------------ | --------------------------- |
-| coconut_row        | Dictionary representing current order book for Coconuts |
-| pina_row           | Dictionary representing current order book for Pina Coladas |
-| coconut_position   | Current position in Coconuts (Max ±600)  |
-| pina_position      | Current position in Pina Coladas (Max ±300) |
-| step               | Current timestep index      |
+| Parameter      | Description |
+| -------------- | ----------- |
+| coconut_row    | Dictionary representing current order book for Coconuts |
+| pina_row       | Dictionary representing current order book for Pina Coladas |
+| pos_coconut    | Current position in Coconuts (Max ±600) |
+| pos_pina       | Current position in Pina Coladas (Max ±300) |
+| step           | Current timestep index |
 
 ### Return format
 
@@ -155,14 +155,14 @@ The function MUST return a dictionary with keys `"COCONUTS"` and `"PINA_COLADAS"
 Example strategy (Naive Pairs Trading):
 
 ```python
-def strategy(c_row, p_row, c_pos, p_pos, step):
+def strategy(coconut_row, pina_row, pos_coconut, pos_pina, step):
     orders = {"COCONUTS": {}, "PINA_COLADAS": {}}
     
-    if not c_row or not p_row:
+    if not coconut_row or not pina_row:
         return orders
         
-    c_mid = (c_row["bid_price_1"] + c_row["ask_price_1"]) / 2
-    p_mid = (p_row["bid_price_1"] + p_row["ask_price_1"]) / 2
+    c_mid = (coconut_row["bid_price_1"] + coconut_row["ask_price_1"]) / 2
+    p_mid = (pina_row["bid_price_1"] + pina_row["ask_price_1"]) / 2
     
     # 15/8 ratio -> 1.875
     spread = p_mid - 1.875 * c_mid 
