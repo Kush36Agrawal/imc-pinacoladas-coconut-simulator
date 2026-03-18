@@ -1115,6 +1115,10 @@
       background: var(--danger);
     }
 
+    .dot-sa {
+      background: var(--purple);
+    }
+
     .dot-mkt {
       background: var(--text-muted);
     }
@@ -1232,6 +1236,14 @@
 
     .bscard.nt2 .bscard-name {
       color: var(--danger);
+    }
+
+    .bscard.sa::after {
+      background: var(--purple);
+    }
+
+    .bscard.sa .bscard-name {
+      color: var(--purple);
     }
 
     .bscard-row {
@@ -1552,6 +1564,7 @@
                 <span class="bot-dot dot-mm2"></span>MM Beta &nbsp;
                 <span class="bot-dot dot-nt1"></span>Noise Alpha &nbsp;
                 <span class="bot-dot dot-nt2"></span>Noise Beta &nbsp;
+                <span class="bot-dot dot-sa"></span>StatArb Alpha &nbsp;
                 <span class="bot-dot dot-mkt"></span>Market
               </span>
             </h3>
@@ -1769,7 +1782,7 @@
       return { c, p };
     }
 
-    const BOT_DOT = { 'MM Alpha': 'dot-mm1', 'MM Beta': 'dot-mm2', 'Noise Alpha': 'dot-nt1', 'Noise Beta': 'dot-nt2', 'StatArb Alpha': 'dot-mm1', 'Market': 'dot-mkt' };
+    const BOT_DOT = { 'MM Alpha': 'dot-mm1', 'MM Beta': 'dot-mm2', 'Noise Alpha': 'dot-nt1', 'Noise Beta': 'dot-nt2', 'StatArb Alpha': 'dot-sa', 'Market': 'dot-mkt' };
 
     // ════════════════════════════════════════════════════════════════════════════
     //  ORDER BOOK MATCHING ENGINE
@@ -2262,6 +2275,7 @@
       { key: 'MM Beta', cls: 'mm2', icon: '🟢' },
       { key: 'Noise Alpha', cls: 'nt1', icon: '🟠' },
       { key: 'Noise Beta', cls: 'nt2', icon: '🔴' },
+      { key: 'StatArb Alpha', cls: 'sa', icon: '🟣' },
     ];
 
     function buildBotSummary() {
