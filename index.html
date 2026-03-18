@@ -1871,9 +1871,9 @@
 
     async function tryAutoLoadData() {
       const candidates = [
-        { key: 'Day -1', path: 'prices_round_2_day_-1.csv' },
-        { key: 'Day 0', path: 'prices_round_2_day_0.csv' },
-        { key: 'Day 1', path: 'prices_round_2_day_1.csv' },
+        { key: 'Day -1', path: 'data/prices_round_2_day_-1.csv' },
+        { key: 'Day 0', path: 'data/prices_round_2_day_0.csv' },
+        { key: 'Day 1', path: 'data/prices_round_2_day_1.csv' },
       ];
       const statusEl = document.getElementById('files-loaded');
       statusEl.textContent = '⟳ Checking for default data…';
