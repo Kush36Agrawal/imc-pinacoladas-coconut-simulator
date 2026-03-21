@@ -1374,26 +1374,19 @@
         <div class="panel green-top">
           <h2 class="green">&#x1F40D; Strategy Contract</h2>
           <div class="demo-code-block"><span class="kw">def</span> <span class="fn">strategy</span>(coconut_row,
-            pina_row, pos_coconut, pos_pina, step):
-            <span class="cm"># coconut_row, pina_row -- dicts
-              # pos_coconut, pos_pina -- ints
-              # step -- int</span>
+            pina_row, pos_coconut, pos_pina, step, state):
+            <span class="cm"># step -- int, state -- string/any</span>
             mid_c = (coconut_row.get(<span class="st">"bid_price_1"</span>, <span class="num">7999</span>) +
             coconut_row.get(<span class="st">"ask_price_1"</span>, <span class="num">8001</span>)) / <span
-              class="num">2</span>
-            mid_p = (pina_row.get(<span class="st">"bid_price_1"</span>, <span class="num">14999</span>) +
-            pina_row.get(<span class="st">"ask_price_1"</span>, <span class="num">15001</span>)) / <span
               class="num">2</span>
             <span class="kw">return</span> {
             <span class="st">"COCONUTS"</span>: { <span class="st">"bid"</span>: <span class="fn">int</span>(mid_c) -
             <span class="num">1</span>, <span class="st">"ask"</span>: <span class="fn">int</span>(mid_c) + <span
               class="num">1</span>, <span class="st">"bid_qty"</span>: <span class="num">10</span>, <span
               class="st">"ask_qty"</span>: <span class="num">10</span> },
-            <span class="st">"PINA_COLADAS"</span>: { <span class="st">"bid"</span>: <span class="fn">int</span>(mid_p)
-            -
-            <span class="num">2</span>, <span class="st">"ask"</span>: <span class="fn">int</span>(mid_p) + <span
-              class="num">2</span>, <span class="st">"bid_qty"</span>: <span class="num">10</span>, <span
-              class="st">"ask_qty"</span>: <span class="num">10</span> }
+            <span class="st">"PINA_COLADAS"</span>: { <span class="st">"market_buy_qty"</span>: <span
+              class="num">5</span> },
+            <span class="st">"state"</span>: <span class="st">"your history data"</span>
             }
           </div>
           <div id="strategy-error"></div>
@@ -1684,7 +1677,7 @@
           bid_price_2: 9998, ask_price_2: 10002, bid_volume_2: 3, ask_volume_2: 3,
           bid_price_3: 9997, ask_price_3: 10003, bid_volume_3: 2, ask_volume_3: 2,
         };
-        const r = callStrategy(dummy, dummy, 0, 0, 0);
+        const r = callStrategy(dummy, dummy, 0, 0, 0, "");
         if (!r || typeof r !== 'object')
           throw new Error('strategy() must return a dict/object');
         return true;
@@ -1693,12 +1686,12 @@
         pyStratFn = null; return false;
       }
     }
-    function callStrategy(rowC, rowP, posC, posP, step) {
+    function callStrategy(rowC, rowP, posC, posP, step, state) {
       let pyC = null, pyP = null, loader = pyodide.runPython("import json\njson.loads");
       if (rowC) pyC = loader(JSON.stringify(rowC)); else pyC = loader("{}");
       if (rowP) pyP = loader(JSON.stringify(rowP)); else pyP = loader("{}");
       let pyResult;
-      try { pyResult = pyStratFn(pyC, pyP, posC, posP, step); }
+      try { pyResult = pyStratFn(pyC, pyP, posC, posP, step, state); }
       finally {
         if (pyC && typeof pyC.destroy === 'function') pyC.destroy();
         if (pyP && typeof pyP.destroy === 'function') pyP.destroy();
@@ -1727,6 +1720,7 @@
     let playTimer = null;
     let isPlaying = false;
 
+    let strategyState = "";
     let cash = 0, posC = 0, posP = 0, lastFairC = 8000, lastFairP = 15000;
     let totalSteps = 0, computedSteps = 0;
     const POS_LIMIT_C = 600, POS_LIMIT_P = 300;
@@ -1948,6 +1942,7 @@
       const ok = await compileStrategy();
       btn.disabled = false; btn.textContent = orig;
       if (!ok) return;
+      strategyState = "";
       cash = 0; posC = 0; posP = 0; lastFairC = 8000; lastFairP = 15000;
       snaps = []; dayStart = {}; allTrades = []; pnlHistory = []; posCHistory = []; posPHistory = [];
       computedSteps = 0; isPlaying = false;
@@ -1996,8 +1991,9 @@
       let sBidPxC = null, sBidQtyC = 0, sAskPxC = null, sAskQtyC = 0, sMktBuyQtyC = 0, sMktSellQtyC = 0;
       let sBidPxP = null, sBidQtyP = 0, sAskPxP = null, sAskQtyP = 0, sMktBuyQtyP = 0, sMktSellQtyP = 0;
       try {
-        const o = callStrategy(rowC, rowP, posC, posP, si);
+        const o = callStrategy(rowC, rowP, posC, posP, si, strategyState);
         if (o) {
+          if (o.state !== undefined) strategyState = o.state;
           oC = o.COCONUTS; oP = o.PINA_COLADAS;
           if (oC) {
             if (typeof oC.bid === 'number' && isFinite(oC.bid)) { sBidPxC = oC.bid; sBidQtyC = Math.min(Math.abs(Number(oC.bid_qty) || 1), POS_LIMIT_C); }
