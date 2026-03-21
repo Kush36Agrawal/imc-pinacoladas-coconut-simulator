@@ -1402,6 +1402,8 @@
             <span id="py-runtime-text">Loading Python runtime (Pyodide)&hellip;</span>
           </div>
           <div class="hint-box" style="margin-top:14px;">
+            <strong style="color:var(--accent2)">Order Dict Keys</strong><br>
+            <code>bid/ask</code> (px) &nbsp;<code>bid/ask_qty</code> &nbsp;<code>market_buy/sell_qty</code><br><br>
             <strong style="color:var(--accent2)">Row keys</strong><br>
             <code>bid_price_1</code>&nbsp;<code>bid_volume_1</code> &mdash; best bid &nbsp;&nbsp;
             <code>ask_price_1</code>&nbsp;<code>ask_volume_1</code> &mdash; best ask<br>
@@ -1806,7 +1808,7 @@
     //  ORDER BOOK MATCHING ENGINE
     // ════════════════════════════════════════════════════════════════════════════
     const PRI = { student: 2, bot: 1, market: 0 };
-    function buildBook(row, bots, sBidPx, sBidQty, sAskPx, sAskQty) {
+    function buildBook(row, bots, sBidPx, sBidQty, sAskPx, sAskQty, sMktBuyQty = 0, sMktSellQty = 0) {
       const bids = [], asks = [];
       for (let i = 1; i <= 3; i++) {
         const bp = row[`bid_price_${i}`], bv = row[`bid_volume_${i}`];
@@ -1815,8 +1817,12 @@
         if (ap > 0 && av > 0) asks.push({ price: ap, qty: av, from: 'Market', isStudent: false, pri: PRI.market });
       }
       for (const o of bots) (o.type === 'bid' ? bids : asks).push({ price: o.price, qty: o.qty, from: o.from, isStudent: false, pri: PRI.bot });
-      if (sBidPx !== null && sBidQty > 0) bids.push({ price: sBidPx, qty: sBidQty, from: 'Student', isStudent: true, pri: PRI.student });
-      if (sAskPx !== null && sAskQty > 0) asks.push({ price: sAskPx, qty: sAskQty, from: 'Student', isStudent: true, pri: PRI.student });
+
+      if (sMktBuyQty > 0) bids.push({ price: 1e9, qty: sMktBuyQty, from: 'Student', isStudent: true, isMkt: true, pri: PRI.student });
+      if (sMktSellQty > 0) asks.push({ price: 0, qty: sMktSellQty, from: 'Student', isStudent: true, isMkt: true, pri: PRI.student });
+      if (sBidPx !== null && sBidQty > 0) bids.push({ price: sBidPx, qty: sBidQty, from: 'Student', isStudent: true, isMkt: false, pri: PRI.student });
+      if (sAskPx !== null && sAskQty > 0) asks.push({ price: sAskPx, qty: sAskQty, from: 'Student', isStudent: true, isMkt: false, pri: PRI.student });
+
       bids.sort((a, b) => b.price - a.price || b.pri - a.pri);
       asks.sort((a, b) => a.price - b.price || b.pri - a.pri);
       return { bids, asks };
@@ -1831,7 +1837,7 @@
           break;
         }
         const fq = Math.min(tb.qty, ta.qty); if (fq <= 0) break;
-        fills.push({ bidFrom: tb.from, askFrom: ta.from, price: ta.price, qty: fq, bidIsStudent: tb.isStudent, askIsStudent: ta.isStudent });
+        fills.push({ bidFrom: tb.from, askFrom: ta.from, price: ta.price, qty: fq, bidIsStudent: tb.isStudent, askIsStudent: ta.isStudent, bidIsMkt: tb.isMkt, askIsMkt: ta.isMkt });
         tb.qty -= fq; ta.qty -= fq; if (tb.qty <= 0) bids.shift(); if (ta.qty <= 0) asks.shift();
       }
       return fills;
@@ -1987,24 +1993,32 @@
       const fC = computeFairValue(rowC, 8000), fP = computeFairValue(rowP, 15000);
       lastFairC = fC; lastFairP = fP;
       let oC = null, oP = null, stratErr = null;
-      let sBidPxC = null, sBidQtyC = 0, sAskPxC = null, sAskQtyC = 0;
-      let sBidPxP = null, sBidQtyP = 0, sAskPxP = null, sAskQtyP = 0;
+      let sBidPxC = null, sBidQtyC = 0, sAskPxC = null, sAskQtyC = 0, sMktBuyQtyC = 0, sMktSellQtyC = 0;
+      let sBidPxP = null, sBidQtyP = 0, sAskPxP = null, sAskQtyP = 0, sMktBuyQtyP = 0, sMktSellQtyP = 0;
       try {
         const o = callStrategy(rowC, rowP, posC, posP, si);
         if (o) {
           oC = o.COCONUTS; oP = o.PINA_COLADAS;
-          if (oC && typeof oC.bid === 'number' && isFinite(oC.bid)) { sBidPxC = oC.bid; sBidQtyC = Math.min(Math.abs(Number(oC.bid_qty) || 1), POS_LIMIT_C); }
-          if (oC && typeof oC.ask === 'number' && isFinite(oC.ask)) { sAskPxC = oC.ask; sAskQtyC = Math.min(Math.abs(Number(oC.ask_qty) || 1), POS_LIMIT_C); }
-          if (oP && typeof oP.bid === 'number' && isFinite(oP.bid)) { sBidPxP = oP.bid; sBidQtyP = Math.min(Math.abs(Number(oP.bid_qty) || 1), POS_LIMIT_P); }
-          if (oP && typeof oP.ask === 'number' && isFinite(oP.ask)) { sAskPxP = oP.ask; sAskQtyP = Math.min(Math.abs(Number(oP.ask_qty) || 1), POS_LIMIT_P); }
+          if (oC) {
+            if (typeof oC.bid === 'number' && isFinite(oC.bid)) { sBidPxC = oC.bid; sBidQtyC = Math.min(Math.abs(Number(oC.bid_qty) || 1), POS_LIMIT_C); }
+            if (typeof oC.ask === 'number' && isFinite(oC.ask)) { sAskPxC = oC.ask; sAskQtyC = Math.min(Math.abs(Number(oC.ask_qty) || 1), POS_LIMIT_C); }
+            if (typeof oC.market_buy_qty === 'number') sMktBuyQtyC = Math.min(Math.abs(Number(oC.market_buy_qty)), POS_LIMIT_C);
+            if (typeof oC.market_sell_qty === 'number') sMktSellQtyC = Math.min(Math.abs(Number(oC.market_sell_qty)), POS_LIMIT_C);
+          }
+          if (oP) {
+            if (typeof oP.bid === 'number' && isFinite(oP.bid)) { sBidPxP = oP.bid; sBidQtyP = Math.min(Math.abs(Number(oP.bid_qty) || 1), POS_LIMIT_P); }
+            if (typeof oP.ask === 'number' && isFinite(oP.ask)) { sAskPxP = oP.ask; sAskQtyP = Math.min(Math.abs(Number(oP.ask_qty) || 1), POS_LIMIT_P); }
+            if (typeof oP.market_buy_qty === 'number') sMktBuyQtyP = Math.min(Math.abs(Number(oP.market_buy_qty)), POS_LIMIT_P);
+            if (typeof oP.market_sell_qty === 'number') sMktSellQtyP = Math.min(Math.abs(Number(oP.market_sell_qty)), POS_LIMIT_P);
+          }
         }
       } catch (e) { stratErr = e.message; }
 
       const botC = allBotOrders(rowC, 'COCONUTS'), botP = allBotOrders(rowP, 'PINA_COLADAS');
       const sa = statArbAlpha(rowC, rowP); botC.push(...sa.c); botP.push(...sa.p);
 
-      const bkC = buildBook(rowC, botC, sBidPxC, sBidQtyC, sAskPxC, sAskQtyC);
-      const bkP = buildBook(rowP, botP, sBidPxP, sBidQtyP, sAskPxP, sAskQtyP);
+      const bkC = buildBook(rowC, botC, sBidPxC, sBidQtyC, sAskPxC, sAskQtyC, sMktBuyQtyC, sMktSellQtyC);
+      const bkP = buildBook(rowP, botP, sBidPxP, sBidQtyP, sAskPxP, sAskQtyP, sMktBuyQtyP, sMktSellQtyP);
       const fillsC = matchBook(bkC.bids, bkC.asks), fillsP = matchBook(bkP.bids, bkP.asks);
       const snapIdx = snaps.length, studentFills = [];
 
@@ -2012,12 +2026,12 @@
         if (f.bidIsStudent) {
           const can = Math.min(f.qty, POS_LIMIT_C - posC); if (can <= 0) continue;
           cash -= can * f.price; posC += can;
-          const fl = { snapIdx, asset: 'COCONUTS', day, ts, side: 'BUY', placedPx: sBidPxC, placedQty: sBidQtyC, price: f.price, qty: can, from: f.askFrom, cashDelta: -(can * f.price) };
+          const fl = { snapIdx, asset: 'COCONUTS', day, ts, side: 'BUY', placedPx: f.bidIsMkt ? 'MKT' : sBidPxC, placedQty: f.bidIsMkt ? sMktBuyQtyC : sBidQtyC, price: f.price, qty: can, from: f.askFrom, cashDelta: -(can * f.price) };
           studentFills.push(fl); allTrades.push(fl);
         } else if (f.askIsStudent) {
           const can = Math.min(f.qty, POS_LIMIT_C + posC); if (can <= 0) continue;
           cash += can * f.price; posC -= can;
-          const fl = { snapIdx, asset: 'COCONUTS', day, ts, side: 'SELL', placedPx: sAskPxC, placedQty: sAskQtyC, price: f.price, qty: can, from: f.bidFrom, cashDelta: can * f.price };
+          const fl = { snapIdx, asset: 'COCONUTS', day, ts, side: 'SELL', placedPx: f.askIsMkt ? 'MKT' : sAskPxC, placedQty: f.askIsMkt ? sMktSellQtyC : sAskQtyC, price: f.price, qty: can, from: f.bidFrom, cashDelta: can * f.price };
           studentFills.push(fl); allTrades.push(fl);
         }
       }
@@ -2025,12 +2039,12 @@
         if (f.bidIsStudent) {
           const can = Math.min(f.qty, POS_LIMIT_P - posP); if (can <= 0) continue;
           cash -= can * f.price; posP += can;
-          const fl = { snapIdx, asset: 'PINA_COLADAS', day, ts, side: 'BUY', placedPx: sBidPxP, placedQty: sBidQtyP, price: f.price, qty: can, from: f.askFrom, cashDelta: -(can * f.price) };
+          const fl = { snapIdx, asset: 'PINA_COLADAS', day, ts, side: 'BUY', placedPx: f.bidIsMkt ? 'MKT' : sBidPxP, placedQty: f.bidIsMkt ? sMktBuyQtyP : sBidQtyP, price: f.price, qty: can, from: f.askFrom, cashDelta: -(can * f.price) };
           studentFills.push(fl); allTrades.push(fl);
         } else if (f.askIsStudent) {
           const can = Math.min(f.qty, POS_LIMIT_P + posP); if (can <= 0) continue;
           cash += can * f.price; posP -= can;
-          const fl = { snapIdx, asset: 'PINA_COLADAS', day, ts, side: 'SELL', placedPx: sAskPxP, placedQty: sAskQtyP, price: f.price, qty: can, from: f.bidFrom, cashDelta: can * f.price };
+          const fl = { snapIdx, asset: 'PINA_COLADAS', day, ts, side: 'SELL', placedPx: f.askIsMkt ? 'MKT' : sAskPxP, placedQty: f.askIsMkt ? sMktSellQtyP : sAskQtyP, price: f.price, qty: can, from: f.bidFrom, cashDelta: can * f.price };
           studentFills.push(fl); allTrades.push(fl);
         }
       }
